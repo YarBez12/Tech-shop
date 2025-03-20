@@ -1,0 +1,12 @@
+{% load products_tags %}
+<div class="card" style="width: {{ width }}rem">
+    <a href = '{{ product.get_absolute_url }}'><img src="{{ product.first_photo }}" class="card-img-top" alt="..." /></a>
+    <div class="card-body">
+      <a href = '{{ product.get_absolute_url }}'><h5 class="card-title">{{ product.title }}</h5></a>
+      <p class="card-text">
+        {{ product.summary|truncatewords:15 }}
+      </p>
+      {% include "products/components/_favourite_button.html" %}
+      <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+    </div>
+  </div>

@@ -1,0 +1,92 @@
+{% extends "base_main.html" %}
+
+{% load products_tags %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5">
+    <!-- Информация о пользователе -->
+    <section id="profile-info" class="mb-5">
+      <h1 class="text-center mb-4">Profile</h1>
+      <p><strong>Firstname: </strong>{{ user.first_name }}</p>
+      <p><strong>Lastname: </strong>{{ user.last_name }}</p>
+      <p><strong>Email: </strong>{{ user.email }}</p>
+      {% if user.phone %}
+      <p><strong>Phone: </strong>{{ user.phone }}</p>
+      {% endif %}
+      {% if user.address %}
+      <p><strong>Address: </strong>{{ user.address.address_field1 }}, {% if user.address.address_field2 %}{{ user.address.address_field2 }},{% endif %} 
+        {{ user.address.city }}, {% if user.address.state %}{{ user.address.state }},{% endif %} {{ user.address.country }}, {{ user.address.postal_code }}</p>
+      {% endif %}
+      <a href="{% url "users:user_edit" %}" class="btn btn-primary">Edit</a>
+    </section>
+  
+    <section id="profile-tabs">
+      <div class="tabs mb-3">
+        {% if products %}
+        <a href="?{% change_params tab='favourites' %}">
+            <button class="tab-button {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %}" data-tab="favourites">Favourites</button>
+        </a>
+        {% endif %}
+        {% if cart.cart_total_quantity > 0 %}
+        <a href="?{% change_params tab='cart' %}">
+            <button class="tab-button {% if request.GET.tab == 'cart' %}active{% endif %}" data-tab="cart">Cart</button>
+        </a>
+        {% endif %}
+        {% if completed_orders %}
+        <a href="?{% change_params tab='orders' %}">
+            <button class="tab-button {% if request.GET.tab == 'orders' %}active{% endif %}" data-tab="orders">Completed orders</button>
+        </a>
+        {% endif %}
+      </div>
+      <div class="tab-content">
+        {% if products %}
+        <div id="favourites" class="tab-panel {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %}">
+            {% include "products/components/_favourite_list.html" %}
+        </div>
+        {% endif %}
+        <!-- Вкладка "Корзина" -->
+        {% if cart.cart_total_quantity > 0 %}
+        <div id="cart" class="tab-panel {% if request.GET.tab == 'cart' %}active{% endif %}">
+            {% include "carts/components/_cart_products.html" %}
+            <div class="col-md-4">
+                <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
+                <p>Total price: <strong>{{ cart.cart_total_price }} $</strong></p>
+              </div>
+        </div>
+        {% endif %}
+        <!-- Вкладка "Завершенные заказы" -->
+
+        {% if completed_orders %}
+<div id="orders" class="tab-panel {% if request.GET.tab == 'orders' %}active{% endif %}">
+  <h2>Completed orders</h2>
+  <ul class="list-group">
+    {% for order in completed_orders %}
+    <li class="list-group-item order-item">
+      <div class="order-header" style="cursor: pointer;">
+        Order {{ order.order_number }} – Price: {{ order.cart_total_price }} $ – Date: {{ order.date_completed|date:"d.m.Y" }}
+      </div>
+      <div class="order-details" style="display: none; margin-top: 10px;">
+        <ul class="list-group">
+          {% for ordered_product in order.ordered.all %}
+          {% if ordered_product.quantity > 0 %}
+          <li class="list-group-item">
+            {{ ordered_product.product.title }} ({{ ordered_product.product.price }}$ x {{ ordered_product.quantity }} = {{ ordered_product.total_price }}$)
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+      </div>
+    </section>
+  </div>
+{% endblock main %}
+
+{% block additional_script %}
+<script src='{% static "js/toggle_completed_orders.js" %}'></script>
+{% endblock additional_script %}

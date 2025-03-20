@@ -1,0 +1,19 @@
+<div id="photoModal" class="modal photos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div class="modal-photo">
+        <img id="modalImage" src="" alt="">
+      </div>
+      <div class="modal-thumbnails">
+        <button class="arrow left" onclick="prevPhoto()">&#9664;</button>
+        <div class="thumbs-container">
+          {% for image in product.images.all  %}
+          <img src="{{ image.image.url }}" alt="" class="thumb" onclick="selectPhoto('{{ image.image.url }}')">
+          {% endfor %}
+        </div>
+        <button class="arrow right" onclick="nextPhoto()">&#9654;</button>
+      </div>
+    </div>
+  </div>
+  </div>

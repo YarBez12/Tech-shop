@@ -1,0 +1,418 @@
+/* Анимация для карточек товаров */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Анимация для ссылок в футере */
+  .footer a {
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .footer a:hover {
+    /* color: #fff; */
+    transform: translateX(5px);
+  }
+  /* Градиент для заголовков */
+  h1, h2, h3, h4, h5, h6 {
+      /* background: linear-gradient(145deg, #007bff, #00ff88); */
+      -webkit-background-clip: text;
+      /* -webkit-text-fill-color: transparent; */
+    }
+    
+    /* Тени для карточек */
+    .card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Градиент для кнопок */
+    .btn-primary {
+      /* background: linear-gradient(145deg, #007bff, #00ff88); */
+      border: none;
+      transition: transform 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: scale(1.05);
+    }
+    /* Фоновое изображение для секции "About Our Shop" */
+  .container.mt-5 {
+      background: url('path/to/background-image.jpg') no-repeat center center;
+      background-size: cover;
+      padding: 2rem;
+      border-radius: 15px;
+      /* color: white; */
+    }
+    
+    /* Текстура для футера */
+    .footer {
+      /* background: url('path/to/texture.png'), linear-gradient(145deg, #333, #555); */
+    }
+    /* Подключение кастомного шрифта */
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+  }
+  /* Эффект при наведении на кнопки */
+  .btn-outline-success {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .btn-outline-success:hover {
+      background-color: #28a745;
+      /* color: white; */
+    }
+    
+    /* Эффект при наведении на карточки */
+    .card:hover {
+      border-color: #007bff;
+      box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+    }
+    /* Параллакс-эффект для секции "About Our Shop" */
+  .container.mt-5 {
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    /* Кастомный скроллбар */
+  ::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    /* Эффект для навигационных ссылок */
+  .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #007bff;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    /* Эффект для карусели */
+  .carousel-item {
+      transition: transform 0.5s ease-in-out;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      padding: 10px;
+    }
+    /* Эффект для футера */
+  .footer {
+      transition: background-color 0.3s ease;
+    }
+    
+    .footer:hover {
+      background-color: #ffb8b8;
+    }
+
+  .hidden {
+  display: none;
+}
+
+.category {
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border 0.3s ease;
+}
+.category:hover {
+  border-color: #007bff;
+}
+
+.product-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid #eee;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+}
+.product-image {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 1rem;
+}
+.product-details {
+  flex: 1;
+}
+.product-tags .tag {
+  display: inline-block;
+  margin: 2px;
+  padding: 2px 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+.product-characteristics {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+.product-characteristics dt {
+  font-weight: bold;
+  display: inline;
+}
+.product-characteristics dd {
+  display: inline;
+  margin-left: 0.5rem;
+  margin-right: 1rem;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+.tab-button.active {
+  border-bottom: 2px solid #007bff;
+  font-weight: bold;
+}
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+}
+/* Общая секция фото и информации о товаре */
+.product-main {
+  display: flex;
+  margin-bottom: 2rem;
+}
+.product-photos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.main-photo img {
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.other-photos {
+  display: flex;
+  gap: 10px;
+}
+.other-photos img {
+  width: calc(25% - 10px);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.product-info {
+  flex: 1;
+  padding-left: 2rem;
+}
+.product-info h2 {
+  margin-top: 0;
+}
+.product-info .price {
+  font-size: 1.25rem;
+  color: #007bff;
+  margin-bottom: 1rem;
+}
+.product-info .characteristics {
+  list-style: none;
+  padding: 0;
+}
+.product-info .characteristics li {
+  margin-bottom: 0.5rem;
+}
+/* Структура вкладки "Информация о товаре" */
+.short-description,
+.detailed-description,
+.recommendations {
+  margin-bottom: 1.5rem;
+}
+.detailed-description {
+  font-size: 0.9rem;
+  color: #555;
+}
+.recommendations {
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+/* Структура вкладки "Отзывы пользователей" */
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.reviews-header .rating-filter button {
+  margin-left: 5px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+.reviews-header .rating-filter button.active {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+}
+.review-item {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 0;
+}
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.review-body {
+  margin-top: 0.5rem;
+}
+.review-pros span,
+.review-cons span {
+  display: inline-block;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.review-pros span:before {
+  content: "+ ";
+  color: green;
+}
+.review-cons span:before {
+  content: "- ";
+  color: red;
+}
+.review-photos img {
+  width: 80px;
+  margin-right: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+/* Модальное окно для просмотра фото */
+.modal.photos {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 1rem;
+  border: 1px solid #888;
+  width: 80%;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #aaa;
+}
+.modal-photo img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+.modal-thumbnails {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.thumbs-container {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  max-width: 70%;
+}
+.thumbs-container img {
+  width: 80px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #007bff;
+}
+
+
+
+.image-container {
+  position: relative;
+}
+.image-container:hover .delete-image {
+  display: block;
+}
+
+#search-suggestions {
+  position: absolute;
+  top: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  display: none;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+#search-suggestions .list-group-item {
+  cursor: pointer;
+}
+
+#search-suggestions .list-group-item:hover {
+  background: #f8f9fa;
+}

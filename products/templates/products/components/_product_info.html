@@ -1,0 +1,25 @@
+<div class="product-photos">
+    <div class="main-photo">
+      <img src="{{ product.first_photo }}" alt="" class="photo-thumb" onclick="openModal('{{ product.first_photo }}')">
+    </div>
+    <div class="other-photos">
+      {% for image in small_images  %}
+      <img src="{{ image.image.url }}" alt="" class="photo-thumb" onclick="openModal('{{ image.image.url }}')"> 
+      {% endfor %}
+    </div>
+  </div>
+  <div class="product-info">
+    <h2>{{ product.title }} {{ product.sku }}</h2>
+    <p class="price">Price: {{ product.price }} $</p>
+    <ul class="characteristics">
+        {% for product_characteristic in product.product_characteristics.all  %}
+    {% if product_characteristic.characteristic.main %}
+    <li>{{ product_characteristic.characteristic.title }}: {{ product_characteristic.value }}</li>
+    {% endif %}
+    {% endfor %}
+    </ul>
+  </div>
+  <div>
+    {% include "products/components/_favourite_button.html" %}
+      <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+  </div>

@@ -1,0 +1,8 @@
+{% load products_tags %}
+
+{% favourite_products request as fav_products %}
+{% if product not in fav_products or not request.user.is_authenticated %}
+<a href="{% url "products:add_to_favourites" product.slug %}" class="btn btn-primary">Add to favourites</a>
+{% else %}
+<a href="{% url "products:remove_from_favourites" product.slug %}" class="btn btn-primary">Remove from favourites</a>
+{% endif %}

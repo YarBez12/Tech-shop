@@ -1,0 +1,9 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load products_tags %}
+{% block main %}
+<div class="container mt-4">
+    <h2>Favourite products</h2>
+{% include "products/components/_favourite_list.html" %}
+</div>
+{% endblock main %}

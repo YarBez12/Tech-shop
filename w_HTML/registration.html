@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <!-- Подключаем Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Регистрация</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Поле для email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Введите email" required>
+                            </div>
+
+                            <!-- Поле для пароля -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Пароль</label>
+                                <input type="password" class="form-control" id="password" placeholder="Введите пароль" required>
+                            </div>
+
+                            <!-- Поле для подтверждения пароля -->
+                            <div class="mb-3">
+                                <label for="confirm-password" class="form-label">Подтвердите пароль</label>
+                                <input type="password" class="form-control" id="confirm-password" placeholder="Подтвердите пароль" required>
+                            </div>
+
+                            <!-- Галочка для отображения дополнительных полей -->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="show-address">
+                                <label class="form-check-label" for="show-address">Ввести свой адрес</label>
+                            </div>
+
+                            <!-- Дополнительные поля для адреса (скрыты по умолчанию) -->
+                            <div id="address-fields" class="hidden">
+                                <!-- Поле для адреса 1 -->
+                                <div class="mb-3">
+                                    <label for="address1" class="form-label">Адрес 1</label>
+                                    <input type="text" class="form-control" id="address1" placeholder="Введите адрес">
+                                </div>
+
+                                <!-- Поле для адреса 2 (опционально) -->
+                                <div class="mb-3">
+                                    <label for="address2" class="form-label">Адрес 2 (опционально)</label>
+                                    <input type="text" class="form-control" id="address2" placeholder="Введите дополнительный адрес">
+                                </div>
+
+                                <!-- Поле для города -->
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">Город</label>
+                                    <input type="text" class="form-control" id="city" placeholder="Введите город">
+                                </div>
+
+                                <!-- Поле для штата (опционально) -->
+                                <div class="mb-3">
+                                    <label for="state" class="form-label">Штат (опционально)</label>
+                                    <input type="text" class="form-control" id="state" placeholder="Введите штат">
+                                </div>
+
+                                <!-- Поле для страны -->
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Страна</label>
+                                    <input type="text" class="form-control" id="country" placeholder="Введите страну">
+                                </div>
+
+                                <!-- Поле для почтового кода -->
+                                <div class="mb-3">
+                                    <label for="zip" class="form-label">Почтовый код</label>
+                                    <input type="text" class="form-control" id="zip" placeholder="Введите почтовый код">
+                                </div>
+                            </div>
+
+                            <!-- Кнопка регистрации -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем Bootstrap JS (необязательно, если не используете JS-компоненты) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Скрипт для отображения/скрытия полей адреса -->
+    <script>
+        document.getElementById('show-address').addEventListener('change', function() {
+            const addressFields = document.getElementById('address-fields');
+            if (this.checked) {
+                addressFields.classList.remove('hidden');
+            } else {
+                addressFields.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

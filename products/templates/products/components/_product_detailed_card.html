@@ -1,0 +1,27 @@
+{% load products_tags %}
+<div class="product-card">
+  <a href = '{{ product.get_absolute_url }}'><img src="{{ product.first_photo }}" alt="" class="product-image"></a>
+  <div class="product-details">
+    {% with query=request.GET.q|default:"" %}
+      <a href = '{{ product.get_absolute_url }}'><h5>{{ product.title|highlight:query }}</h5></a>
+      <p>Price: {{ product.price }} $</p>
+      <div class="product-tags">
+        {% for tag in product.tags.all|display_tags:query  %}
+        <span class="tag">{{ tag.text|safe }}</span>
+        {% endfor %}
+      </div>
+      <p class="card-text">
+        {{ product.summary|highlight:query }}
+      </p>
+      <dl class="product-characteristics">
+        {% for product_characteristic in product.product_characteristics.all  %}
+        {% if product_characteristic.characteristic.main %}
+        <dt>{{ product_characteristic.characteristic.title }}:</dt><dd>{{ product_characteristic.value }}</dd>
+        {% endif %}
+        {% endfor %}
+      </dl>
+      {% endwith %}
+    </div>
+    {% include "products/components/_favourite_button.html" %}
+    <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+  </div>

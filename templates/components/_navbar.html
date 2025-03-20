@@ -1,0 +1,72 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="{% url "main:index" %}">
+        <img src="{% static "images/icon.png" %}" alt="" height="60" />
+      </a>
+    </div>
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url "main:index" %}">Tech shop</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarScroll"
+        aria-controls="navbarScroll"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarScroll">
+        <ul
+          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+          style="--bs-scroll-height: 100px">
+          {% if request.user.is_authenticated %}
+          {% if user.is_authenticated and user.is_staff %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "admin:index" %}">Admin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "users:send_mail" %}">Send mail</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "users:profile" %}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "users:logout" %}">Log out</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "products:favourites" %}">Favourites</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "users:login" %}">Log in</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url "carts:cart" %}">Cart</a>
+          </li>
+        </ul>
+        <form class="d-flex flex-grow-1" action="{% url "products:search_results" %}">
+          <input type="hidden" id="search-suggestions-url" value="{% url 'products:search_suggestions' %}">
+          <input type="hidden" id="product-detail-url" value="{% url 'products:product_detail' 'PLACEHOLDER' %}">
+          <input type="hidden" id="category-detail-url" value="{% url 'products:category_detail' 'PLACEHOLDER' %}">
+          <input type="hidden" id="subcategory-detail-url" value="{% url 'products:subcategory_detail' 'PLACEHOLDER1' 'PLACEHOLDER2' %}">
+          <input
+            id = 'search-input'
+            class="form-control me-2 w-100"
+            type="search"
+            placeholder="Search our tech products"
+            aria-label="Search"
+            autocomplete = "off"
+            name='q'/>
+          <ul id="search-suggestions" class="list-group"></ul>
+         <button id="search-btn" class="btn btn-outline-success" type="submit">
+            Search
+         </button>
+        </form>
+      </div>
+    </div>
+  </nav>

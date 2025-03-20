@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form action="/submit_review" method="post" class="review-form">
+        <!-- Title field -->
+        <div class="form-group">
+          <label for="id_title">Title</label>
+          <input type="text" id="id_title" name="title" class="form-control" placeholder="Your review title" />
+        </div>
+      
+        <!-- Summary field -->
+        <div class="form-group">
+          <label for="id_summary">Summary</label>
+          <textarea id="id_summary" name="summary" class="form-control" placeholder="Your review short description"></textarea>
+        </div>
+      
+        <!-- Pros field -->
+        <div class="form-group">
+          <label for="id_pros">Pros</label>
+          <textarea id="id_pros" name="pros" class="form-control" placeholder="Your pros"></textarea>
+        </div>
+      
+        <!-- Cons field -->
+        <div class="form-group">
+          <label for="id_cons">Cons</label>
+          <textarea id="id_cons" name="cons" class="form-control" placeholder="Your cons"></textarea>
+        </div>
+      
+        <!-- Grade field -->
+        <div class="form-group">
+          <label for="id_grade">Grade</label>
+          <input type="number" id="id_grade" name="grade" class="form-control" value="3" min="1" max="5" />
+        </div>
+      
+        <!-- Product field -->
+        <div class="form-group">
+          <label for="id_product">Product</label>
+          <select id="id_product" name="product" class="form-control">
+            <!-- Example options; these would normally be populated dynamically -->
+            <option value="1">Product 1</option>
+            <option value="2">Product 2</option>
+            <option value="3">Product 3</option>
+          </select>
+        </div>
+      
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+      </form>
+      
+</body>
+</html>

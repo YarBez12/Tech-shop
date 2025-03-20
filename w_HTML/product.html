@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Детали товара</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Стили для вкладок */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 1rem;
+    }
+    .tab-button {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    .tab-button.active {
+      border-bottom: 2px solid #007bff;
+      font-weight: bold;
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+    /* Общая секция фото и информации о товаре */
+    .product-main {
+      display: flex;
+      margin-bottom: 2rem;
+    }
+    .product-photos {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-photo img {
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    .other-photos {
+      display: flex;
+      gap: 10px;
+    }
+    .other-photos img {
+      width: calc(25% - 10px);
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .product-info {
+      flex: 1;
+      padding-left: 2rem;
+    }
+    .product-info h2 {
+      margin-top: 0;
+    }
+    .product-info .price {
+      font-size: 1.25rem;
+      color: #007bff;
+      margin-bottom: 1rem;
+    }
+    .product-info .characteristics {
+      list-style: none;
+      padding: 0;
+    }
+    .product-info .characteristics li {
+      margin-bottom: 0.5rem;
+    }
+    /* Структура вкладки "Информация о товаре" */
+    .short-description,
+    .detailed-description,
+    .recommendations {
+      margin-bottom: 1.5rem;
+    }
+    .detailed-description {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .recommendations {
+      border-top: 1px solid #ddd;
+      padding-top: 1rem;
+    }
+    /* Структура вкладки "Отзывы пользователей" */
+    .reviews-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .reviews-header .rating-filter button {
+      margin-left: 5px;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+    }
+    .reviews-header .rating-filter button.active {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+    }
+    .review-item {
+      border-bottom: 1px solid #ddd;
+      padding: 1rem 0;
+    }
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .review-body {
+      margin-top: 0.5rem;
+    }
+    .review-pros span,
+    .review-cons span {
+      display: inline-block;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .review-pros span:before {
+      content: "+ ";
+      color: green;
+    }
+    .review-cons span:before {
+      content: "- ";
+      color: red;
+    }
+    .review-photos img {
+      width: 80px;
+      margin-right: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    /* Модальное окно для просмотра фото */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 1rem;
+      border: 1px solid #888;
+      width: 80%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .modal-photo img {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+    .modal-thumbnails {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .thumbs-container {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      max-width: 70%;
+    }
+    .thumbs-container img {
+      width: 80px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .arrow {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Вкладки -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="info">Информация про товар</button>
+      <button class="tab-button" data-tab="reviews">Отзывы пользователей</button>
+    </div>
+    
+    <!-- Общая секция: фото товара и информация -->
+    <div class="product-main">
+      <!-- Фото товара -->
+      <div class="product-photos">
+        <div class="main-photo">
+          <img src="main-photo.jpg" alt="Главное фото товара">
+        </div>
+        <div class="other-photos">
+          <img src="photo1.jpg" alt="Фото 1" class="photo-thumb" onclick="openModal('photo1.jpg')">
+          <img src="photo2.jpg" alt="Фото 2" class="photo-thumb" onclick="openModal('photo2.jpg')">
+          <img src="photo3.jpg" alt="Фото 3" class="photo-thumb" onclick="openModal('photo3.jpg')">
+          <img src="photo4.jpg" alt="Фото 4" class="photo-thumb" onclick="openModal('photo4.jpg')">
+        </div>
+      </div>
+      <!-- Информация о товаре -->
+      <div class="product-info">
+        <h2>Название товара</h2>
+        <p class="price">Цена: 12345 ₽</p>
+        <ul class="characteristics">
+          <li>Характеристика 1: Значение</li>
+          <li>Характеристика 2: Значение</li>
+          <li>Характеристика 3: Значение</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Контент вкладок -->
+    <div class="tab-content">
+      <!-- Вкладка "Информация про товар" -->
+      <div id="info" class="tab-panel active">
+        <div class="short-description">
+          <h3>Краткое описание товара</h3>
+          <p>Здесь краткое описание товара.</p>
+        </div>
+        <div class="detailed-description">
+          <h4>Подробное описание товара</h4>
+          <p>Здесь развернутое описание товара, его особенности и преимущества...</p>
+        </div>
+        <div class="recommendations">
+          <h3>Рекомендуемые товары</h3>
+          <div class="recommendation-item">Товар 1</div>
+          <div class="recommendation-item">Товар 2</div>
+          <div class="recommendation-item">Товар 3</div>
+        </div>
+      </div>
+      <!-- Вкладка "Отзывы пользователей" -->
+      <div id="reviews" class="tab-panel">
+        <div class="reviews-header">
+          <button class="add-review">Добавить отзыв</button>
+          <div class="rating-filter">
+            <span>Оценка:</span>
+            <button class="rating-button" data-rating="1">1</button>
+            <button class="rating-button" data-rating="2">2</button>
+            <button class="rating-button" data-rating="3">3</button>
+            <button class="rating-button" data-rating="4">4</button>
+            <button class="rating-button" data-rating="5">5</button>
+          </div>
+        </div>
+        <div class="reviews-list">
+          <div class="review-item">
+            <div class="review-header">
+              <h4 style="display: inline-block; margin-right: 10px;">Отличный товар</h4>
+              <span class="review-stars" style="display: inline-block;">
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+              </span>
+              <span class="review-date" style="margin-left: 10px;">2025-02-28</span>
+            </div>
+            <!-- остальной код отзыва -->
+          </div>
+          <!-- Дополнительные отзывы -->
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- Модальное окно для просмотра фото -->
+    <div id="photoModal" class="modal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-photo">
+          <img id="modalImage" src="" alt="Большое фото">
+        </div>
+        <div class="modal-thumbnails">
+          <button class="arrow left" onclick="prevPhoto()">&#9664;</button>
+          <div class="thumbs-container">
+            <img src="photo1.jpg" alt="Фото 1" class="thumb" onclick="selectPhoto('photo1.jpg')">
+            <img src="photo2.jpg" alt="Фото 2" class="thumb" onclick="selectPhoto('photo2.jpg')">
+            <img src="photo3.jpg" alt="Фото 3" class="thumb" onclick="selectPhoto('photo3.jpg')">
+            <img src="photo4.jpg" alt="Фото 4" class="thumb" onclick="selectPhoto('photo4.jpg')">
+          </div>
+          <button class="arrow right" onclick="nextPhoto()">&#9654;</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Переключение вкладок
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+    
+    // Функции для модального окна
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('photoModal').style.display = 'block';
+    }
+    function closeModal() {
+      document.getElementById('photoModal').style.display = 'none';
+    }
+    function selectPhoto(src) {
+      document.getElementById('modalImage').src = src;
+    }
+    function prevPhoto() {
+      // Реализуйте логику перехода к предыдущей фотографии
+    }
+    function nextPhoto() {
+      // Реализуйте логику перехода к следующей фотографии
+    }
+    document.getElementById('photoModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+  </script>
+</body>
+</html>

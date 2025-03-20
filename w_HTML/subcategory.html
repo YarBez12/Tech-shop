@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подкатегория товаров</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Новые стили для карточки товара */
+    .product-card {
+      display: flex;
+      align-items: flex-start;
+      padding: 1rem;
+      border: 1px solid #eee;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+    }
+    .product-image {
+      width: 200px;
+      height: auto;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-right: 1rem;
+    }
+    .product-details {
+      flex: 1;
+    }
+    .product-tags .tag {
+      display: inline-block;
+      margin: 2px;
+      padding: 2px 6px;
+      background-color: #f0f0f0;
+      border-radius: 3px;
+      font-size: 0.8rem;
+    }
+    .product-characteristics {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .product-characteristics dt {
+      font-weight: bold;
+      display: inline;
+    }
+    .product-characteristics dd {
+      display: inline;
+      margin-left: 0.5rem;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-4">
+    <div class="row">
+      <!-- Левая колонка: Фильтрация -->
+      <div class="col-md-3">
+        <h4>Фильтрация</h4>
+        <form>
+          <!-- Чекбоксы для разделов -->
+          <div class="mb-3">
+            <label class="form-label">Раздел</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="filter1">
+              <label class="form-check-label" for="filter1">Пункт 1</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="filter2">
+              <label class="form-check-label" for="filter2">Пункт 2</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="filter3">
+              <label class="form-check-label" for="filter3">Пункт 3</label>
+            </div>
+          </div>
+          <!-- Фильтрация по цене -->
+          <div class="mb-3">
+            <label class="form-label">Цена</label>
+            <div class="row g-2">
+              <div class="col">
+                <input type="number" class="form-control" placeholder="От">
+              </div>
+              <div class="col">
+                <input type="number" class="form-control" placeholder="До">
+              </div>
+            </div>
+          </div>
+          <!-- Ползунки для диапазона цены -->
+          <div class="mb-3">
+            <label class="form-label">Диапазон цены</label>
+            <div class="d-flex justify-content-between">
+              <input type="range" class="form-range" min="0" max="1000" step="10">
+              <input type="range" class="form-range" min="0" max="1000" step="10">
+            </div>
+          </div>
+          <!-- Кнопка применения фильтра -->
+          <button type="submit" class="btn btn-primary w-100">Применить фильтрацию</button>
+        </form>
+      </div>
+      <!-- Правая колонка: Список товаров -->
+      <div class="col-md-9">
+        <!-- Сортировка товаров -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Список товаров</h4>
+          <select class="form-select w-auto">
+            <option selected>Сортировать по...</option>
+            <option value="price_asc">Цена: по возрастанию</option>
+            <option value="price_desc">Цена: по убыванию</option>
+            <option value="name_asc">Название: А-Я</option>
+            <option value="name_desc">Название: Я-А</option>
+          </select>
+        </div>
+        <!-- Список товаров: по одному в строку -->
+        <div class="product-list">
+          <!-- Пример карточки товара -->
+          <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Фото продукта 1" class="product-image">
+            <div class="product-details">
+              <h5>Название продукта 1</h5>
+              <p>Цена: 1000 ₽</p>
+              <div class="product-tags">
+                <span class="tag">Тег1</span>
+                <span class="tag">Тег2</span>
+                <span class="tag">Тег3</span>
+              </div>
+              <dl class="product-characteristics">
+                <dt>Дисплей:</dt><dd>13.3"</dd>
+                <dt>CPU:</dt><dd>Apple M1</dd>
+              </dl>
+            </div>
+          </div>
+          <!-- Вторая карточка товара -->
+          <div class="product-card">
+            <img src="https://via.placeholder.com/200" alt="Фото продукта 2" class="product-image">
+            <div class="product-details">
+              <h5>Название продукта 2</h5>
+              <p>Цена: 1500 ₽</p>
+              <div class="product-tags">
+                <span class="tag">Тег4</span>
+                <span class="tag">Тег5</span>
+              </div>
+              <dl class="product-characteristics">
+                <dt>Дисплей:</dt><dd>15.6"</dd>
+                <dt>CPU:</dt><dd>Intel i7</dd>
+              </dl>
+            </div>
+          </div>
+          <!-- Дополнительные карточки товара можно добавить аналогичным образом -->
+        </div>
+        <!-- Пагинация (просто вид) -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">Предыдущая</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Следующая</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

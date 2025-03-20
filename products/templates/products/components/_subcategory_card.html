@@ -1,0 +1,7 @@
+<div class="col-md-4">
+    <div class="card p-3 category" data-bs-toggle="modal" data-bs-target="#subcategoryModal_{{subcategory.pk}}">
+      {% with category=subcategory %}
+        {% include "products/components/_category_card.html" %}
+      {% endwith %}
+    </div>
+  </div>

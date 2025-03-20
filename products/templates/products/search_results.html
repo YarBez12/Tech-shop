@@ -1,0 +1,37 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load products_tags %}
+{% block main %}
+<div class="container mt-4">
+    <h2>Search Results for "{{ request.GET.q }}"</h2>
+    <div class="tabs">
+        {% if products %}
+        <a href="?{% change_params tab='products' %}">
+            <button class="tab-button {% if request.GET.tab != 'categories' %}active{% endif %}" data-tab="products">Products</button>
+        </a>
+        {% endif %}
+        {% if categories %}
+        <a href="?{% change_params tab='categories' %}">
+            <button class="tab-button {% if request.GET.tab == 'categories' or not products %}active{% endif %}" data-tab="categories">Categories</button>
+        </a>
+            {% endif %}
+      </div>
+    <div class="tab-content">
+        {% if products %}
+            <div id="products" class="tab-panel {% if request.GET.tab != 'categories' %}active{% endif %}">
+                {% include "products/components/_product_list.html" %}
+            </div>
+        {% endif %}
+        {% if categories %}
+            <div id="categories" class="tab-panel {% if request.GET.tab == 'categories' or not products %}active{% endif %}">
+                {% include "products/components/_category_list.html" %}
+            </div>
+        {% endif %}
+    {% if not categories and not products %}
+        <p>No products found for your query.</p>
+    {% endif %}
+</div>
+{% endblock %}
+{% block additional_script %}
+<script src = '{% static "js/toggle_tabs.js" %}' ></script>
+{% endblock additional_script %}

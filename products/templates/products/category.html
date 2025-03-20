@@ -1,0 +1,26 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% block main %}
+<div class="container mt-5">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url "main:index" %}">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+      </ol>
+    </nav>
+
+    <!-- Заголовок категории -->
+    <h1 class="text-center mb-4">{{ title }}</h1>
+
+    <!-- Подкатегории -->
+    <div class="row text-center mb-5">
+        {% for subcategory in subcategories %}
+      {% include "products/components/_subcategory_card.html" %}
+
+    <!-- Модальное окно -->
+    {% include "products/components/_modal_window_for_subcategory.html" %}
+    {% endfor %}
+</div>
+  </div>
+{% endblock main %}

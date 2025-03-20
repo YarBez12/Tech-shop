@@ -1,0 +1,22 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% block main %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url "main:index" %}">Home</a></li>
+          <li class="breadcrumb-item"><a href="{{ subcategory.parent.get_absolute_url }}">{{ subcategory.parent.title }}</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+        </ol>
+      </nav>
+    <div class="row">
+      <!-- Левая колонка: Фильтрация -->
+      {% include "products/components/_filtering_menu.html" %}
+      <!-- Правая колонка: Список товаров -->
+      {% include "products/components/_product_list.html" %}
+    </div>
+  </div>
+{% endblock main %}
+{% block additional_script %}
+<script src='{% static "js/subcategory.js" %}'></script>
+{% endblock additional_script %}

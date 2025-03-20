@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% include "components/_notifications.html" %}
+{% load static %}
+    {% block menu %}
+    {% include "components/_navbar.html" %}
+    {% include "components/_main_categories_list.html" %}
+    {% endblock menu %}
+    {% block main %}{% endblock main %}
+
+    {% block footer %}
+    <!-- Footer -->
+    {% include "components/_footer.html" %}
+    {% endblock footer %}
+

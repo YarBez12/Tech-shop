@@ -1,0 +1,40 @@
+{% for ordered_product in cart.ordered.all %}
+         {% if ordered_product.quantity > 0 %}
+         {% if ordered_product.quantity > ordered_product.product.quantity %}
+      <div class="product-card disabled">
+        <div class="stock-info" style="background: rgba(128,128,128,0.1); padding: 5px; margin-bottom: 5px;">
+          <p>Available stock: {{ ordered_product.product.quantity }}</p>
+          <a href="{% url 'carts:reduce_quantity' ordered_product.pk %}" class="btn btn-warning btn-sm">Reduce quantity</a>
+        </div>
+        <a href="{{ ordered_product.product.get_absolute_url }}">
+          <img src="{{ ordered_product.product.first_photo }}" alt="" class="product-image">
+        </a>
+        <div class="product-details">
+          <a href="{{ ordered_product.product.get_absolute_url }}">
+            <h5>{{ ordered_product.product.title }}</h5>
+          </a>
+          <p>Price per item: {{ ordered_product.product.price }} $</p>
+          <p>Total product price: {{ ordered_product.total_price }} $</p>
+        </div>
+        <a href="{% url 'carts:delete_full_from_cart' ordered_product.product.slug %}" class="btn btn-primary disabled">Delete</a>
+      </div>
+    {% else %}
+        <div class="product-card">
+          <a href="{{ ordered_product.product.get_absolute_url }}">
+            <img src="{{ ordered_product.product.first_photo }}" alt="" class="product-image">
+          </a>
+          <div class="product-details">
+            <a href="{{ ordered_product.product.get_absolute_url }}"><h5>{{ ordered_product.product.title }}</h5></a>
+            <p>Price per item: {{ ordered_product.product.price }} $</p>
+            <div class="quantity-controls">
+              <a type="button" class="btn btn-outline-secondary {% if ordered_product.quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" ordered_product.product.slug %}">-</a>
+              <span class="quantity">{{ ordered_product.quantity }}</span>
+              <a type="button" class="btn btn-outline-secondary" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
+            </div>
+            <p>Total product price: {{ ordered_product.total_price }} $</p>
+          </div>
+          <a href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}" class="btn btn-primary">Delete</a>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}

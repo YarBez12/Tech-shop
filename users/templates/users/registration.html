@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">Registration</h3>
+                </div>
+                <div class="card-body">
+                    <form method='post' action='{% url "users:registration" %}'>
+                        {% csrf_token %}
+                        {% for item in form  %}
+                        <div class="mb-3">
+                            <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
+                            {{ item }}
+                        </div>
+                        {% endfor %}
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="show-address" name="show-address">
+                            <label class="form-check-label" for="show-address">Enter your address</label>
+                        </div>
+
+                        <div id="address-fields" class="hidden">
+                            {% for item in address_form  %}
+                            <div class="mb-3">
+                                <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
+                                {{ item }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <input type="checkbox" id="remember_me" name="remember_me">
+                            <label for="remember_me">Remember me</label>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main %}
+
+{% block additional_script %}
+<script src="{% static "js/toggle_address.js" %}"></script>
+{% endblock additional_script %}

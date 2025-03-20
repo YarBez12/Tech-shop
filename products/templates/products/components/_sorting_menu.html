@@ -1,0 +1,20 @@
+
+
+    <form method="get">
+      {% for key, values in request.GET.lists %}
+        {% if key != "sort" and key != "tab" %}
+        {% for value in values %}
+        <input type="hidden" name="{{ key }}" value="{{ value }}">
+    {% endfor %}
+        {% endif %}
+      {% endfor %}
+      {% if is_search %}
+      <input type="hidden" name="tab" value="{% if is_category %}categories{% else %}products{% endif %}">
+      {% endif %}
+      <select name="sort" class="form-select w-auto" onchange="this.form.submit()">
+        <option value="price" {% if request.GET.sort == "price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by ascending</option>
+      <option value="-price" {% if request.GET.sort == "-price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by descending</option>
+      <option value="title" {% if request.GET.sort == "title" or not request.GET.sort %}selected{% endif %}>Title: A-Z</option>
+      <option value="-title" {% if request.GET.sort == "-title" %}selected{% endif %}>Title: Z-A</option>
+      </select>
+    </form>

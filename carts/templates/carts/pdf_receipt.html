@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="header">
+    <h1>Receipt</h1>
+  </div>
+  
+  <div class="order-info">
+    <h2>Order #{{ order.order_number|default:"" }}</h2>
+    <p>Date: {{ order.date_completed|date:"d.m.Y" }}</p>
+    <p>Total Price: {{ order.cart_total_price }} $</p>
+  </div>
+  
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price per item</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.ordered.all %}
+      {% if item.quantity > 0 %}
+      <tr>
+        <td>{{ item.product.title }}</td>
+        <td>{{ item.product.price }} $</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.total_price }} $</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <div class="footer">
+    <p>Thank you for your purchase!</p>
+    <p>This receipt was generated automatically.</p>
+  </div>
+{% endblock main %}
