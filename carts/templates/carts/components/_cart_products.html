@@ -1,4 +1,4 @@
-{% for ordered_product in cart.ordered.all %}
+{% comment %} {% for ordered_product in cart.ordered.all %}
          {% if ordered_product.quantity > 0 %}
          {% if ordered_product.quantity > ordered_product.product.quantity %}
       <div class="product-card disabled">
@@ -36,5 +36,30 @@
           <a href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}" class="btn btn-primary">Delete</a>
         </div>
         {% endif %}
+        {% endif %}
+        {% endfor %} {% endcomment %}
+
+
+
+
+        {% for ordered_product in cart.ordered.all %}
+        {% if ordered_product.quantity > 0 %}
+        {% if ordered_product.quantity > ordered_product.product.quantity %}
+
+        <div class="product-cart-card disabled">
+          <div class="ui message" style="background: rgba(128,128,128,0.1); padding: 5px; margin-bottom: 5px;">
+            <p>Available stock: {{ ordered_product.product.quantity }}</p>
+            <a href="{% url 'carts:reduce_quantity' ordered_product.pk %}" class="ui yellow mini button">Reduce quantity</a>
+          </div>
+          {% include "carts/components/_product_cart_details.html" %}
+        </div>
+    {% else %}
+
+
+    <div class="product-cart-card">
+      {% include "carts/components/_product_cart_details.html" %}
+    </div>
+
+    {% endif %}
         {% endif %}
         {% endfor %}

@@ -1,12 +1,34 @@
 {% load products_tags %}
-<div class="card" style="width: {{ width }}rem">
-    <a href = '{{ product.get_absolute_url }}'><img src="{{ product.first_photo }}" class="card-img-top" alt="..." /></a>
-    <div class="card-body">
-      <a href = '{{ product.get_absolute_url }}'><h5 class="card-title">{{ product.title }}</h5></a>
-      <p class="card-text">
+
+
+
+  <div class="ui card product-card {% if product.discount %}discount-card{% endif %}">
+    <div class="overlay">
+      <div class="overlay-content">
+        {% include "products/components/_favourite_button.html" %}
+        <a href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon" title="To cart"></i></a>
+        <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
+      </div>
+    </div>
+    <div class="image product-image-container">
+      <img src="{{ product.first_photo }}" alt="{{ product.title }}">
+  
+    </div>
+  
+    <div class="content">
+  <div class="ui medium centered header">{{ product.title }}</div>
+
+      <div class="meta">
+         {% if product.discount %}
+        <span class="old-price">${{ product.price }}</span>
+        <span class="new-price">${{ product.full_price }}</span>
+        <span class="discount-label">-{{ product.discount }}%</span>
+        {% else %}
+        <span class="price">${{ product.price }}</span>
+        {% endif %}
+      </div>
+      <div class="description">
         {{ product.summary|truncatewords:15 }}
-      </p>
-      {% include "products/components/_favourite_button.html" %}
-      <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+      </div>
     </div>
   </div>

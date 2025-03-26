@@ -2,39 +2,21 @@
 {% load static %}
 
 {% block main %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">Checkout</h3>
-                </div>
-                <div class="card-body">
-                    <form method='post' action="{% url "carts:checkout" %}">
+<div class="ui card register-card">
+        <div class="ui centered massive header">Checkout</div>
+                    <form method='post' action="{% url "carts:checkout" %}" class="ui form">
                         {% csrf_token %}
-                        {% for item in receiver_form  %}
-                        <div class="mb-3">
-                            <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
-                            {{ item }}
-                        </div>
-                        {% endfor %}
+                        {% with form=receiver_form %}
+                        {% include "users/components/_contact_information_form.html" %}
+                        {% endwith %}
 
-                        <div id="address-fields">
-                            {% for item in address_form  %}
-                            <div class="mb-3">
-                                <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
-                                {{ item }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Pay</button>
-                        </div>
+                        {% include "users/components/_address_information_form.html" %}
+
+
+                        <button type="submit" class="ui fluid primary button">Pay</button>
+
                     </form>
-                </div>
             </div>
-        </div>
-    </div>
-</div>
+
 {% endblock main %}
 

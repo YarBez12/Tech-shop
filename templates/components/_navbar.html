@@ -1,11 +1,11 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+{% comment %} <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
       <a class="navbar-brand" href="{% url "main:index" %}">
         <img src="{% static "images/icon.png" %}" alt="" height="60" />
       </a>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid w-100">
       <a class="navbar-brand" href="{% url "main:index" %}">Tech shop</a>
       <button
         class="navbar-toggler"
@@ -51,22 +51,96 @@
         </ul>
         <form class="d-flex flex-grow-1" action="{% url "products:search_results" %}">
           <input type="hidden" id="search-suggestions-url" value="{% url 'products:search_suggestions' %}">
-          <input type="hidden" id="product-detail-url" value="{% url 'products:product_detail' 'PLACEHOLDER' %}">
-          <input type="hidden" id="category-detail-url" value="{% url 'products:category_detail' 'PLACEHOLDER' %}">
-          <input type="hidden" id="subcategory-detail-url" value="{% url 'products:subcategory_detail' 'PLACEHOLDER1' 'PLACEHOLDER2' %}">
           <input
             id = 'search-input'
-            class="form-control me-2 w-100"
+            class="form-control flex-grow-1 me-2"
             type="search"
             placeholder="Search our tech products"
             aria-label="Search"
             autocomplete = "off"
             name='q'/>
-          <ul id="search-suggestions" class="list-group"></ul>
+          <ul id="search-suggestions" class="list-group">
+          </ul>
          <button id="search-btn" class="btn btn-outline-success" type="submit">
             Search
          </button>
         </form>
       </div>
     </div>
-  </nav>
+  </nav> {% endcomment %}
+
+
+
+
+
+{% comment %} ---------- {% endcomment %}
+
+<nav class="ui container top-menu desktop">
+  <div class="ui secondary menu">
+    <!-- Логотип (слева) -->
+    <a href="{% url "main:index" %}" class="item logo-link">
+      <img src="{% static "images/icon.png" %}" alt="Logo">
+    <div >
+      Tech Shop
+    </div>
+    </a>
+    <div class="right menu">
+      {% if request.user.is_authenticated %}
+      {% if user.is_staff %}
+    <div class="ui simple dropdown item">
+      <i class="cog icon"></i> Admin <i class="dropdown icon"></i>
+      <div class="menu">
+        <a href="{% url 'admin:index' %}" class="item">
+          <i class="tachometer alternate icon"></i> Dashboard
+        </a>
+        <a href="{% url 'users:send_mail' %}" class="item">
+          <i class="envelope icon"></i> Send Mail
+        </a>
+      </div>
+    </div>
+    {% endif %}
+      <a href="{% url "products:favourites" %}" class="item">
+        <i class="heart icon"></i>
+      </a>
+      {% else %}
+      <a href="{% url "users:login" %}" class="item">
+        <i class="sign in icon"></i> Log in
+      </a>
+      {% endif %}
+      <a href="{% url "carts:cart" %}" class="item">
+        <i class="shopping cart icon"></i>
+      </a>
+      <div class="item">
+        <div class="ui search">
+          <form action="{% url 'products:search_results' %}" method="get">
+          <input type="hidden" id="search-suggestions-url" value="{% url 'products:search_suggestions' %}">
+          <div class="ui icon input" style="position: relative;">
+            <input
+            id = 'search-input'
+            class="prompt"
+            type="search"
+            placeholder="Search our tech products"
+            aria-label="Search"
+            autocomplete = "off"
+            name='q'/>
+            <button id="search-btn" type="submit" class='search-link'>
+              <i class="search icon"></i>
+            </button>
+          </div>
+          
+          
+          <div id="search-suggestions"></div>
+        </form>
+        </div>
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{% url "users:profile" %}" class="item">
+        <i class="user icon"></i>
+      </a>
+      <a href="{% url "users:logout" %}" class="item">
+        <i class="sign out icon"></i> Log out 
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</nav>

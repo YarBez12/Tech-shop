@@ -1,22 +1,13 @@
 {% load products_tags %}
 
-<div class="container mt-5">
-    <h1 class="text-center">Product Catalog</h1>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="catalog">
+  <div class="ui massive centered header">Categories</div>
+  <div class="ui three stackable cards">
       {% parent_categories as parent_categories %}
       {% for parent_category in parent_categories  %}
-      {% child_categories parent_category '10' as subcategories %}
-      <div class="col">
-        <a href ="{{ parent_category.get_absolute_url }}"><h5>
-          <img src="{% if parent_category.image %}{{ parent_category.image.url }}{% endif %}" alt="{{ parent_category.title }}" class="me-2" height="40" />
-          {{ parent_category.title }}
-        </h5></a>
-        {% for subcategory in subcategories  %}
-        <a href="{{ subcategory.get_absolute_url }}">{{ subcategory.title }}</a>, 
-        {% endfor %}
-        ...
-        <hr />
-      </div>
+      {% include "main/components/_category_card.html" %}
       {% endfor %}
     </div>
   </div>
+
+

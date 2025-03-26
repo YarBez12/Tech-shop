@@ -1,5 +1,5 @@
 {% load products_tags %}
-<div class="product-card">
+{% comment %} <div class="product-card">
   <a href = '{{ product.get_absolute_url }}'><img src="{{ product.first_photo }}" alt="" class="product-image"></a>
   <div class="product-details">
     {% with query=request.GET.q|default:"" %}
@@ -24,4 +24,51 @@
     </div>
     {% include "products/components/_favourite_button.html" %}
     <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+  </div> {% endcomment %}
+
+
+  <div class="product-detailed-card">
+    {% with query=request.GET.q|default:"" %}
+    <div class="product-info">
+      
+      <img src="{{ product.first_photo }}" alt="">
+      <div class="product-details">
+        <div class="ui purple tiny label">{{ product.category }}</div>
+        {% if product.discount %}
+        <div class="ui red tiny label">-{{ product.discount }}%</div>
+        {% endif %}
+        <div class="ui third blue header">{{ product.title|highlight:query }}</div>
+        <div class="ui labels" style="margin-top: 0.5em;">
+        {% for tag in product.tags.all|display_tags:query  %}
+          <div class="ui small grey label">{{ tag.text|safe }}</div>
+          {% endfor %}
+        </div>
+        <p>{{ product.summary|highlight:query }}</p>
+        <div class="price-block">
+         {% if product.discount %}
+          <span class="old-price">${{ product.price }}</span>
+          <span class="new-price">${{ product.full_price }}</span>
+          <span class="discount-label">-{{ product.discount }}%</span>
+          {% else %}
+          <span class="price">${{ product.price }}</span>
+          {% endif %}
+        </div>
+        <div class="ui horizontal list" style="margin-top: 1em;">
+          {% for product_characteristic in product.product_characteristics.all  %}
+        {% if product_characteristic.characteristic.main %}
+        <div class="item"><strong>{{ product_characteristic.characteristic.title }}:</strong> {{ product_characteristic.value }}</div>
+        {% endif %}
+        {% endfor %}
+
+        </div>
+      </div>
+    </div>
+    {% endwith %}
+    <div class="overlay">
+      <div class="overlay-content">
+        {% include "products/components/_favourite_button.html" %}
+        <a href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon" title="To cart"></i></a>
+        <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
+      </div>
+    </div>
   </div>

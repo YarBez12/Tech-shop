@@ -1,4 +1,12 @@
-<img src="{% if category.image %}{{ category.image.url }}{% else %}{{ category.products.all.0.first_photo }}{% endif %}" class="card-img-top" alt="{{ category.title }}" />
-      <div class="card-body">
-        <h5 class="card-title">{{ category.title }}</h5>
+
+
+
+
+      <div class="ui subcategory card">
+        <div class="image">
+          <img src="{% if category.image %}{{ category.image.url }}{% else %}{{ category.products.all.0.first_photo }}{% endif %}" class="card-img-top" alt="{{ category.title }}" alt="">
+        </div>
+        <div class="content">
+          <div class="header">{{ category.title }}</div>
+        </div>
       </div>

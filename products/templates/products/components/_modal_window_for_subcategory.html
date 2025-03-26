@@ -1,27 +1,20 @@
-{% load products_tags %}
 
-<div class="modal fade" id="subcategoryModal_{{ subcategory.pk }}" tabindex="-1" aria-labelledby="subcategoryModalLabel_{{ subcategory.pk }}" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="subcategoryModalLabel">Popular products</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        {% get_top_subcategory_products subcategory as popular_products %}
-        <div class="modal-body">
-          <div class="row">
-            <!-- 1-я строка: 2 карточки -->
-             {% for product in popular_products  %}
-            <div class="col-md-6 mb-3">
-                {% include "products/components/_product_card.html" with width=10 %}
-            </div>
-            {% endfor %}
-            <!-- 4-я строка: кнопка перехода -->
-            <div class="col-12 text-center mt-3">
-              <a href="{{ subcategory.get_absolute_url }}" class="btn btn-primary">View more</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
+<div class="ui modal custom-modal">
+  <i class="close icon"></i>
+  <div class="header">{{ subcategory.title }}: Popular products</div>
+  <div class="content">
+  <div class="ui three stackable cards">
+    {% for product in products %}
+    {% include "products/components/_product_card.html" %}
+    {% endfor %}
   </div>
+</div>
+<div class="actions" style="text-align: right; padding: 1em 1.5em;">
+  <a href="{{ subcategory.get_absolute_url }}" class="ui primary button">
+    Details...
+    <i class="arrow right icon"></i>
+  </a>
+</div>
+</div>
+  

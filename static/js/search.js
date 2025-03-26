@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let searchUrl = document.getElementById("search-suggestions-url").value;
     
 
-    // Автозаполнение
     searchInput.addEventListener("input", function () {
         let query = this.value.trim();
         if (query.length === 0) {
@@ -32,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             listItem.innerHTML = `<strong>${category.title}</strong>`;
                             // listItem.dataset.slug = category.slug;
                             // listItem.dataset.type = "category";
-                            let categoryUrl;
                             listItem.addEventListener("click", function () {
                                 window.location.href = category.url;
                             });
@@ -40,7 +38,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     }
 
-                    // Добавляем продукты
                     if (data.products.length > 0) {
                         // let productHeader = document.createElement("li");
                         // productHeader.classList.add("list-group-item", "fw-bold", "text-success");
@@ -78,3 +75,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+  

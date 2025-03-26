@@ -1,25 +1,65 @@
-<div class="product-photos">
-    <div class="main-photo">
-      <img src="{{ product.first_photo }}" alt="" class="photo-thumb" onclick="openModal('{{ product.first_photo }}')">
-    </div>
-    <div class="other-photos">
-      {% for image in small_images  %}
-      <img src="{{ image.image.url }}" alt="" class="photo-thumb" onclick="openModal('{{ image.image.url }}')"> 
-      {% endfor %}
-    </div>
-  </div>
-  <div class="product-info">
-    <h2>{{ product.title }} {{ product.sku }}</h2>
-    <p class="price">Price: {{ product.price }} $</p>
-    <ul class="characteristics">
-        {% for product_characteristic in product.product_characteristics.all  %}
+
+  <div class="ui grid">
+    <div class="sixteen wide column">
+      <div class="product-images">
+        <div class="main-image">
+          <img id="mainProductImage" 
+          src="{{ product.first_photo }}" 
+          alt="{{ product.title }}"
+          data-index="0">
+        </div>
+      
+        <div class="thumbnail-column" style="margin-left: 2em;">
+          {% for image in small_images  %}
+   <img src="{{ image.image.url }}"
+               class="ui tiny image preview-image"
+               data-index="{{ forloop.counter }}" />
+   {% endfor %}
+        </div>
+      
+        <div class="product-info">
+      <div class="ui large centered header product-title">
+            {{ product.title }}
+            <div class="ui icon buttons icon-buttons">
+    {% include "products/components/_favourite_button.html" %}
+            <a class="ui icon button" style="background: none; box-shadow: none;" title="Add to cart" href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon"></i></a>
+          </div>
+        </div>
+          <div class="price">
+            {% if product.discount %}
+        <span class="old-price">${{ product.price }}</span>
+        <span class="new-price">${{ product.full_price }}</span>
+        <span class="discount-label">-{{ product.discount }}%</span>
+        {% else %}
+        <span class="price">${{ product.price }}</span>
+        {% endif %}
+          </div>
+          
+          
+          <div class="ui relaxed divided list" style="margin-top: 1em;">
+            <div class="ui grid">
+              {% for product_characteristic in product.product_characteristics.all  %}
     {% if product_characteristic.characteristic.main %}
-    <li>{{ product_characteristic.characteristic.title }}: {{ product_characteristic.value }}</li>
+    <div class="eight wide column"><strong>{{ product_characteristic.characteristic.title }}:</strong> {{ product_characteristic.value }}</div>
     {% endif %}
     {% endfor %}
-    </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
   </div>
-  <div>
-    {% include "products/components/_favourite_button.html" %}
-      <a href="{% url "carts:add_to_cart" product.slug %}" class="btn btn-primary">Add to cart</a>
+
+
+
+<div id="imagePreviewModal" class="ui fullscreen modal">
+  <i class="close icon"></i>
+  <div class="content">
+      <i class="big nav-arrow circular chevron left icon"></i>
+      <img id="modalPreviewImage" src="" alt="Preview Image">
+      <i class="big nav-arrow circular chevron right icon"></i>
+    <div class="modal-thumbnails actions">
+    </div>
   </div>
+</div>

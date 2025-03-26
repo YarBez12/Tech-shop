@@ -10,6 +10,8 @@ from django.db.models.functions import Lower
 from django.db.models import Min, Max, Avg
 from django.db.models import Q, F
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
+from django.http import HttpResponse
 
 
 
@@ -109,9 +111,23 @@ class CategoryDetailView(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = parent_category.title
         return context
-        
+
+from django.db.models import F, ExpressionWrapper, DecimalField, Value
+from django.db.models.functions import Coalesce, Lower
 def sort_with_option(sort_option, items):
-    if sort_option == 'title':
+    if sort_option in ['price', '-price']:
+        # Аннотируем новое поле, отличное от свойства full_price
+        items = items.annotate(
+            calculated_full_price=ExpressionWrapper(
+                F('price') * (Value(100) - Coalesce(F('discount'), Value(0))) / Value(100),
+                output_field=DecimalField(max_digits=10, decimal_places=2)
+            )
+        )
+        if sort_option == 'price':
+            items = items.order_by('calculated_full_price')
+        else:
+            items = items.order_by('-calculated_full_price')
+    elif sort_option == 'title':
         items = items.annotate(lower_title=Lower('title')).order_by('lower_title')
     elif sort_option == '-title':
         items = items.annotate(lower_title=Lower('title')).order_by('-lower_title')
@@ -163,7 +179,24 @@ class SubcategoryDetailView(ListView):
             selected_filters[key] = set(values)
         context['selected_filters'] = selected_filters
         return context
-    
+
+class SubcategoryProductsView(DetailView):
+    model = Category
+    template_name = 'products/components/_modal_window_for_subcategory.html'
+    context_object_name = 'subcategory'
+    slug_url_kwarg = 'slug'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['products'] = self.object.products.all()[:6]
+        return context
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data()
+        html = render_to_string(self.template_name, context, request=request)
+        return HttpResponse(html)
+
 class ProductDetailView(DetailView, FormMixin):
     model = Product
     template_name = 'products/product.html'
@@ -189,7 +222,7 @@ class ProductDetailView(DetailView, FormMixin):
         context['title'] = self.object.title
         context['review_form'] = self.get_form()
         context['recommended_products'] = recommended_products
-        context['small_images'] = self.object.images.all()[1:5]
+        context['small_images'] = self.object.images.all()[1:4]
         return context
     
     def post(self, request, *args, **kwargs):

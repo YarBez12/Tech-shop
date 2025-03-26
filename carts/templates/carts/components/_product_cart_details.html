@@ -1,0 +1,23 @@
+<a href="{{ ordered_product.product.get_absolute_url }}">
+    <img src="{{ ordered_product.product.first_photo }}" alt="" class="product-image">
+  </a>
+  <div class="product-details">
+    <a href="{{ ordered_product.product.get_absolute_url }}"><div class="ui medium blue header">{{ ordered_product.product.title }}</div></a>
+    <p>Price per item:</p>
+    {% if ordered_product.product.discount %}
+    <div class="price-block">
+      <span class="old-price">${{ ordered_product.product.price }}</span>
+      <span class="new-price">${{ ordered_product.product.full_price }}</span>
+      <span class="discount-label">-{{ ordered_product.product.discount }}%</span>
+    </div>
+    {% else %}
+    <strong>${{ ordered_product.product.price }}</strong></p>
+    {% endif %}
+    <div class="quantity-controls">
+      <a class="ui mini button {% if ordered_product.quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" ordered_product.product.slug %}">-</a>
+      <span class="quantity">{{ ordered_product.quantity }}</span>
+      <a class="ui mini button" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
+    </div>
+    <p>Total product price: <strong>${{ ordered_product.total_price }}</strong></p>
+  </div>
+  <a class="ui red button delete-btn" href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}">Delete</a>

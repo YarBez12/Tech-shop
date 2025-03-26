@@ -1,5 +1,5 @@
 {% load products_tags %}
-<div class="col-md-3">
+{% comment %} <div class="col-md-3">
     <h4>Filtering</h4>
     <form method='get'>
       <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}">
@@ -40,5 +40,65 @@
       <!-- Кнопка применения фильтра -->
       <button type="submit" class="btn btn-primary w-100">Apply filters</button>
       <a href="{{ subcategory.get_absolute_url }}" class="btn btn-primary w-100">Reset filters</a>
+    </form>
+  </div> {% endcomment %}
+
+
+
+
+
+
+  <div class="filter-box">
+    <div class="ui medium header">Filtering</div>
+
+    <form class="ui form" method="get">
+      <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}">
+      
+      {% for characteristic in characteristics  %}
+      <div class="grouped fields" data-section-name="{{ characteristic.title }}">
+        <label>{{ characteristic.title }}</label>
+        <div class="characteristics-wrapper">
+        {% for product_characteristic in characteristic|get_product_characteristics  %}
+        <div class="characteristic-value">
+          <div class="field">
+          <div class="ui checkbox">
+            <input type="checkbox" 
+            name="{{ characteristic.slug }}" 
+            value="{{ product_characteristic.value }}" 
+            id="{{ product_characteristic.product }}-{{ characteristic.title }}" 
+            data-label="{{ product_characteristic.value }}"
+            {% if product_characteristic.value in selected_filters|get_item_from_dict:characteristic.slug %}checked{% endif %}>
+            <label for="{{ product_characteristic.product }}-{{ characteristic.title }}">{{ product_characteristic.value }}</label>
+          </div>
+        </div>
+      </div>
+        {% endfor %}
+      </div>
+      </div>
+      {% endfor %}
+
+
+
+      <div class="field">
+        <label>Price</label>
+        <div class="ui two column grid">
+          <div class="column">
+            <input type="number" id="price_from" name = 'price_from' placeholder="From" value="{{ request.GET.price_from|default:"" }}">
+          </div>
+          <div class="column">
+            <input type="number" id="price_to" name = 'price_to' placeholder="To" value="{{ request.GET.price_to|default:"" }}">
+          </div>
+        </div>
+
+        <div id="rangeSlider" data-min-price="{{ min_price|floor_int }}" data-max-price="{{ max_price|ceil_int }}"
+        data-initial-min-price = "{{ request.GET.price_from|default:"" }}"
+        data-initial-max-price= "{{ request.GET.price_to|default:"" }}"></div>
+      </div>
+
+      <div class="two ui buttons" style="margin-top: 1.5em;">
+      <button type="submit" class="ui blue button">Apply filters</button>
+        <div class="or"></div>
+      <a href="{{ subcategory.get_absolute_url }}" class="ui button">Reset filters</a>
+      </div>
     </form>
   </div>

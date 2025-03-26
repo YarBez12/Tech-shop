@@ -1,7 +1,6 @@
 {% extends "base_main.html" %}
 {% block main %}
-<div class="container mt-5">
-    <div class="row">
+    {% comment %} <div class="row">
       <div class="col-md-8">
         <h1 class="text-center mb-4">Cart</h1>
         
@@ -14,6 +13,40 @@
         <p>Total price: <strong>{{ cart.cart_total_price }} $</strong></p>
         <a href="{% if disable_payment %}#{% else %}{% url "carts:checkout" %}{% endif %}" class="btn btn-primary">Checkout</a>
       </div>
+    </div> {% endcomment %}
+
+
+
+
+
+
+
+  <div class="ui massive centered header"><i class="shopping cart icon"></i>Cart</div>
+  <div class="ui stackable grid">
+    <div class="eleven wide column">
+
+
+
+      {% include "carts/components/_cart_products.html" %}
+
+
+
     </div>
+
+
+    <div class="five wide column">
+      <div class="summary-box">
+        <h3 class="ui header">Final information</h3>
+        <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
+        <p>Total price: <strong>${{ cart.cart_total_price }}</strong></p>
+        <a href="{% if disable_payment %}#{% else %}{% url "carts:checkout" %}{% endif %}" class="ui primary button">Checkout</a>
+      </div>
+    </div>
+
+
+
+
+
   </div>
+
 {% endblock main %}

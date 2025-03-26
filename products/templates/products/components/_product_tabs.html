@@ -1,91 +1,78 @@
 {% load products_tags %}
+  <div class="ui bottom attached {% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} tab segment" data-tab="info">
+    <div class="description-section">
+      <div class="ui medium centered header">Short description</div>
+      <p class="ui text">
+        {{ product.summary }}
+      </p>
+      <div class="ui medium centered header">Detailed description</div>
+      <p class="ui text">
+        {{ product.description }}
+      </p>
+    </div>
 
 <div class="tab-content">
-    <!-- Вкладка "Информация про товар" -->
-    <div id="info" class="tab-panel {% if request.GET.tab == 'information' %}active{% endif %}">
-      <div class="short-description">
-        <h3>Short description</h3>
-        <p>{{ product.summary }}</p>
-      </div>
-      <div class="detailed-description">
-        <h4>Detailed description</h4>
-        <p>{{ product.description }}</p>
-      </div>
-      <div class="recommendations">
-        <h3>Recommended products</h3>
-        <div class="row">
-          {% for recommended_product in recommended_products %}
-            <div class="col-md-3">
-              {% with recommended_product as product %}
+    <div class="recommended-products">
+      <div class="ui large centered header">Recommended products</div>
+      <div class="ui cards">
+        {% for recommended_product in recommended_products %}
+        {% with recommended_product as product %}
                 {% include "products/components/_product_card.html" with width=10 %}
-              {% endwith %}
-            </div>
+                {% endwith %}
           {% endfor %}
-        </div>
       </div>
     </div>
-    <!-- Вкладка "Отзывы пользователей" -->
-    <div id="reviews" class="tab-panel {% if request.GET.tab == 'reviews' %}active{% endif %}">
-      <div class="reviews-header">
-        <button class="add-review">Add review</button>
-        <div class="rating-filter">
-          <span>Grade:</span>
-          <a href="?{% change_params rating=0 %}"><button class="rating-button">All</button></a>
-          <a href="?{% change_params rating=1 %}"><button class="rating-button">1</button></a>
-          <a href="?{% change_params rating=2 %}"><button class="rating-button">2</button></a>
-          <a href="?{% change_params rating=3 %}"><button class="rating-button">3</button></a>
-          <a href="?{% change_params rating=4 %}"><button class="rating-button">4</button></a>
-          <a href="?{% change_params rating=5 %}"><button class="rating-button">5</button></a>
+    </div>
+
+
+
+
+    <div class="ui bottom attached {% if request.GET.tab == 'reviews' %}active{% endif %} tab segment" data-tab="reviews">
+      <div class="ui grid">
+        <div class="eight wide column">
+          <button class="ui primary button" id="openReviewModal">
+            <i class="plus icon"></i> Add review
+          </button>
         </div>
-      </div>
-      <div id="reviewFormContainer" style="display: none; margin-top: 1rem;">
-        {% include "products/components/_review_form.html" %}
-      </div>
-      <div class="reviews-list">
-        {% for review in reviews  %}
-        <div class="review-item">
-          <div class="review-header">
-            <h4>{{ review.title }}</h4>
-            {% if request.user == review.user %}
-            <span class="review-actions" style="display: inline-block;">
-              <a href="{{ review.delete_review }}" class="btn btn-xs btn-default" title="Edit">
-                Delete
-                <span class="glyphicon glyphicon-edit"></span>
-              </a>
-              <a href="{{ review.edit_review }}" class="btn btn-xs btn-default" title="Delete">
-                Edit
-                <span class="glyphicon glyphicon-trash"></span>
-              </a>
-            </span>
-            {% endif %}
-            <span class="review-stars" style="display: inline-block;">
-              {% for _ in review.grade|get_grade_range  %}
-              1
-              <i class="fa fa-star" aria-hidden="true"></i>
-              {% endfor %}
-            </span>
-            <span class="review-date">{{ review.created_at }}</span>
+        
+        <div class="eight wide column right aligned">
+          <div class="ui form">
+            <div class="field" style="margin-bottom: 0;">
+              <label><strong>Filter by rating:</strong></label>
+              <select class="ui dropdown" id="ratingFilter">
+                <option value="all">All Ratings</option>
+                <option value="5">★★★★★</option>
+                <option value="3">★★★☆☆</option>
+                <option value="2">★★☆☆☆</option>
           </div>
-          <div class="review-body">
-            <p>{{ review.summary }}</p>
-            {% if review.pros %}
-            <div class="review-pros">
-              <span>{{ review.pros }}</span>
-            </div>
-            {% endif %}
-            {% if review.cons %}
-            <div class="review-cons">
-              <span>{{ review.cons }}</span>
-            </div>
-            {% endif %}
-            <div class="review-photos">
-              {% for image in review.images.all  %}
-              <img src="{{ image.image.url }}" alt="">
-              {% endfor %}
-            </div>
+        </div>
+        
+      </div>
+    
+      <div class="ui divided items" id="reviewList" style="margin-top: 2em;">
+        {% for review in reviews  %}
+        <div class="item">
+          <div class="content">
+          {% include "products/components/_review_card.html" %}
+          {% if request.user == review.user %}
+          <div class="ui right floated">
+            <a href="{{ review.delete_review }}"><i class="trash alternate outline icon red" title="Delete" style="cursor:pointer;"></i></a>
+            <a href="{{ review.edit_review }}"><i class="edit outline icon blue" title="Edit" style="cursor:pointer;"></i></a>
+          </div>
+          {% endif %}
           </div>
         </div>
         {% endfor %}
+  
       </div>
-    </div>
+    
+    
   </div>
+  <div class="ui modal" id="reviewModal">
+    <div class="header">
+      <i class="edit icon"></i> Write a Review
+    </div>
+      {% include "products/components/_review_form.html" %}
+
+  </div>
+  

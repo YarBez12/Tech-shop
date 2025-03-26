@@ -1,4 +1,4 @@
-<div class="col-md-9" >
+{% comment %} <div class="col-md-9" >
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Product list</h4>
      {% include "products/components/_sorting_menu.html" %}
@@ -9,4 +9,22 @@
       {% endfor %}
     </div>
     {% include "products/components/_pagination.html" %}
+  </div> {% endcomment %}
+
+
+
+
+
+
+  <div class="ui grid section-header">
+    <div class="eight wide column">
+      {% comment %} <h3>Product list</h3> {% endcomment %}
+    </div>
+    <div class="eight wide column right aligned">
+      {% include "products/components/_sorting_menu.html" %}
+    </div>
   </div>
+  {% for product in products  %}
+  {% include "products/components/_product_detailed_card.html" %}
+  {% endfor %}
+  {% include "products/components/_pagination.html" %}

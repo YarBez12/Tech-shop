@@ -1,20 +1,68 @@
 {% if messages %}
-    {% for message in messages %}
-        {% if message.tags == 'deleted' %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% elif message.tags == 'error' %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% else %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endif %}
-    {% endfor %}
+  {% for message in messages %}
+    {% if message.tags == 'debug' %}
+      <div class="ui secondary icon message">
+        <i class="info circle icon"></i>
+        <div class="content">
+          <div class="header">Debug</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% elif message.tags == 'info' %}
+      <div class="ui info icon message">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">Info</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% elif message.tags == 'success' %}
+      <div class="ui positive icon message">
+        <i class="check circle icon"></i>
+        <div class="content">
+          <div class="header">Success</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% elif message.tags == 'warning' %}
+      <div class="ui warning icon message">
+        <i class="exclamation triangle icon"></i>
+        <div class="content">
+          <div class="header">Warning</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% elif message.tags == 'error' %}
+      <div class="ui negative icon message">
+        <i class="times circle icon"></i>
+        <div class="content">
+          <div class="header">Error</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% elif message.tags == 'deleted' %}
+      <div class="ui warning icon message">
+        <i class="trash icon"></i>
+        <div class="content">
+          <div class="header">Deleted</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% else %}
+      <div class="ui primary icon message">
+        <i class="info icon"></i>
+        <div class="content">
+          <div class="header">Message</div>
+          <p>{{ message }}</p>
+        </div>
+        <i class="close icon" ></i>
+      </div>
+    {% endif %}
+  {% endfor %}
 {% endif %}

@@ -1,23 +1,17 @@
 {% load products_tags %}
-<ul class="nav nav-tabs nav-fill">
+<div class="ui container categories desktop">
+  <div class="ui tabular full-width-menu menu">
   {% parent_categories as parent_categories %}
   {% for parent_category in parent_categories  %}
-    <li class="nav-item dropdown">
-      <a
-        class="nav-link dropdown-toggle"
-        data-bs-toggle="dropdown"
-        href="#"
-        role="button"
-        aria-expanded="false">
-        {{ parent_category.title }}</a>
-      <ul class="dropdown-menu">
+  <div class="ui dropdown item category">
+        <a href="{{ parent_category.get_absolute_url }}" class="link">{{ parent_category.title }}</a> <i class="dropdown icon"></i>
+        <div class="menu">
       {% child_categories parent_category '10' as subcategories %}
       {% for subcategory in subcategories  %}
-        <li><a class="dropdown-item" href="{{ subcategory.get_absolute_url }}">{{ subcategory.title }}</a></li>
+        <a href="{{ subcategory.get_absolute_url }}" class="item">{{ subcategory.title }}</a>
         {% endfor %}
-        <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="{{ parent_category.get_absolute_url }}">All...</a></li>
-      </ul>
-    </li>
+        </div>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
+</div>

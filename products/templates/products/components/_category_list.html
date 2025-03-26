@@ -1,13 +1,16 @@
-<div class="col-md-9">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Category list</h4>
-     {% include "products/components/_sorting_menu.html" with is_category=True %}
-    </div>
-    <div class="row text-center mb-5">
-        {% for category in categories  %}
-        <div class="col-md-4"><div class="card p-3 category"><a href = '{{ category.get_absolute_url }}'>
-      {% include "products/components/_category_card.html" %}
-    </a></div></div>
-      {% endfor %}
-    </div>
+
+        {% comment %} <div class="ui massive centered header">Category list</div> {% endcomment %}
+        <div class="ui grid">
+          <div class="sixteen wide column right aligned">
+          {% include "products/components/_sorting_menu.html" with is_category=True %}
+        </div>
+      </div>
+
+
+    <div class="card-grid">
+      {% for category in categories %}
+      <a href = '{{ category.get_absolute_url }}'>
+    {% include "products/components/_category_card.html" %}
+      </a>
+    {% endfor %}
   </div>

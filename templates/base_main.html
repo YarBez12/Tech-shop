@@ -9,7 +9,10 @@
     {% block main %}{% endblock main %}
 
     {% block footer %}
-    <!-- Footer -->
     {% include "components/_footer.html" %}
     {% endblock footer %}
+    {% block search_script %}
+    <script src='{% static "js/search.js" %}'></script>
+    {% endblock search_script %}
+
 

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const showAddressCheckbox = document.getElementById('show-address');
-    const addressFields = document.getElementById('address-fields');
+    const addressFields = document.getElementById('address-section');
     const form = document.querySelector('form');
 
     const alwaysOptionalFields = ['id_address_field1', 'id_address_field2', 'id_state'];

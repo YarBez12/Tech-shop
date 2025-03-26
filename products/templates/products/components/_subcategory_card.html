@@ -1,7 +1,17 @@
-<div class="col-md-4">
+{% comment %} <div class="col-md-4">
     <div class="card p-3 category" data-bs-toggle="modal" data-bs-target="#subcategoryModal_{{subcategory.pk}}">
       {% with category=subcategory %}
         {% include "products/components/_category_card.html" %}
       {% endwith %}
+    </div>
+  </div> {% endcomment %}
+
+
+  <div class="ui subcategory card" data-subcategory-slug="{{ subcategory.slug }}" data-url="{% url 'products:subcategory_products' subcategory.slug %}">
+    <div class="image">
+      <img src="{% if subcategory.image %}{{ subcategory.image.url }}{% else %}{{ subcategory.products.all.0.first_photo }}{% endif %}" class="card-img-top" alt="{{ subcategory.title }}" alt="Smartphones">
+    </div>
+    <div class="content">
+      <div class="header">{{ subcategory.title }}</div>
     </div>
   </div>

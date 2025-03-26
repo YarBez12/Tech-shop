@@ -14,6 +14,7 @@ urlpatterns = [
     path('favourites/add/<slug:product_slug>/', add_to_favourites, name = 'add_to_favourites'),
     path('favourites/remove/<slug:product_slug>/', remove_from_favourites, name = 'remove_from_favourites'),
     path('favourites/', FavouriteProducts.as_view(), name = 'favourites'),
+    path('subcategory/<slug:slug>/products/', SubcategoryProductsView.as_view(), name='subcategory_products'),
     path('<slug:category_slug>/', CategoryDetailView.as_view(), name='category_detail'),
     path('<slug:category_slug>/<slug:subcategory_slug>/', SubcategoryDetailView.as_view(), name='subcategory_detail'),
 ]

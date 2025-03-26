@@ -31,9 +31,9 @@ def product_number_by_page(parent_count, count):
 def get_item(queryset, index):
     return queryset[int(index)]
 
-@register.simple_tag()
-def get_top_subcategory_products(subcategory):
-    return Product.objects.filter(category=subcategory).order_by('watched')[:6]
+# @register.simple_tag()
+# def get_top_subcategory_products(subcategory):
+#     return Product.objects.filter(category=subcategory).order_by('watched')[:6]
 
 @register.filter()
 def get_grade_range(grade):

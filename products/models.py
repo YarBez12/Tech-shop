@@ -2,6 +2,8 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
+from decimal import Decimal
+
 
 from users.models import User
 
@@ -85,7 +87,9 @@ class Product(models.Model):
     
     @property
     def full_price(self):
-        return self.price * self.discount
+        if self.discount:
+            return round(Decimal(self.price) * (Decimal(100) - Decimal(self.discount)) / Decimal(100), 2)
+        return self.price
     
     @property
     def first_photo(self):

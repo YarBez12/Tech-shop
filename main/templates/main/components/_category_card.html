@@ -1,0 +1,16 @@
+{% load products_tags %}
+{% child_categories parent_category '10' as subcategories %}
+      <div class="ui card catalog-card">
+        <div class="content">
+          <a class="header-row" href ="{{ parent_category.get_absolute_url }}">
+            <img src="{% if parent_category.image %}{{ parent_category.image.url }}{% endif %}" alt="{{ parent_category.title }}" class="category-image" />
+            <div class="ui medium header">{{ parent_category.title }}</div>
+          </a>
+          <div class="subcategories">
+        {% for subcategory in subcategories  %}
+        <a href="{{ subcategory.get_absolute_url }}">{{ subcategory.title }}</a>, 
+        {% endfor %}
+        ...
+      </div>
+      </div>
+    </div>

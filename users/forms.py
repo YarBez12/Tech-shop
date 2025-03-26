@@ -8,13 +8,10 @@ class LoginForm(AuthenticationForm):
     username = forms.EmailField(label='Email',
                              widget = forms.EmailInput(attrs= {
                                  'autofocus': True,
-                                 'class': 'form-control',
                                  'placeholder': 'Enrer your email'
                              }))
     password = forms.CharField(label='Password',
                              widget = forms.PasswordInput(attrs= {
-                                 'autocomplete': 'current-password',
-                                 'class': 'form-control',
                                  'placeholder': 'Enrer your password'
                              }))
 

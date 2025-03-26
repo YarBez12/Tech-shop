@@ -12,7 +12,6 @@ def index(request):
         # 'parent_categories': parent_categories,
         # 'child_categories':child_categories,
         'popular_products': popular_products,
-        'count_of_slides': (len(popular_products) // 4) 
     }
     return render(request, 'main/index.html', context)
 

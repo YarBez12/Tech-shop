@@ -4,25 +4,34 @@
 {% load static %}
 
 {% block main %}
-<div class="container mt-5">
     <!-- Информация о пользователе -->
-    <section id="profile-info" class="mb-5">
-      <h1 class="text-center mb-4">Profile</h1>
-      <p><strong>Firstname: </strong>{{ user.first_name }}</p>
-      <p><strong>Lastname: </strong>{{ user.last_name }}</p>
-      <p><strong>Email: </strong>{{ user.email }}</p>
+  <div class="ui centered massive header">👤 User Profile</div>
+
+
+      <div class="ui segment profile-section">
+        <div class="ui grid">
+          <div class="thirteen wide column">
+            <p><strong>Firstname:</strong> {{ user.first_name }}</p>
+            <p><strong>Lastname:</strong> {{ user.last_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
       {% if user.phone %}
-      <p><strong>Phone: </strong>{{ user.phone }}</p>
-      {% endif %}
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            {% endif %}
       {% if user.address %}
-      <p><strong>Address: </strong>{{ user.address.address_field1 }}, {% if user.address.address_field2 %}{{ user.address.address_field2 }},{% endif %} 
-        {{ user.address.city }}, {% if user.address.state %}{{ user.address.state }},{% endif %} {{ user.address.country }}, {{ user.address.postal_code }}</p>
-      {% endif %}
-      <a href="{% url "users:user_edit" %}" class="btn btn-primary">Edit</a>
-    </section>
+            <p><strong>Address:</strong> {{ user.address.address_field1 }}, {% if user.address.address_field2 %}{{ user.address.address_field2 }},{% endif %} 
+              {{ user.address.city }}, {% if user.address.state %}{{ user.address.state }},{% endif %} {{ user.address.country }}, {{ user.address.postal_code }}</p>
+              {% endif %}
+          </div>
+          <div class="three wide column right aligned">
+            <a class="ui blue icon button" href="{% url "users:user_edit" %}">
+              <i class="edit icon"></i> Edit Profile
+            </a>
+          </div>
+        </div>
+      </div>
   
     <section id="profile-tabs">
-      <div class="tabs mb-3">
+      {% comment %} <div class="tabs mb-3">
         {% if products %}
         <a href="?{% change_params tab='favourites' %}">
             <button class="tab-button {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %}" data-tab="favourites">Favourites</button>
@@ -38,53 +47,78 @@
             <button class="tab-button {% if request.GET.tab == 'orders' %}active{% endif %}" data-tab="orders">Completed orders</button>
         </a>
         {% endif %}
+      </div> {% endcomment %}
+
+
+
+      <div class="ui top attached tabular menu">
+        {% if products %}
+        <a href="?{% change_params tab='favourites' %}" class="{% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %} item" data-tab="favourites">❤️ Favourites</a>
+        {% endif %}
+        {% if cart.cart_total_quantity > 0 %}
+        <a href="?{% change_params tab='cart' %}" class="{% if request.GET.tab == 'cart' %}active{% endif %} item" data-tab="cart">🛒 Cart</a>
+        {% endif %}
+        {% if completed_orders %}
+        <a href="?{% change_params tab='orders' %}" class="{% if request.GET.tab == 'orders' %}active{% endif %} item" data-tab="orders">📦 Orders</a>
+        {% endif %}
       </div>
+
+
+
+
       <div class="tab-content">
         {% if products %}
-        <div id="favourites" class="tab-panel {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %}">
-            {% include "products/components/_favourite_list.html" %}
+        <div class="ui bottom attached {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %} tab segment" data-tab="favourites">
+  <h3 class="ui large header">Your Favourite Products
+
+  </h3>
+
+          {% include "products/components/_favourite_list.html" %}
         </div>
         {% endif %}
-        <!-- Вкладка "Корзина" -->
+
         {% if cart.cart_total_quantity > 0 %}
-        <div id="cart" class="tab-panel {% if request.GET.tab == 'cart' %}active{% endif %}">
+          <div class="ui bottom attached {% if request.GET.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
+  <h3 class="ui large header">Your Cart</h3>
+
             {% include "carts/components/_cart_products.html" %}
-            <div class="col-md-4">
-                <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
-                <p>Total price: <strong>{{ cart.cart_total_price }} $</strong></p>
+            <div class="cart-summary" style="margin-top: 1rem;">
+              <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
+                <p>Total price: <strong>${{ cart.cart_total_price }}</strong></p>
               </div>
         </div>
         {% endif %}
-        <!-- Вкладка "Завершенные заказы" -->
 
         {% if completed_orders %}
-<div id="orders" class="tab-panel {% if request.GET.tab == 'orders' %}active{% endif %}">
-  <h2>Completed orders</h2>
-  <ul class="list-group">
-    {% for order in completed_orders %}
-    <li class="list-group-item order-item">
-      <div class="order-header" style="cursor: pointer;">
-        Order {{ order.order_number }} – Price: {{ order.cart_total_price }} $ – Date: {{ order.date_completed|date:"d.m.Y" }}
-      </div>
-      <div class="order-details" style="display: none; margin-top: 10px;">
-        <ul class="list-group">
-          {% for ordered_product in order.ordered.all %}
+  <div class="ui bottom attached {% if request.GET.tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
+
+  <h3 class="ui large header">🧾 Completed Orders</h3>
+
+ 
+  <div class="ui styled fluid accordion">
+  {% for order in completed_orders %}
+  <div class="title">
+    <i class="dropdown icon"></i>
+    <strong>Order #{{ order.order_number }}</strong> — <span>📅 {{ order.date_completed|date:"d.m.Y" }}</span> — 
+    <span><strong>Total:</strong> ${{ order.cart_total_price }}</span>
+  </div>
+  <div class="content">
+    <div class="ui bulleted list">
+      {% for ordered_product in order.ordered.all %}
           {% if ordered_product.quantity > 0 %}
-          <li class="list-group-item">
-            {{ ordered_product.product.title }} ({{ ordered_product.product.price }}$ x {{ ordered_product.quantity }} = {{ ordered_product.total_price }}$)
-          </li>
+          <div class="item">
+            <strong>{{ ordered_product.product.title }}</strong> — ${{ ordered_product.product.full_price }} × {{ ordered_product.quantity }} = <strong>${{ ordered_product.total_price }}</strong>
+          </div>
           {% endif %}
           {% endfor %}
-        </ul>
-      </div>
-    </li>
-    {% endfor %}
-  </ul>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 </div>
 {% endif %}
       </div>
     </section>
-  </div>
 {% endblock main %}
 
 {% block additional_script %}

@@ -1,4 +1,4 @@
-<form action="" method="post" class="review-form" enctype="multipart/form-data">
+{% comment %} <form action="" method="post" class="review-form" enctype="multipart/form-data">
     {% csrf_token %}
     {% for item in review_form  %}
       <div class="mb-3">
@@ -27,4 +27,43 @@
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Submit Review</button>
-  </form>
+  </form> {% endcomment %}
+  <div class="content">
+  <form id="reviewForm" action="" method="post" class="ui form review-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in review_form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <div class="field">
+      <label>Upload Images</label>
+      <input type="file" name="images" multiple>
+    </div>
+    {% if existing_images %}
+  <div class="field">
+    <label>Existing Images</label>
+    <div class="ui grid stackable">
+      {% for image in existing_images %}
+        <div class="four wide column">
+          <img class="ui review bordered image" src="{{ image.image.url }}" alt="Review image" style="margin-bottom: 0.5em;">
+          <div class="ui checkbox">
+            <input type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}">
+            <label for="delete_image_{{ image.id }}">Delete</label>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+</form>
+</div>
+<div class="actions">
+  {% if is_edit %}
+  <a class="ui grey button" href= "{{ review.get_absolute_url }}">Cancel</a>
+  {% else %}
+  <div class="ui grey button" id="cancelReview">Cancel</div>
+  {% endif %}
+  <button type="submit" form="reviewForm" class="ui primary button">Submit Review</button>
+</div>

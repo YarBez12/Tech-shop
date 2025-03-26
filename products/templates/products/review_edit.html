@@ -1,17 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% block main %}
-<div class="d-flex justify-content-center">
-    <div class="card col-8 mb-4 mt-4">
-        <div class="card-body">
-            <h2 class="text-center">
-                Review update
-            </h2>
-            {% include "products/components/_review_form.html" %}
-        </div>
-    </div>
-</div>
-{% comment %} <div><div style="margin-top: 100px;"></div></div> {% endcomment %}
+<div class="ui massive centered header">Review update</div>
+            {% include "products/components/_review_form.html" with is_edit=True%}
 {% endblock main %}
 {% block additional_script %}
 <script src = '{% static "js/review.js" %}' ></script>
