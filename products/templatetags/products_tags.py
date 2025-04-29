@@ -6,22 +6,46 @@ from django.utils.http import urlencode
 from django.db.models import OuterRef, Subquery
 from products.models import FavouriteProduct
 from django.utils.safestring import mark_safe
+from django.db.models import Count
 
 
 
-from products.models import Category, Product, Characteristic, ProductCharacteristic
+from products.models import Category, Product, Characteristic, ProductCharacteristic, Brand
+import redis
+from django.conf import settings
+r = redis.Redis(host=settings.REDIS_HOST,
+ port=settings.REDIS_PORT,
+ db=settings.REDIS_DB)
+
+
+
+def get_category_views(category_id):
+    score = r.zscore('category:views:zset', category_id)
+    return int(score) if score else 0
 
 register = template.Library()
 
 @register.simple_tag()
 def child_categories(parent_category, count):
-    return Category.objects.filter(parent=parent_category).annotate(
-        total_watched = Sum('products__watched')
-    ).order_by('-total_watched')[:int(count)]
+    # return Category.objects.filter(parent=parent_category).annotate(
+    #     total_watched = Sum('products__watched')
+    # ).order_by('-total_watched')[:int(count)]
+
+    categories = Category.objects.filter(parent=parent_category)
+    categories = sorted(
+        categories,
+        key=lambda c: get_category_views(c.id),
+        reverse=True
+    )
+    return categories[:int(count)]
 
 @register.simple_tag()
 def parent_categories():
     return Category.objects.filter(parent=None)
+
+@register.simple_tag()
+def brands(count = 15):
+    return Brand.objects.annotate(product_count=Count('products')).order_by('-product_count')[:count]
 
 @register.simple_tag()
 def product_number_by_page(parent_count, count):
@@ -101,15 +125,15 @@ def display_tags(tags, query):
         query_lower = query.lower()
         terms = query_lower.split()
         for term in terms:
-            matching += [tag for tag in tags if term in tag.tag.lower() and tag not in matching]
+            matching += [tag for tag in tags if term in tag.name.lower() and tag not in matching]
     non_matching = [tag for tag in tags if tag.display and tag not in matching]
     result = []
     for tag in matching:
         result.append({
-            'text': f"<strong>{tag.tag}</strong>"
+            'text': f"<strong>{tag.name}</strong>"
         })
     for tag in non_matching:
         result.append({
-            'text': tag.tag
+            'text': tag.name
         })
     return result

@@ -1,1 +1,713 @@
-[{"model": "products.category", "pk": 8, "fields": {"title": "Gadgets", "slug": "gadgets", "image": "categories/gadgets.jpg", "parent": null}}, {"model": "products.category", "pk": 9, "fields": {"title": "Computers", "slug": "computers", "image": "categories/computers.jpeg", "parent": null}}, {"model": "products.category", "pk": 10, "fields": {"title": "Photo", "slug": "photo", "image": "categories/photo.jpg", "parent": null}}, {"model": "products.category", "pk": 11, "fields": {"title": "Home Appliances", "slug": "home-appliances", "image": "categories/home-appliances.jpg", "parent": null}}, {"model": "products.category", "pk": 12, "fields": {"title": "Climate", "slug": "climate", "image": "categories/climate.jpeg", "parent": null}}, {"model": "products.category", "pk": 13, "fields": {"title": "Smartphones", "slug": "smartphones", "image": "", "parent": 8}}, {"model": "products.category", "pk": 14, "fields": {"title": "Cases", "slug": "cases", "image": "", "parent": 8}}, {"model": "products.category", "pk": 15, "fields": {"title": "Headphones", "slug": "headphones", "image": "", "parent": 8}}, {"model": "products.category", "pk": 16, "fields": {"title": "Watches", "slug": "watches", "image": "", "parent": 8}}, {"model": "products.category", "pk": 17, "fields": {"title": "Chargers", "slug": "chargers", "image": "", "parent": 8}}, {"model": "products.category", "pk": 18, "fields": {"title": "Laptops", "slug": "laptops", "image": "", "parent": 9}}, {"model": "products.category", "pk": 19, "fields": {"title": "Tablets", "slug": "tablets", "image": "", "parent": 9}}, {"model": "products.category", "pk": 20, "fields": {"title": "Gaming Consoles", "slug": "gaming-consoles", "image": "", "parent": 9}}, {"model": "products.category", "pk": 21, "fields": {"title": "Cameras", "slug": "cameras", "image": "", "parent": 10}}, {"model": "products.category", "pk": 22, "fields": {"title": "Lenses", "slug": "lenses", "image": "", "parent": 10}}, {"model": "products.category", "pk": 23, "fields": {"title": "Tripods", "slug": "tripods", "image": "", "parent": 10}}, {"model": "products.category", "pk": 24, "fields": {"title": "Washing Machines", "slug": "washing-machines", "image": "", "parent": 11}}, {"model": "products.category", "pk": 25, "fields": {"title": "Dishwashers", "slug": "dishwashers", "image": "", "parent": 11}}, {"model": "products.category", "pk": 26, "fields": {"title": "Stoves", "slug": "stoves", "image": "", "parent": 11}}, {"model": "products.category", "pk": 27, "fields": {"title": "Air Conditioners", "slug": "air-conditioners", "image": "", "parent": 12}}, {"model": "products.category", "pk": 28, "fields": {"title": "Heaters", "slug": "heaters", "image": "", "parent": 12}}, {"model": "products.brand", "pk": 1, "fields": {"name": "Apple", "slug": "apple", "description": "Innovative technology company.", "image": "brands/apple.jpg", "foundation_year": 1976}}, {"model": "products.brand", "pk": 2, "fields": {"name": "Samsung", "slug": "samsung", "description": "South Korean multinational electronics company.", "image": "brands/samsung.png", "foundation_year": 1938}}, {"model": "products.brand", "pk": 3, "fields": {"name": "Sony", "slug": "sony", "description": "Japanese multinational corporation.", "image": "brands/sony.png", "foundation_year": 1946}}, {"model": "products.brand", "pk": 4, "fields": {"name": "Dell", "slug": "dell", "description": "American technology company.", "image": "brands/dell.png", "foundation_year": 1984}}, {"model": "products.brand", "pk": 5, "fields": {"name": "HP", "slug": "hp", "description": "Hewlett-Packard, a global IT company.", "image": "brands/hp.png", "foundation_year": 1939}}, {"model": "products.brand", "pk": 6, "fields": {"name": "Canon", "slug": "canon", "description": "Japanese imaging and optical products company.", "image": "brands/canon.png", "foundation_year": 1937}}, {"model": "products.brand", "pk": 7, "fields": {"name": "Bose", "slug": "bose", "description": "American audio equipment manufacturer.", "image": "brands/bose.jpg", "foundation_year": 1964}}, {"model": "products.brand", "pk": 8, "fields": {"name": "Philips", "slug": "philips", "description": "Dutch multinational electronics company.", "image": "brands/philips.jpg", "foundation_year": 1891}}, {"model": "products.brand", "pk": 9, "fields": {"name": "LG", "slug": "lg", "description": "South Korean electronics and home appliances company.", "image": "brands/lg.png", "foundation_year": 1958}}, {"model": "products.brand", "pk": 10, "fields": {"name": "Xiaomi", "slug": "xiaomi", "description": "Chinese electronics company.", "image": "brands/xiaomi.png", "foundation_year": 2010}}, {"model": "products.characteristic", "pk": 5, "fields": {"title": "Screen Size", "slug": "screen-size", "category": 13}}, {"model": "products.characteristic", "pk": 6, "fields": {"title": "Battery Capacity", "slug": "battery-capacity", "category": 13}}, {"model": "products.characteristic", "pk": 7, "fields": {"title": "Camera Resolution", "slug": "camera-resolution", "category": 13}}, {"model": "products.characteristic", "pk": 8, "fields": {"title": "Processor", "slug": "processor", "category": 18}}, {"model": "products.characteristic", "pk": 9, "fields": {"title": "RAM", "slug": "ram", "category": 18}}, {"model": "products.characteristic", "pk": 10, "fields": {"title": "Storage", "slug": "storage", "category": 18}}, {"model": "products.characteristic", "pk": 11, "fields": {"title": "Wireless", "slug": "wireless", "category": 15}}, {"model": "products.characteristic", "pk": 12, "fields": {"title": "Battery Life", "slug": "battery-life", "category": 15}}, {"model": "products.characteristic", "pk": 13, "fields": {"title": "Noise Cancellation", "slug": "noise-cancellation", "category": 15}}, {"model": "products.characteristic", "pk": 14, "fields": {"title": "Megapixels", "slug": "megapixels", "category": 21}}, {"model": "products.characteristic", "pk": 15, "fields": {"title": "Lens Type", "slug": "lens-type", "category": 21}}, {"model": "products.characteristic", "pk": 16, "fields": {"title": "ISO Range", "slug": "iso-range", "category": 21}}, {"model": "products.product", "pk": 11, "fields": {"title": "iPhone 14 Pro", "slug": "iphone-14-pro", "summary": null, "description": "", "price": 999.99, "discount": null, "quantity": 50, "watched": 1000, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 13, "brand": 1, "tags": []}}, {"model": "products.product", "pk": 12, "fields": {"title": "Samsung Galaxy S23", "slug": "samsung-galaxy-s23", "summary": null, "description": "", "price": 899.99, "discount": null, "quantity": 40, "watched": 850, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 13, "brand": 2, "tags": []}}, {"model": "products.product", "pk": 13, "fields": {"title": "MacBook Air M2", "slug": "macbook-air-m2", "summary": null, "description": "", "price": 1299.99, "discount": null, "quantity": 30, "watched": 700, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 18, "brand": 1, "tags": []}}, {"model": "products.product", "pk": 14, "fields": {"title": "Dell XPS 15", "slug": "dell-xps-15", "summary": null, "description": "", "price": 1599.99, "discount": null, "quantity": 20, "watched": 500, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 18, "brand": 4, "tags": []}}, {"model": "products.product", "pk": 15, "fields": {"title": "Sony WH-1000XM5", "slug": "sony-wh-1000xm5", "summary": null, "description": "", "price": 399.99, "discount": null, "quantity": 60, "watched": 1200, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 15, "brand": 3, "tags": []}}, {"model": "products.product", "pk": 16, "fields": {"title": "Bose QuietComfort 45", "slug": "bose-qc45", "summary": null, "description": "", "price": 329.99, "discount": null, "quantity": 55, "watched": 1100, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 15, "brand": 7, "tags": []}}, {"model": "products.product", "pk": 17, "fields": {"title": "Canon EOS R6", "slug": "canon-eos-r6", "summary": null, "description": "", "price": 2499.99, "discount": null, "quantity": 15, "watched": 300, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 21, "brand": 6, "tags": []}}, {"model": "products.product", "pk": 18, "fields": {"title": "LG 4K OLED TV", "slug": "lg-4k-oled-tv", "summary": null, "description": "", "price": 1499.99, "discount": null, "quantity": 25, "watched": 600, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 11, "brand": 9, "tags": []}}, {"model": "products.product", "pk": 19, "fields": {"title": "Philips Air Purifier", "slug": "philips-air-purifier", "summary": null, "description": "", "price": 199.99, "discount": null, "quantity": 50, "watched": 400, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 12, "brand": 8, "tags": []}}, {"model": "products.product", "pk": 20, "fields": {"title": "Xiaomi Air Conditioner", "slug": "xiaomi-air-conditioner", "summary": null, "description": "", "price": 599.99, "discount": null, "quantity": 30, "watched": 450, "created_at": "2025-02-24", "updated_at": "2025-02-25", "warranty": null, "category": 12, "brand": 10, "tags": []}}, {"model": "products.productcharacteristic", "pk": 2, "fields": {"product": 11, "characteristic": 5, "value": "6.1 inches"}}, {"model": "products.productcharacteristic", "pk": 3, "fields": {"product": 11, "characteristic": 6, "value": "3200 mAh"}}, {"model": "products.productcharacteristic", "pk": 4, "fields": {"product": 11, "characteristic": 7, "value": "48 MP"}}, {"model": "products.productcharacteristic", "pk": 5, "fields": {"product": 13, "characteristic": 8, "value": "Apple M2"}}, {"model": "products.productcharacteristic", "pk": 6, "fields": {"product": 13, "characteristic": 9, "value": "16 GB"}}, {"model": "products.productcharacteristic", "pk": 7, "fields": {"product": 13, "characteristic": 10, "value": "512 GB SSD"}}, {"model": "products.image", "pk": 1, "fields": {"image": "products/iphone-14-pro1.jpg", "product": 11}}, {"model": "products.image", "pk": 2, "fields": {"image": "products/iphone-14-pro2.jpg", "product": 11}}, {"model": "products.image", "pk": 3, "fields": {"image": "products/iphone-14-pro3.jpg", "product": 11}}, {"model": "products.image", "pk": 4, "fields": {"image": "products/samsung-galaxy-s231.jpg", "product": 12}}, {"model": "products.image", "pk": 5, "fields": {"image": "products/samsung-galaxy-s232.jpg", "product": 12}}, {"model": "products.image", "pk": 6, "fields": {"image": "products/macbook-air-m21.jpg", "product": 13}}, {"model": "products.image", "pk": 7, "fields": {"image": "products/macbook-air-m22.jpeg", "product": 13}}, {"model": "products.image", "pk": 8, "fields": {"image": "products/dell-xps-151.jpeg", "product": 14}}, {"model": "products.image", "pk": 9, "fields": {"image": "products/dell-xps-152.jpeg", "product": 14}}, {"model": "products.image", "pk": 10, "fields": {"image": "products/sony-wh-1000xm51.jpg", "product": 15}}, {"model": "products.image", "pk": 11, "fields": {"image": "products/sony-wh-1000xm52.png", "product": 15}}, {"model": "products.image", "pk": 12, "fields": {"image": "products/bose-qc45.jpeg", "product": 16}}, {"model": "products.image", "pk": 13, "fields": {"image": "products/bose-qc452.jpg", "product": 16}}, {"model": "products.image", "pk": 14, "fields": {"image": "products/canon-eos-r61.jpeg", "product": 17}}, {"model": "products.image", "pk": 15, "fields": {"image": "products/canon-eos-r62.jpeg", "product": 17}}, {"model": "products.image", "pk": 16, "fields": {"image": "products/philips-air-purifier.jpeg", "product": 19}}, {"model": "products.image", "pk": 17, "fields": {"image": "products/xiaomi-air-conditioner1.png", "product": 20}}, {"model": "products.image", "pk": 18, "fields": {"image": "products/xiaomi-air-conditioner2.jpg", "product": 20}}]
+[
+  {
+    "model": "products.category",
+    "pk": 8,
+    "fields": {
+      "title": "Gadgets",
+      "slug": "gadgets",
+      "image": "categories/gadgets.jpg",
+      "parent": null
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 9,
+    "fields": {
+      "title": "Computers",
+      "slug": "computers",
+      "image": "categories/computers.jpeg",
+      "parent": null
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 10,
+    "fields": {
+      "title": "Photo",
+      "slug": "photo",
+      "image": "categories/photo.jpg",
+      "parent": null
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 11,
+    "fields": {
+      "title": "Home Appliances",
+      "slug": "home-appliances",
+      "image": "categories/home-appliances.jpg",
+      "parent": null
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 12,
+    "fields": {
+      "title": "Climate",
+      "slug": "climate",
+      "image": "categories/climate.jpeg",
+      "parent": null
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 13,
+    "fields": {
+      "title": "Smartphones",
+      "slug": "smartphones",
+      "image": "",
+      "parent": 8
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 14,
+    "fields": { "title": "Cases", "slug": "cases", "image": "", "parent": 8 }
+  },
+  {
+    "model": "products.category",
+    "pk": 15,
+    "fields": {
+      "title": "Headphones",
+      "slug": "headphones",
+      "image": "",
+      "parent": 8
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 16,
+    "fields": {
+      "title": "Watches",
+      "slug": "watches",
+      "image": "",
+      "parent": 8
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 17,
+    "fields": {
+      "title": "Chargers",
+      "slug": "chargers",
+      "image": "",
+      "parent": 8
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 18,
+    "fields": {
+      "title": "Laptops",
+      "slug": "laptops",
+      "image": "",
+      "parent": 9
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 19,
+    "fields": {
+      "title": "Tablets",
+      "slug": "tablets",
+      "image": "",
+      "parent": 9
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 20,
+    "fields": {
+      "title": "Gaming Consoles",
+      "slug": "gaming-consoles",
+      "image": "",
+      "parent": 9
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 21,
+    "fields": {
+      "title": "Cameras",
+      "slug": "cameras",
+      "image": "",
+      "parent": 10
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 22,
+    "fields": { "title": "Lenses", "slug": "lenses", "image": "", "parent": 10 }
+  },
+  {
+    "model": "products.category",
+    "pk": 23,
+    "fields": {
+      "title": "Tripods",
+      "slug": "tripods",
+      "image": "",
+      "parent": 10
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 24,
+    "fields": {
+      "title": "Washing Machines",
+      "slug": "washing-machines",
+      "image": "",
+      "parent": 11
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 25,
+    "fields": {
+      "title": "Dishwashers",
+      "slug": "dishwashers",
+      "image": "",
+      "parent": 11
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 26,
+    "fields": { "title": "Stoves", "slug": "stoves", "image": "", "parent": 11 }
+  },
+  {
+    "model": "products.category",
+    "pk": 27,
+    "fields": {
+      "title": "Air Conditioners",
+      "slug": "air-conditioners",
+      "image": "",
+      "parent": 12
+    }
+  },
+  {
+    "model": "products.category",
+    "pk": 28,
+    "fields": {
+      "title": "Heaters",
+      "slug": "heaters",
+      "image": "",
+      "parent": 12
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 1,
+    "fields": {
+      "name": "Apple",
+      "slug": "apple",
+      "description": "Innovative technology company.",
+      "image": "brands/apple.jpg",
+      "foundation_year": 1976
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 2,
+    "fields": {
+      "name": "Samsung",
+      "slug": "samsung",
+      "description": "South Korean multinational electronics company.",
+      "image": "brands/samsung.png",
+      "foundation_year": 1938
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 3,
+    "fields": {
+      "name": "Sony",
+      "slug": "sony",
+      "description": "Japanese multinational corporation.",
+      "image": "brands/sony.png",
+      "foundation_year": 1946
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 4,
+    "fields": {
+      "name": "Dell",
+      "slug": "dell",
+      "description": "American technology company.",
+      "image": "brands/dell.png",
+      "foundation_year": 1984
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 5,
+    "fields": {
+      "name": "HP",
+      "slug": "hp",
+      "description": "Hewlett-Packard, a global IT company.",
+      "image": "brands/hp.png",
+      "foundation_year": 1939
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 6,
+    "fields": {
+      "name": "Canon",
+      "slug": "canon",
+      "description": "Japanese imaging and optical products company.",
+      "image": "brands/canon.png",
+      "foundation_year": 1937
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 7,
+    "fields": {
+      "name": "Bose",
+      "slug": "bose",
+      "description": "American audio equipment manufacturer.",
+      "image": "brands/bose.jpg",
+      "foundation_year": 1964
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 8,
+    "fields": {
+      "name": "Philips",
+      "slug": "philips",
+      "description": "Dutch multinational electronics company.",
+      "image": "brands/philips.jpg",
+      "foundation_year": 1891
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 9,
+    "fields": {
+      "name": "LG",
+      "slug": "lg",
+      "description": "South Korean electronics and home appliances company.",
+      "image": "brands/lg.png",
+      "foundation_year": 1958
+    }
+  },
+  {
+    "model": "products.brand",
+    "pk": 10,
+    "fields": {
+      "name": "Xiaomi",
+      "slug": "xiaomi",
+      "description": "Chinese electronics company.",
+      "image": "brands/xiaomi.png",
+      "foundation_year": 2010
+    }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 5,
+    "fields": { "title": "Screen Size", "slug": "screen-size", "category": 13 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 6,
+    "fields": {
+      "title": "Battery Capacity",
+      "slug": "battery-capacity",
+      "category": 13
+    }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 7,
+    "fields": {
+      "title": "Camera Resolution",
+      "slug": "camera-resolution",
+      "category": 13
+    }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 8,
+    "fields": { "title": "Processor", "slug": "processor", "category": 18 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 9,
+    "fields": { "title": "RAM", "slug": "ram", "category": 18 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 10,
+    "fields": { "title": "Storage", "slug": "storage", "category": 18 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 11,
+    "fields": { "title": "Wireless", "slug": "wireless", "category": 15 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 12,
+    "fields": {
+      "title": "Battery Life",
+      "slug": "battery-life",
+      "category": 15
+    }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 13,
+    "fields": {
+      "title": "Noise Cancellation",
+      "slug": "noise-cancellation",
+      "category": 15
+    }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 14,
+    "fields": { "title": "Megapixels", "slug": "megapixels", "category": 21 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 15,
+    "fields": { "title": "Lens Type", "slug": "lens-type", "category": 21 }
+  },
+  {
+    "model": "products.characteristic",
+    "pk": 16,
+    "fields": { "title": "ISO Range", "slug": "iso-range", "category": 21 }
+  },
+  {
+    "model": "products.product",
+    "pk": 11,
+    "fields": {
+      "title": "iPhone 14 Pro",
+      "slug": "iphone-14-pro",
+      "summary": null,
+      "description": "",
+      "price": 999.99,
+      "discount": null,
+      "quantity": 50,
+      "watched": 1000,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 13,
+      "brand": 1,
+      "tags": [],
+      "sku": "sku-11"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 12,
+    "fields": {
+      "title": "Samsung Galaxy S23",
+      "slug": "samsung-galaxy-s23",
+      "summary": null,
+      "description": "",
+      "price": 899.99,
+      "discount": null,
+      "quantity": 40,
+      "watched": 850,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 13,
+      "brand": 2,
+      "tags": [],
+      "sku": "sku-12"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 13,
+    "fields": {
+      "title": "MacBook Air M2",
+      "slug": "macbook-air-m2",
+      "summary": null,
+      "description": "",
+      "price": 1299.99,
+      "discount": null,
+      "quantity": 30,
+      "watched": 700,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 18,
+      "brand": 1,
+      "tags": [],
+      "sku": "sku-13"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 14,
+    "fields": {
+      "title": "Dell XPS 15",
+      "slug": "dell-xps-15",
+      "summary": null,
+      "description": "",
+      "price": 1599.99,
+      "discount": null,
+      "quantity": 20,
+      "watched": 500,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 18,
+      "brand": 4,
+      "tags": [],
+      "sku": "sku-14"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 15,
+    "fields": {
+      "title": "Sony WH-1000XM5",
+      "slug": "sony-wh-1000xm5",
+      "summary": null,
+      "description": "",
+      "price": 399.99,
+      "discount": null,
+      "quantity": 60,
+      "watched": 1200,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 15,
+      "brand": 3,
+      "tags": [],
+      "sku": "sku-15"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 16,
+    "fields": {
+      "title": "Bose QuietComfort 45",
+      "slug": "bose-qc45",
+      "summary": null,
+      "description": "",
+      "price": 329.99,
+      "discount": null,
+      "quantity": 55,
+      "watched": 1100,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 15,
+      "brand": 7,
+      "tags": [],
+      "sku": "sku-16"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 17,
+    "fields": {
+      "title": "Canon EOS R6",
+      "slug": "canon-eos-r6",
+      "summary": null,
+      "description": "",
+      "price": 2499.99,
+      "discount": null,
+      "quantity": 15,
+      "watched": 300,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 21,
+      "brand": 6,
+      "tags": [],
+      "sku": "sku-17"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 18,
+    "fields": {
+      "title": "LG 4K OLED TV",
+      "slug": "lg-4k-oled-tv",
+      "summary": null,
+      "description": "",
+      "price": 1499.99,
+      "discount": null,
+      "quantity": 25,
+      "watched": 600,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 11,
+      "brand": 9,
+      "tags": [],
+      "sku": "sku-18"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 19,
+    "fields": {
+      "title": "Philips Air Purifier",
+      "slug": "philips-air-purifier",
+      "summary": null,
+      "description": "",
+      "price": 199.99,
+      "discount": null,
+      "quantity": 50,
+      "watched": 400,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 12,
+      "brand": 8,
+      "tags": [],
+      "sku": "sku-19"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 20,
+    "fields": {
+      "title": "Xiaomi Air Conditioner",
+      "slug": "xiaomi-air-conditioner",
+      "summary": null,
+      "description": "",
+      "price": 599.99,
+      "discount": null,
+      "quantity": 30,
+      "watched": 450,
+      "created_at": "2025-02-24",
+      "updated_at": "2025-02-25",
+      "warranty": null,
+      "category": 12,
+      "brand": 10,
+      "tags": [],
+      "sku": "sku-20"
+    }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 2,
+    "fields": { "product": 11, "characteristic": 5, "value": "6.1 inches" }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 3,
+    "fields": { "product": 11, "characteristic": 6, "value": "3200 mAh" }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 4,
+    "fields": { "product": 11, "characteristic": 7, "value": "48 MP" }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 5,
+    "fields": { "product": 13, "characteristic": 8, "value": "Apple M2" }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 6,
+    "fields": { "product": 13, "characteristic": 9, "value": "16 GB" }
+  },
+  {
+    "model": "products.productcharacteristic",
+    "pk": 7,
+    "fields": { "product": 13, "characteristic": 10, "value": "512 GB SSD" }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 1,
+    "fields": { "image": "products/iphone-14-pro1.jpg", "product": 11 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 2,
+    "fields": { "image": "products/iphone-14-pro2.jpg", "product": 11 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 3,
+    "fields": { "image": "products/iphone-14-pro3.jpg", "product": 11 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 4,
+    "fields": { "image": "products/samsung-galaxy-s231.jpg", "product": 12 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 5,
+    "fields": { "image": "products/samsung-galaxy-s232.jpg", "product": 12 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 6,
+    "fields": { "image": "products/macbook-air-m21.jpg", "product": 13 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 7,
+    "fields": { "image": "products/macbook-air-m22.jpeg", "product": 13 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 8,
+    "fields": { "image": "products/dell-xps-151.jpeg", "product": 14 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 9,
+    "fields": { "image": "products/dell-xps-152.jpeg", "product": 14 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 10,
+    "fields": { "image": "products/sony-wh-1000xm51.jpg", "product": 15 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 11,
+    "fields": { "image": "products/sony-wh-1000xm52.png", "product": 15 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 12,
+    "fields": { "image": "products/bose-qc45.jpeg", "product": 16 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 13,
+    "fields": { "image": "products/bose-qc452.jpg", "product": 16 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 14,
+    "fields": { "image": "products/canon-eos-r61.jpeg", "product": 17 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 15,
+    "fields": { "image": "products/canon-eos-r62.jpeg", "product": 17 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 16,
+    "fields": { "image": "products/philips-air-purifier.jpeg", "product": 19 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 17,
+    "fields": { "image": "products/xiaomi-air-conditioner1.png", "product": 20 }
+  },
+  {
+    "model": "products.productimage",
+    "pk": 18,
+    "fields": { "image": "products/xiaomi-air-conditioner2.jpg", "product": 20 }
+  }
+]

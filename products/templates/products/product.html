@@ -20,11 +20,14 @@
     
 
     {% include "products/components/_product_tabs.html" %}
+
+    {% include "products/components/_modal_window_for_tags.html" %}
     
-    <!-- Модальное окно для просмотра фото -->
-    {% comment %} {% include "products/components/_photos_modal_window.html" %} {% endcomment %}
+    
   {% endblock main %}
 {% block additional_script %}
 {% comment %} <script src = '{% static "js/toggle_tabs.js" %}' ></script> {% endcomment %}
 <script src = '{% static "js/product.js" %}' ></script>
+<script src="{% static "js/products_carousel.js" %}"></script>
+
 {% endblock additional_script %}

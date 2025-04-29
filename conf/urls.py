@@ -19,11 +19,22 @@ from django.urls import path, include
 from conf import settings
 from django.conf.urls.static import static
 from products.views import get_characteristics
+from django.conf.urls import handler404
+from main.views import custom_404, test_404
+from django.contrib.sitemaps.views import sitemap
+from main.sitemaps import ProductSitemap
+
+sitemaps = {
+    'products': ProductSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
+    path('test-404/', test_404),
     path('admin/get_characteristics/', get_characteristics, name='get_characteristics'),
+    path('sitemap.xml/', sitemap, {'sitemaps': sitemaps}, name = 'django.contrib.sitemaps.views.sitemap'),
+    path('social-auth/', include('social_django.urls', namespace='social')),
+    path('__debug__/', include('debug_toolbar.urls')),
     path('', include('main.urls', namespace='main')),
     path('user/', include('users.urls', namespace='users')),
     path('products/', include('products.urls', namespace='products')),
@@ -32,3 +43,6 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+
+
+handler404 = custom_404

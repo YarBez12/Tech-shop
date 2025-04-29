@@ -1,15 +1,18 @@
+{% load products_tags %}
 
   <div class="ui grid">
     <div class="sixteen wide column">
       <div class="product-images">
+    {% if product.first_photo %}
         <div class="main-image">
           <img id="mainProductImage" 
           src="{{ product.first_photo }}" 
           alt="{{ product.title }}"
           data-index="0">
         </div>
+        {% endif %}
       
-        <div class="thumbnail-column" style="margin-left: 2em;">
+        <div class="thumbnail-column">
           {% for image in small_images  %}
    <img src="{{ image.image.url }}"
                class="ui tiny image preview-image"
@@ -19,12 +22,20 @@
       
         <div class="product-info">
       <div class="ui large centered header product-title">
-            {{ product.title }}
+        <div class="title-with-icons">
+          <span class="product-name">{{ product.title }} {{ product.sku }}</span>
             <div class="ui icon buttons icon-buttons">
-    {% include "products/components/_favourite_button.html" %}
-            <a class="ui icon button" style="background: none; box-shadow: none;" title="Add to cart" href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon"></i></a>
+{% include "products/components/_favourite_button.html" with without_outline=True %} 
+            <a class="ui icon button" title="To cart" href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon"></i></a>
           </div>
         </div>
+        </div>
+        <div class="ui labels" style="margin-top: 0.5em;">
+          <a class="ui small red label" href="{% url 'products:brand_details' product.brand.slug %}">{{ product.brand.name }}</a>
+          {% for tag in product.tags.all  %}
+            <a class="ui small grey custom-tag label" data-url="{% url 'products:tag_products' product.slug tag.slug %}">{{ tag.name }}</a>
+            {% endfor %}
+          </div>
           <div class="price">
             {% if product.discount %}
         <span class="old-price">${{ product.price }}</span>
@@ -34,6 +45,11 @@
         <span class="price">${{ product.price }}</span>
         {% endif %}
           </div>
+          {% if product.warranty %}
+<div class="ui section">
+  <strong>Warranty:</strong> {{ product.warranty }} years
+</div>
+{% endif %}
           
           
           <div class="ui relaxed divided list" style="margin-top: 1em;">
@@ -45,6 +61,28 @@
     {% endfor %}
             </div>
           </div>
+          {% if request.user == product.user %}
+<div class="ui divider"></div>
+<div class="ui segment owner-info">
+  <div><strong>Quantity:</strong> {{ product.quantity }}</div>
+  <div><strong>Views:</strong> {{ product_views }}</div>
+  <div><strong>Created at:</strong> {{ product.created_at }}</div>
+  <div><strong>Updated at:</strong> {{ product.updated_at }}</div>
+  <div><strong>Status:</strong> 
+    {% if product.is_active %}
+      <span class="ui green label">Active</span>
+    {% else %}
+      <span class="ui red label">Inactive</span>
+    {% endif %}
+  </div>
+  <div style="margin-top: 0.5em;">
+    <a class="ui icon button" title="Edit product" href="#">
+      <i class="edit icon"></i>
+    </a>
+  </div>
+</div>
+{% endif %}
+
         </div>
       </div>
       

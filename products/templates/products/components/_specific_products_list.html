@@ -1,0 +1,18 @@
+
+          <div class="slider-container only-desktop ">
+            
+            {% for product in specific_products %}
+            {% include "products/components/_product_card.html" %}
+            {% endfor %}
+          </div>
+  
+          <div class="ui segment carousel only tablet mobile">
+            <div class="carousel-inner">
+            {% for product in specific_products %}
+            <div class="carousel-container">
+            {% include "products/components/_product_card.html" %}
+            </div>
+            {% endfor %}
+            </div>
+          </div>
+  

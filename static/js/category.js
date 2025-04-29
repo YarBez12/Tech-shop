@@ -7,17 +7,12 @@ $(document).ready(function () {
         url: url,
         method: 'GET',
         success: function (html) {
-          // Удалим предыдущую модалку (если была)
           $('.ui.modal').remove();
-  
-          // Добавим новую модалку в body
-          $('body').append(html);
-  
-          // И откроем её
-          $('.ui.modal').modal('show');
+            $('body').append(html);
+            $('.ui.modal').modal('show');
         },
         error: function () {
-          alert('Ошибка при загрузке данных подкатегории');
+          alert('Error while loading subcategory details');
         }
       });
     });

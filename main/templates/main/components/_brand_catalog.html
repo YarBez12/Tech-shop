@@ -1,0 +1,13 @@
+{% load products_tags %}
+
+<div class="catalog">
+  <div class="ui massive centered header">Brands</div>
+  <div class="ui three stackable cards">
+    {% brands as brands %}
+      {% for brand in brands  %}
+      {% include "main/components/_brand_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+
+

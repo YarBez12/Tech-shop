@@ -3,6 +3,10 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
 from decimal import Decimal
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, GenericTaggedItemBase
+from django.utils.text import slugify
+
 
 
 from users.models import User
@@ -28,14 +32,22 @@ class Category(models.Model):
         return reverse('products:category_detail', kwargs={'category_slug': self.slug})
     
 
-class Tag(models.Model):
-    tag = models.CharField(max_length=100)
+# class Tag(models.Model):
+#     tag = models.CharField(max_length=100)
+#     display = models.BooleanField(default=False)
+    
+#     def __str__(self):
+#         return self.tag
+    
+class CustomTag(TagBase):
     display = models.BooleanField(default=False)
-    
-    def __str__(self):
-        return self.tag
-    
 
+class CustomTaggedItem(GenericTaggedItemBase):
+    tag = models.ForeignKey(
+        CustomTag,
+        on_delete=models.CASCADE,
+        related_name="tagged_items"
+    )
 class Brand(models.Model):
     name = models.CharField(max_length=150, unique=True)
     slug = models.SlugField(max_length=150, unique=True)
@@ -45,6 +57,10 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("products:brand_details", kwargs={"slug": self.slug})
+
 
 class Characteristic(models.Model):
     title = models.CharField(max_length=200)
@@ -67,13 +83,17 @@ class Product(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     warranty = models.DecimalField(decimal_places=2, max_digits=5, null=True, blank=True)
-    tags = models.ManyToManyField(Tag, blank=True, related_name='products')
+    # tags = models.ManyToManyField(Tag, blank=True, related_name='products')
+    tags = TaggableManager(through=CustomTaggedItem, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
     is_active = models.BooleanField(default=True)
     sku = models.CharField(max_length=50, unique=True, blank=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE, related_name='products')
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
         if not self.sku:
             self.sku = f"SKU-{uuid.uuid4().hex[:8].upper()}"
         super().save(*args, **kwargs)
@@ -142,3 +162,17 @@ class FavouriteProduct(models.Model):
 
     def __str__(self):
         return self.product.title
+    
+class Subcription(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contacts')
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='contacts')
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'brand')  
+        indexes = [
+            models.Index(fields=['user', 'brand']),
+        ]
+
+    def __str__(self):
+        return f"{self.user} subscribed on {self.brand}"

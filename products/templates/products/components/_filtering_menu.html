@@ -78,6 +78,27 @@
       {% endfor %}
 
 
+      <div class="grouped fields">
+        <label>Brand</label>
+        <div class="characteristics-wrapper">
+          {% for brand in brands %}
+          <div class="characteristic-value">
+            <div class="field">
+              <div class="ui checkbox">
+                <input type="checkbox" 
+                       name="brand" 
+                       value="{{ brand.slug }}"
+                       id="brand-{{ brand.slug }}"
+                       {% if brand.slug|stringformat:"s" in selected_brands %}checked{% endif %}>
+                <label for="brand-{{ brand.slug }}">{{ brand.name }}</label>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+
 
       <div class="field">
         <label>Price</label>

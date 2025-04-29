@@ -1,0 +1,19 @@
+<div class="content">
+    <form id="product-form" action="" method="post" class="ui form" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in product_form %}
+        <div class="field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+      {% endfor %}
+      <div class="field">
+        <label>Upload Images</label>
+        <input type="file" name="images" multiple>
+      </div>
+  </form>
+  </div>
+  <div class="actions">
+    <div class="ui grey button" id="cancel-product">Cancel</div>
+    <button type="submit" form="product-form" class="ui primary button">Post Product</button>
+  </div>

@@ -1,4 +1,3 @@
-// Функция для получения CSRF-токена (если ещё не определена)
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -20,7 +19,6 @@ function getCookie(name) {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         const imageId = btn.getAttribute('data-image-id');
-        // Отправляем AJAX-запрос на удаление изображения
         fetch(`/products/review-image/${imageId}/delete/`, {
           method: 'POST',
           headers: {
@@ -31,7 +29,6 @@ function getCookie(name) {
         })
         .then(response => {
           if(response.ok) {
-            // Удаляем контейнер с изображением
             btn.closest('.image-container').remove();
           } else {
             console.error('Deletion failed');
@@ -41,4 +38,10 @@ function getCookie(name) {
       });
     });
   });
+
+    lightGallery(document.querySelector('#review-edit-gallery'), {
+      selector: 'a',
+      plugins: [lgZoom, lgThumbnail],
+      speed: 400
+    });
   

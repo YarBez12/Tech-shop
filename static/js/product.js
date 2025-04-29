@@ -1,27 +1,4 @@
-// Переключение вкладок
-  
-  // // Функции для модального окна
-  // function openModal(src) {
-  //   document.getElementById('modalImage').src = src;
-  //   document.getElementById('photoModal').style.display = 'block';
-  // }
-  // function closeModal() {
-  //   document.getElementById('photoModal').style.display = 'none';
-  // }
-  // function selectPhoto(src) {
-  //   document.getElementById('modalImage').src = src;
-  // }
-  // function prevPhoto() {
-  //   // Реализуйте логику перехода к предыдущей фотографии
-  // }
-  // function nextPhoto() {
-  //   // Реализуйте логику перехода к следующей фотографии
-  // }
-  // document.getElementById('photoModal').addEventListener('click', function(e) {
-  //   if (e.target === this) {
-  //     closeModal();
-  //   }
-  // });
+
 
   $('#openReviewModal').on('click', function () {
     $('#reviewModal').modal('show');
@@ -125,4 +102,31 @@
       $('.modal-thumbnails img[data-index="'+currentIndex+'"]').css('border-color', '#2185d0');
     }
 
+
+
+      $('.custom-tag').on('click', function () {
+        const url = $(this).data('url');
+    
+        $.ajax({
+          url: url,
+          method: 'GET',
+          success: function (html) {
+            $('#tag-modal').remove();
+              $('body').append(html);
+              $('#tag-modal').modal('show');
+          },
+          error: function () {
+            alert('Error while loading products with this tag');
+          }
+        });
+      });
+
+
+      document.querySelectorAll('[id^="review-gallery-"]').forEach(gallery => {
+        lightGallery(gallery, {
+          selector: 'a',
+          plugins: [lgZoom, lgThumbnail],
+          speed: 400
+        });
+      });
   

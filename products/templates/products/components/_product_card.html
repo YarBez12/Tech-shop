@@ -10,10 +10,12 @@
         <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
       </div>
     </div>
+    {% if product.first_photo %}
     <div class="image product-image-container">
       <img src="{{ product.first_photo }}" alt="{{ product.title }}">
   
     </div>
+    {% endif %}
   
     <div class="content">
   <div class="ui medium centered header">{{ product.title }}</div>

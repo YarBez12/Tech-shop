@@ -1,0 +1,9 @@
+       {% extends "base.html" %}
+       {% block main %}
+       <h1 class="ui header" style="color: #ff4757;">Error 404</h1>
+        <p>Page not found.</p>
+
+        <p class="ui message" style="text-align: center;">
+            <a href="{% url 'main:index' %}">Return to main page</a>
+        </p>
+        {% endblock main %}

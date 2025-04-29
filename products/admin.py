@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
 from .models import *
+from taggit.models import Tag
 
 class ProductCharacteristicInline(admin.TabularInline):
     model = ProductCharacteristic
@@ -9,11 +10,9 @@ class ProductCharacteristicInline(admin.TabularInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
 
-        # Если продукт существует и у него есть категория
         if obj and obj.category:
             formset.form.base_fields['characteristic'].queryset = obj.category.characteristics.all()
         else:
-            # Если продукт новый, скрываем поле characteristic
             formset.form.base_fields['characteristic'].queryset = Characteristic.objects.none()
 
         return formset
@@ -32,8 +31,9 @@ class ReviewImageInline(ImageInline):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     inlines = (ProductCharacteristicInline, ProductImageInline)
-    list_display = ('pk', 'title', 'price', 'quantity', 'watched', 'updated_at', 'warranty', 'category', 'brand')
+    list_display = ('pk', 'title', 'price', 'quantity', 'watched', 'updated_at', 'warranty', 'category', 'brand', 'is_active')
     list_display_links = ('pk', 'title')
+    list_editable = ('is_active',)
     list_filter = ('category', 'brand')
     readonly_fields = ('watched', 'created_at', 'updated_at')
     prepopulated_fields = {'slug' : ('title', )}
@@ -47,11 +47,20 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('parent', )
     prepopulated_fields = {'slug' : ('title', )}
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'tag', 'display')
+# @admin.register(Tag)
+# class TagAdmin(admin.ModelAdmin):
+#     list_display = ('pk', 'tag', 'display')
+#     list_editable = ('display',)
+#     list_display_links = ('pk', 'tag')
+
+
+
+@admin.register(CustomTag)
+class CustomTagAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name', 'display')
     list_editable = ('display',)
-    list_display_links = ('pk', 'tag')
+    list_display_links = ('pk', 'name')
+    prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
@@ -91,4 +100,9 @@ class ProductImageAdmin(admin.ModelAdmin):
 class ReviewImageAdmin(admin.ModelAdmin):
     list_display = ('review', )
     list_filter = ('review', )
+
+@admin.register(Subcription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'brand', 'created')
+    list_filter = ('user', 'brand')
 

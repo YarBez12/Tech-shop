@@ -9,12 +9,17 @@ from django.urls import reverse_lazy, reverse
 from .forms import *
 from django.views.generic import CreateView
 from carts.models import Cart, Receiver
-from products.models import Product, FavouriteProduct
+from products.models import Product, FavouriteProduct, ProductImage, Subcription
 from django.db.models.functions import Lower
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
-
+from django.views.generic.edit import FormMixin
+from products.forms import ProductForm
+from datetime import timedelta
+from django.utils import timezone
+from users.models import Action
+from django.contrib.contenttypes.models import ContentType
 
 
 
@@ -161,13 +166,17 @@ def merge_carts(session_key, user):
                 session_cart.session_key = None
                 session_cart.save()
 
-class ProfileView(LoginRequiredMixin, DetailView):
+class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
     model = User
     template_name = 'users/profile.html'
     context_object_name = 'user'
+    form_class = ProductForm
 
     def get_object(self, queryset = ...):
         return self.request.user
+    
+    def get_success_url(self):
+        return self.request.path_info
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -176,10 +185,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
         cart, _ = Cart.objects.get_or_create(receiver = receiver, is_completed = False)
         completed_orders = Cart.objects.filter(receiver = receiver, is_completed = True).order_by('-date_completed')
 
+        brand_ids = Subcription.objects.filter(user=user).values_list('brand_id', flat=True)
+        two_weeks_ago = timezone.now() - timedelta(days=14)
+        news = Product.objects.filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago)
+
         sort_option = self.request.GET.get('sort', 'title')
         fav_products = user.favourite_products.all()
         product_ids = fav_products.values_list('product__pk', flat=True)
-        products = Product.objects.filter(pk__in=product_ids)
+        products = Product.objects.filter(pk__in=product_ids, is_active=True)
         if sort_option:
             products = sort_with_option(sort_option, products)
         paginator = Paginator(products, 2)
@@ -190,15 +203,51 @@ class ProfileView(LoginRequiredMixin, DetailView):
             paginated_products = paginator.page(1)
         except EmptyPage:
             paginated_products = paginator.page(paginator.num_pages)
+
+        user_products = user.products.filter(is_active=True)
+
+        product_ct = ContentType.objects.get_for_model(Product)
+        other_actions = Action.objects.filter(
+            target_ct=product_ct,
+            target_id__in=user_products.values_list('id', flat=True)
+        ).exclude(user=user).select_related('user')
         
         context['title'] = 'Profile'
         context['page_obj'] = paginated_products
         context['cart'] = cart
         context['completed_orders'] = completed_orders
         context['products'] = paginated_products
+        context['product_form'] = self.get_form()
+        context['user_products'] = user_products
+        context['news'] = news
+        context['other_actions'] = other_actions
 
 
         return context
+    
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user = request.user
+            product.is_active = False
+            product.save()
+            form.save_m2m()
+            images = request.FILES.getlist('images')
+            for image in images:
+                ProductImage.objects.create(product=product, image=image)
+            messages.success(self.request, 'Your product has been succesfully added')
+            return self.form_valid(form)
+        else:
+            error_messages = []
+            for field, errors in form.errors.items():
+                field_label = field if field != '__all__' else 'General'
+                error_messages.append(f"{field_label}: {', '.join(errors)}")
+            full_error_message = "Please correct the following errors: " + "; ".join(error_messages)
+            messages.error(self.request, full_error_message)
+            return self.form_invalid(form)
     
     
 def sort_with_option(sort_option, items):
@@ -281,3 +330,4 @@ class SendMainView(FormView):
                 email.attach_alternative(html_message, "text/html")
             email.send()
         return super().form_valid(form)
+    

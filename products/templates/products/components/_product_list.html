@@ -24,7 +24,10 @@
       {% include "products/components/_sorting_menu.html" %}
     </div>
   </div>
-  {% for product in products  %}
-  {% include "products/components/_product_detailed_card.html" %}
-  {% endfor %}
+  <div id='product-endless-list'>
+{% include "products/components/_product_endless_list.html" %}
+  </div>
+  {% if not is_search and not is_brand and not is_user_products %}
   {% include "products/components/_pagination.html" %}
+  {% endif %}
+  {% comment %} {% include "products/components/_pagination.html" %} {% endcomment %}

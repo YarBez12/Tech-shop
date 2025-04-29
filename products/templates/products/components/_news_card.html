@@ -1,0 +1,26 @@
+<div class="card">
+    {% if product.first_photo %}
+    <div class="image">
+      <img src="{{ product.first_photo }}" alt="{{ product.title }}">
+    </div>
+    {% endif %}
+    <div class="content">
+      <a class="header" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+      <div class="meta">
+        <span class="date">
+          Updated {{ product.updated_at|timesince|cut:"minutes"|cut:"hours"|cut:"days"|cut:"weeks" }} ago
+        </span>
+      </div>
+      <div class="description">
+        {{ product.description|truncatewords:15 }}
+      </div>
+    </div>
+    <div class="extra content">
+      <span class="right floated">
+        From <a href="{{ product.brand.get_absolute_url }}">{{ product.brand.name }}</a>
+      </span>
+      <span>
+        ${{ product.price }}
+      </span>
+    </div>
+  </div>

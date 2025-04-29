@@ -1,5 +1,6 @@
 {% extends "base_main.html" %} {% block main %}
 {% load products_tags %}
+{% load static %}
 
 
 
@@ -40,6 +41,7 @@
 
 
 {% include "main/components/_product_catalog.html" %}
+{% include "main/components/_brand_catalog.html" %}
 {% comment %} <div
   id="carouselExampleDark"
   class="carousel carousel-dark slide"
@@ -98,19 +100,16 @@
     </button>
   </div>
 </div> {% endcomment %}
-
-<div class="popular-products" style="padding: 2em 0;">
-  <div class="ui massive centered header">Popular Products</div>
-
-        <div class="slider-container">
-          
-          {% for product in popular_products %}
-          {% include "products/components/_product_card.html" %}
-          {% endfor %}
-
+{% with specific_products=popular_products %}
+<div class="popular-products">
+  <div class="ui massive centered header">Popular products</div>
+{% include "products/components/_specific_products_list.html" %}
 </div>
-</div>
+{% endwith %}
 
 
 
 {% endblock main %}
+{% block additional_script %}
+<script src="{% static "js/products_carousel.js" %}"></script>
+{% endblock additional_script %}

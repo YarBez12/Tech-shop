@@ -44,10 +44,13 @@
     {% if existing_images %}
   <div class="field">
     <label>Existing Images</label>
-    <div class="ui grid stackable">
+
+    <div id="review-edit-gallery" class="ui grid stackable">
       {% for image in existing_images %}
         <div class="four wide column">
-          <img class="ui review bordered image" src="{{ image.image.url }}" alt="Review image" style="margin-bottom: 0.5em;">
+          <a href="{{ image.image.url }}">
+            <img class="ui review bordered image" src="{{ image.image.url }}" alt="Review image" style="margin-bottom: 0.5em;">
+          </a>
           <div class="ui checkbox">
             <input type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}">
             <label for="delete_image_{{ image.id }}">Delete</label>
@@ -55,6 +58,11 @@
         </div>
       {% endfor %}
     </div>
+
+
+
+
+
   </div>
 {% endif %}
 </form>

@@ -3,13 +3,7 @@
 <div class="ui modal custom-modal">
   <i class="close icon"></i>
   <div class="header">{{ subcategory.title }}: Popular products</div>
-  <div class="content">
-  <div class="ui three stackable cards">
-    {% for product in products %}
-    {% include "products/components/_product_card.html" %}
-    {% endfor %}
-  </div>
-</div>
+  {% include "products/components/_product_list_for_modal_window.html" %}
 <div class="actions" style="text-align: right; padding: 1em 1.5em;">
   <a href="{{ subcategory.get_absolute_url }}" class="ui primary button">
     Details...

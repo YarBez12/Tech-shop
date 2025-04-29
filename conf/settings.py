@@ -25,17 +25,14 @@ SECRET_KEY = 'django-insecure-whe1v%7-4m_k(!q7gq3-y0gj_0yw81shp3olqfw^12(@_!b#n!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
 
-
+SITE_ID = 3
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,16 +43,20 @@ INSTALLED_APPS = [
     'main',
     'products',
     'users',
-    'carts'
+    'carts',
+    'taggit',
+    'django.contrib.sitemaps',
+    'social_django',
+    'debug_toolbar',
+    'django_celery_beat',
 ]
 
-SITE_ID = 1
 
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -78,7 +79,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'main.context_processors.socialaccount',
             ],
         },
     },
@@ -110,7 +110,6 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  
-    'allauth.account.auth_backends.AuthenticationBackend', 
 ]
 
 
@@ -177,3 +176,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'styleghg126@gmail.com'
 EMAIL_HOST_PASSWORD = 'bnlobjrycqffsbhz'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+INTERNAL_IPS = [
+ '127.0.0.1',
+]
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'

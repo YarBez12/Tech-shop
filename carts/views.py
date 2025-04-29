@@ -16,6 +16,8 @@ from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 from io import BytesIO
 from django.core.mail import EmailMultiAlternatives
+from users.models import Action
+from django.contrib.contenttypes.models import ContentType
 
 
 
@@ -215,7 +217,8 @@ def payment_success(request):
     if pdf_content:
         email.attach('receipt.pdf', pdf_content, 'application/pdf')
     
-    email.send()  
+    email.send() 
+    create_action(request.user, 'purchased', product) 
     return redirect('main:index')
 
 def payment_cancel(request):
@@ -229,3 +232,16 @@ def render_to_pdf(template_src, context_dict={}):
     if pdf.err:
         return None
     return result.getvalue()
+
+
+def create_action(user, verb, target=None):
+    existing = Action.objects.filter(user=user, verb=verb)
+    if target:
+        ct = ContentType.objects.get_for_model(target)
+        existing = existing.filter(target_ct=ct, target_id=target.id)
+    if existing.exists():
+        return False
+
+    action = Action(user=user, verb=verb, target=target)
+    action.save()
+    return True

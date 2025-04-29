@@ -1,0 +1,19 @@
+<form action="{% url 'products:search_results' %}" method="get">
+    <input type="hidden" id="search-suggestions-url" value="{% url 'products:search_suggestions' %}">
+    <div class="ui icon input" style="position: relative;">
+      <input
+      id = 'search-input'
+      class="prompt"
+      type="search"
+      placeholder="Search our tech products"
+      aria-label="Search"
+      autocomplete = "off"
+      name='q'/>
+      <button id="search-btn" type="submit" class='search-link'>
+        <i class="search icon"></i>
+      </button>
+    </div>
+    
+    
+    <div id="search-suggestions"></div>
+  </form>

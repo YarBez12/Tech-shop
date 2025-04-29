@@ -4,7 +4,6 @@
 {% load static %}
 
 {% block main %}
-    <!-- Информация о пользователе -->
   <div class="ui centered massive header">👤 User Profile</div>
 
 
@@ -24,7 +23,7 @@
           </div>
           <div class="three wide column right aligned">
             <a class="ui blue icon button" href="{% url "users:user_edit" %}">
-              <i class="edit icon"></i> Edit Profile
+              <i class="edit icon"></i> <span class="only computer">Edit Profile</span>
             </a>
           </div>
         </div>
@@ -61,6 +60,13 @@
         {% if completed_orders %}
         <a href="?{% change_params tab='orders' %}" class="{% if request.GET.tab == 'orders' %}active{% endif %} item" data-tab="orders">📦 Orders</a>
         {% endif %}
+        <a href="?{% change_params tab='user_products' %}" class="{% if request.GET.tab == 'user_products' %}active{% endif %} item" data-tab="user_products">🔧 Your products</a>
+        {% if other_actions %}
+        <a href="?{% change_params tab='other_actions' %}" class="{% if request.GET.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions">Other actions</a>
+        {% endif %}
+        {% if news %}
+        <a href="?{% change_params tab='news' %}" class="{% if request.GET.tab == 'news' %}active{% endif %} item" data-tab="news">📰 News</a>
+        {% endif %}
       </div>
 
 
@@ -69,9 +75,9 @@
       <div class="tab-content">
         {% if products %}
         <div class="ui bottom attached {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %} tab segment" data-tab="favourites">
-  <h3 class="ui large header">Your Favourite Products
+  <div class="ui large header">Your Favourite Products
 
-  </h3>
+  </div>
 
           {% include "products/components/_favourite_list.html" %}
         </div>
@@ -79,7 +85,7 @@
 
         {% if cart.cart_total_quantity > 0 %}
           <div class="ui bottom attached {% if request.GET.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
-  <h3 class="ui large header">Your Cart</h3>
+  <div class="ui large header">Your Cart</div>
 
             {% include "carts/components/_cart_products.html" %}
             <div class="cart-summary" style="margin-top: 1rem;">
@@ -92,7 +98,7 @@
         {% if completed_orders %}
   <div class="ui bottom attached {% if request.GET.tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
 
-  <h3 class="ui large header">🧾 Completed Orders</h3>
+  <div class="ui large header">Completed Orders</div>
 
  
   <div class="ui styled fluid accordion">
@@ -117,10 +123,80 @@
 </div>
 </div>
 {% endif %}
+
+
+
+
+<div class="ui bottom attached {% if request.GET.tab == 'user_products' %}active{% endif %} tab segment" data-tab="user_products">
+  <button class="ui primary button" id="open-product-modal">
+    <i class="plus icon"></i> Add product
+  </button>
+  <div class="ui large header">Your Added Products</div>
+  {% with user_products as products  %}
+  {% if not products %}
+  <p>You have not added any products yet</p>
+  {% else %}
+  {% include "products/components/_product_list.html" with is_user_products=True %}
+  {% endif %}
+  {% endwith %}
+        </div>
+
+        {% if other_actions %}
+        <div class="ui bottom attached {% if request.GET.tab == 'other_actions' %}active{% endif %} tab segment" data-tab="other_actions">
+  <div class="ui large header">Other actions</div>
+
+  <div class="ui feed">
+    {% for action in other_actions %}
+      <div class="event">
+        <div class="content">
+          <div class="summary">
+            <strong>{{action.user.email}}</strong>
+            {% if action.verb == 'liked' %}
+              liked your product
+            {% elif action.verb == 'purchased' %}
+              purchased your product
+            {% endif %}
+            <a href="{{ action.target.get_absolute_url }}">{{ action.target.title }}</a>
+            <div class="date">{{ action.created|timesince }} ago</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+        </div>
+        {% endif %}
+
+        {% if news %}
+        <div class="ui bottom attached {% if request.GET.tab == 'news' %}active{% endif %} tab segment" data-tab="news">
+  <div class="ui large header">News</div>
+  <div class="ui three stackable cards">
+    {% for product in news %}
+    {% include "products/components/_news_card.html" %}
+    {% endfor %}
+  </div>
+
+        </div>
+        {% endif %}
+
+
+
+
+
+
       </div>
     </section>
+
+    <div class="ui modal" id="product-modal">
+      <div class="header">
+        <i class="add icon"></i> Add a product
+      </div>
+        {% include "products/components/_product_form.html" %}
+  
+    </div>
 {% endblock main %}
 
 {% block additional_script %}
 <script src='{% static "js/toggle_completed_orders.js" %}'></script>
+<script src="{% static "js/profile.js" %}""></script>
 {% endblock additional_script %}

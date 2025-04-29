@@ -1,27 +1,34 @@
 {% load products_tags %}
   <div class="ui bottom attached {% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} tab segment" data-tab="info">
     <div class="description-section">
+      {% if product.summary %}
       <div class="ui medium centered header">Short description</div>
       <p class="ui text">
         {{ product.summary }}
       </p>
+      {% endif %}
+      {% if product.description %}
       <div class="ui medium centered header">Detailed description</div>
       <p class="ui text">
         {{ product.description }}
       </p>
+      {% endif %}
     </div>
 
-<div class="tab-content">
+    {% if recommended_products %}
     <div class="recommended-products">
       <div class="ui large centered header">Recommended products</div>
-      <div class="ui cards">
-        {% for recommended_product in recommended_products %}
-        {% with recommended_product as product %}
-                {% include "products/components/_product_card.html" with width=10 %}
-                {% endwith %}
-          {% endfor %}
-      </div>
+      {% with specific_products=recommended_products %}
+      {% include "products/components/_specific_products_list.html" with list_title="Popular products" %}
+      {% endwith %}
     </div>
+    {% endif %}
+    
+
+
+ 
+
+
     </div>
 
 
@@ -30,9 +37,11 @@
     <div class="ui bottom attached {% if request.GET.tab == 'reviews' %}active{% endif %} tab segment" data-tab="reviews">
       <div class="ui grid">
         <div class="eight wide column">
+          {% if not request.user == product.user %}
           <button class="ui primary button" id="openReviewModal">
             <i class="plus icon"></i> Add review
           </button>
+          {% endif %}
         </div>
         
         <div class="eight wide column right aligned">
@@ -42,8 +51,12 @@
               <select class="ui dropdown" id="ratingFilter">
                 <option value="all">All Ratings</option>
                 <option value="5">★★★★★</option>
+                <option value="4">★★★★☆</option>
                 <option value="3">★★★☆☆</option>
                 <option value="2">★★☆☆☆</option>
+                <option value="1">★☆☆☆☆</option>
+              </select>
+            </div>
           </div>
         </div>
         

@@ -1,6 +1,6 @@
 {% load products_tags %}
-<div class="ui container categories desktop">
-  <div class="ui tabular full-width-menu menu">
+<div class="ui categories computer only">
+  <div class="ui tabular category-grid stackable full-width-menu menu">
   {% parent_categories as parent_categories %}
   {% for parent_category in parent_categories  %}
   <div class="ui dropdown item category">
