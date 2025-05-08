@@ -20,6 +20,13 @@ from users.models import Action
 from django.contrib.contenttypes.models import ContentType
 import redis
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import json
+from decimal import Decimal
+from django.http import HttpResponseRedirect
+
+
+
 
 r = redis.Redis(host=settings.REDIS_HOST,
  port=settings.REDIS_PORT,
@@ -174,10 +181,27 @@ class FavouriteProducts(ListView):
         'title': 'Favourite products'
     }
 
+    def paginate_queryset(self, queryset, page_size):
+        paginator = self.get_paginator(queryset, page_size,
+            orphans=self.get_paginate_orphans(),
+            allow_empty_first_page=self.get_allow_empty()
+        )
+        page_number = self.request.GET.get(self.page_kwarg, 1)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        return paginator, page, page.object_list, page.has_other_pages()
+
     def get_queryset(self):
         sort_option = self.request.GET.get('sort', 'title')
-        fav_products = self.request.user.favourite_products.all()
-        product_ids = fav_products.values_list('product__pk', flat=True)
+        # fav_products = self.request.user.favourite_products.all()
+        # product_ids = fav_products.values_list('product__pk', flat=True)
+        # products = Product.objects.filter(pk__in=product_ids, is_active=True)
+        redis_product_ids = get_user_favourites(self.request.user.id)
+        product_ids = [int(pid) for pid in redis_product_ids]
         products = Product.objects.filter(pk__in=product_ids, is_active=True)
         if sort_option:
             products = sort_with_option(sort_option, products)
@@ -277,28 +301,57 @@ class SubcategoryDetailView(ListView):
     template_name = 'products/subcategory.html'
     paginate_by = 1
 
+    def paginate_queryset(self, queryset, page_size):
+        paginator = self.get_paginator(queryset, page_size,
+            orphans=self.get_paginate_orphans(),
+            allow_empty_first_page=self.get_allow_empty()
+        )
+        page_number = self.request.GET.get(self.page_kwarg, 1)
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        return paginator, page, page.object_list, page.has_other_pages()
+
     def get_queryset(self):
-        sort_option = self.request.GET.get('sort', 'title')
         subcategory = Category.objects.get(slug=self.kwargs['subcategory_slug'])
+        session_key = f"ui_state:subcategory:{subcategory.slug}"
+        ui_state = self.request.session.get(session_key, {})
+        sort_option = ui_state.get('sort', 'title')
+        filters = {k: v for k, v in ui_state.items() if k != 'sort'}
         products = Product.objects.filter(category=subcategory, is_active=True)
+        products = products.annotate(
+            calculated_full_price=ExpressionWrapper(
+                F('price') * (Value(100) - Coalesce(F('discount'), Value(0))) / Value(100),
+                output_field=DecimalField(max_digits=10, decimal_places=2)
+            )
+        )
         characteristics = subcategory.characteristics.all()
         for characteristic in characteristics:
-            selected_values = self.request.GET.getlist(characteristic.slug)
+            selected_values = filters.get(characteristic.slug)
             if selected_values:
                 products = products.filter(
                     product_characteristics__characteristic=characteristic,
                     product_characteristics__value__in=selected_values
                 )
-        brands = self.request.GET.getlist('brand')
+        brands = filters.get('brand')
         if brands:
             products = products.filter(brand__slug__in=brands)
 
-        price_from = self.request.GET.get('price_from')
-        price_to = self.request.GET.get('price_to')
+        price_from = filters.get('price_from')
+        price_to = filters.get('price_to')
+        # if isinstance(price_from, list):
+        #     price_from = price_from[0]
+        # if isinstance(price_to, list):
+        #     price_to = price_to[0]
         if price_from is not None:
-            products = products.filter(price__gte=float(price_from))
+            products = products.filter(calculated_full_price__gte=Decimal(price_from))
+            # products = products.filter(price__gte=float(price_from))
         if price_to is not None:
-            products = products.filter(price__lte=float(price_to))
+            products = products.filter(calculated_full_price__lte=Decimal(price_to))
+            # products = products.filter(price__lte=float(price_to))
         if sort_option:
             products = sort_with_option(sort_option, products)
 
@@ -306,6 +359,9 @@ class SubcategoryDetailView(ListView):
     
     def get_context_data(self, **kwargs):
         subcategory = Category.objects.get(slug=self.kwargs['subcategory_slug'])
+        session_key = f"ui_state:subcategory:{subcategory.slug}"
+        ui_state = self.request.session.get(session_key, {})
+        print(self.request.session.get(f"ui_state:subcategory:{subcategory.slug}", {}))
         context = super().get_context_data(**kwargs)
         context['title'] = subcategory.title
         context['subcategory'] = subcategory
@@ -317,12 +373,17 @@ class SubcategoryDetailView(ListView):
         price_range = qs.aggregate(min_price=Min('price'), max_price=Max('price'))
         context.update(price_range)
         selected_filters = {}
-        characteristic_slugs = {c.slug for c in characteristics}
-        for key, values in self.request.GET.lists():
-            if key in characteristic_slugs:
-                selected_filters[key] = set(values)
+        for characteristic in characteristics:
+            values = ui_state.get(characteristic.slug)
+            if values:
+                selected_filters[characteristic.slug] = set(values)
+        # characteristic_slugs = {c.slug for c in characteristics}
+        # for key, values in self.request.GET.lists():
+        #     if key in characteristic_slugs:
+        #         selected_filters[key] = set(values)
         context['selected_filters'] = selected_filters
-        context['selected_brands'] = self.request.GET.getlist('brand')
+        context['selected_brands'] = ui_state.get('brand', [])
+        context['saved_ui_state'] = ui_state
         return context
 
 class SubcategoryProductsView(DetailView):
@@ -512,24 +573,30 @@ def search_suggestions(request):
 
 @login_required    
 def add_to_favourites(request, product_slug):
-    product = Product.objects.get(slug=product_slug)
-    user = request.user
-    FavouriteProduct.objects.create(product=product, user=user)
+    # product = Product.objects.get(slug=product_slug)
+    # user = request.user
+    # FavouriteProduct.objects.create(product=product, user=user)
+    product = get_object_or_404(Product, slug=product_slug)
+    like_product(request.user.id, product.id)
+    create_action(request.user, 'liked', product)
     next_page = request.META.get('HTTP_REFERER', '/')
     if "login" in next_page:
         next_page = product.get_absolute_url()
-    create_action(user, 'liked', product)
+    # create_action(user, 'liked', product)
     return redirect (next_page)
 
 @login_required    
 def remove_from_favourites(request, product_slug):
-    product = Product.objects.get(slug=product_slug)
-    user = request.user
-    favs = FavouriteProduct.objects.filter(product=product, user=user)
-    if favs:
-        favs[0].delete()
-    next_page = request.META.get('HTTP_REFERER', '/')
+    # product = Product.objects.get(slug=product_slug)
+    # user = request.user
+    # favs = FavouriteProduct.objects.filter(product=product, user=user)
+    # if favs:
+    #     favs[0].delete()
+    product = get_object_or_404(Product, slug=product_slug)
+    unlike_product(request.user.id, product.id)
     delete_action(request.user, 'liked', product)
+    next_page = request.META.get('HTTP_REFERER', '/')
+    # delete_action(request.user, 'liked', product)
     return redirect (next_page)   
 
 @login_required
@@ -569,3 +636,50 @@ def delete_action(user, verb, target=None):
         ct = ContentType.objects.get_for_model(target)
         actions = actions.filter(target_ct=ct, target_id=target.id)
     actions.delete()
+
+
+@csrf_exempt
+def save_sort(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        sort_value = data.get("sort")
+        slug = data.get("slug")
+        session_key = f"ui_state:subcategory:{slug}"
+        ui_state = request.session.get(session_key, {})
+        ui_state["sort"] = sort_value
+        request.session[session_key] = ui_state
+        request.session.modified = True
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
+@csrf_exempt
+def save_filters(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        slug = data.pop("slug", None)  
+        session_key = f"ui_state:subcategory:{slug}"
+        ui_state = request.session.get(session_key, {})
+        sort = ui_state.get("sort")
+        ui_state = {}
+        if sort:
+            ui_state["sort"] = sort
+        for key, value in data.items():
+            if key in ['price_from', 'price_to']:
+                ui_state[key] = value
+            else:
+                if isinstance(value, str):
+                    value = [value]
+                ui_state[key] = value
+        request.session[session_key] = ui_state
+        request.session.modified = True
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
+def reset_filters(request, category_slug, subcategory_slug):
+    session_key = f"ui_state:subcategory:{subcategory_slug}"
+    if session_key in request.session:
+        del request.session[session_key]
+        request.session.modified = True
+    return redirect('products:subcategory_detail', category_slug=category_slug, subcategory_slug=subcategory_slug)

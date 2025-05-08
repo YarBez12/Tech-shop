@@ -26,7 +26,7 @@
     <form method="get" style="margin:20px;">
 
 
-      {% for key, values in request.GET.lists %}
+      {% comment %} {% for key, values in request.GET.lists %}
         {% if key != "sort" and key != "tab" %}
         {% for value in values %}
         <input type="hidden" name="{{ key }}" value="{{ value }}">
@@ -35,21 +35,22 @@
       {% endfor %}
       {% if is_search %}
       <input type="hidden" name="tab" value="{% if is_category %}categories{% else %}products{% endif %}">
-      {% endif %}
+      {% endif %} {% endcomment %}
 
 
 
-
+      {% with saved_ui_state.sort as selected_sort %}
       <div class="field" style="margin-bottom: 0;">
         <label><strong>Sort by:</strong></label>
-        <select name="sort" class="ui dropdown" id="ratingFilter" onchange="this.form.submit()">
-          <option value="price" {% if request.GET.sort == "price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by ascending</option>
-      <option value="-price" {% if request.GET.sort == "-price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by descending</option>
-      <option value="title" {% if request.GET.sort == "title" or not request.GET.sort %}selected{% endif %}>Title: A-Z</option>
-      <option value="-title" {% if request.GET.sort == "-title" %}selected{% endif %}>Title: Z-A</option>
+        <select name="sort" class="ui dropdown" id="sortSelector" {% if subcategory %}data-slug="{{ subcategory.slug }}"{% endif %} data-url="{% url "products:save_sort" %}">
+          <option value="price" {% if selected_sort == "price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by ascending</option>
+      <option value="-price" {% if selected_sort == "-price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by descending</option>
+      <option value="title" {% if selected_sort == "title" or not selected_sort %}selected{% endif %}>Title: A-Z</option>
+      <option value="-title" {% if selected_sort == "-title" %}selected{% endif %}>Title: Z-A</option>
 
         </select>
       </div>
+      {% endwith %}
   </form>
 
 

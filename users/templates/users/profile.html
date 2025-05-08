@@ -10,8 +10,12 @@
       <div class="ui segment profile-section">
         <div class="ui grid">
           <div class="thirteen wide column">
+      {% if user.first_name %}
             <p><strong>Firstname:</strong> {{ user.first_name }}</p>
+            {% endif %}
+      {% if user.last_name %}
             <p><strong>Lastname:</strong> {{ user.last_name }}</p>
+            {% endif %}
             <p><strong>Email:</strong> {{ user.email }}</p>
       {% if user.phone %}
             <p><strong>Phone:</strong> {{ user.phone }}</p>
@@ -150,7 +154,11 @@
       <div class="event">
         <div class="content">
           <div class="summary">
+            {% if action.user.first_name and action.user.last_name %}
+            <strong>{{action.user.first_name}} {{action.user.last_name}}</strong>
+            {% else %}
             <strong>{{action.user.email}}</strong>
+            {% endif %}
             {% if action.verb == 'liked' %}
               liked your product
             {% elif action.verb == 'purchased' %}

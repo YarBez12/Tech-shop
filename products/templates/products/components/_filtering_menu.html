@@ -52,7 +52,7 @@
     <div class="ui medium header">Filtering</div>
 
     <form class="ui form" method="get">
-      <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}">
+      {% comment %} <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}"> {% endcomment %}
       
       {% for characteristic in characteristics  %}
       <div class="grouped fields" data-section-name="{{ characteristic.title }}">
@@ -104,22 +104,22 @@
         <label>Price</label>
         <div class="ui two column grid">
           <div class="column">
-            <input type="number" id="price_from" name = 'price_from' placeholder="From" value="{{ request.GET.price_from|default:"" }}">
+            <input type="number" id="price_from" name = 'price_from' placeholder="From" value="{{ saved_ui_state.price_from|default:"" }}">
           </div>
           <div class="column">
-            <input type="number" id="price_to" name = 'price_to' placeholder="To" value="{{ request.GET.price_to|default:"" }}">
+            <input type="number" id="price_to" name = 'price_to' placeholder="To" value="{{ saved_ui_state.price_to|default:"" }}">
           </div>
         </div>
 
         <div id="rangeSlider" data-min-price="{{ min_price|floor_int }}" data-max-price="{{ max_price|ceil_int }}"
-        data-initial-min-price = "{{ request.GET.price_from|default:"" }}"
-        data-initial-max-price= "{{ request.GET.price_to|default:"" }}"></div>
+        data-initial-min-price = "{{ saved_ui_state.price_from|default:"" }}"
+        data-initial-max-price= "{{ saved_ui_state.price_to|default:"" }}"></div>
       </div>
 
       <div class="two ui buttons" style="margin-top: 1.5em;">
-      <button type="submit" class="ui blue button">Apply filters</button>
+      <button type="button" id = 'applyFilters' class="ui blue button" {% if subcategory %}data-slug="{{ subcategory.slug }}"{% endif %} data-url="{% url 'products:save_filters' %}">Apply filters</button>
         <div class="or"></div>
-      <a href="{{ subcategory.get_absolute_url }}" class="ui button">Reset filters</a>
+      <a href="{% url 'products:reset_filters' category_slug=subcategory.parent.slug subcategory_slug=subcategory.slug %}" class="ui button">Reset filters</a>
       </div>
     </form>
   </div>

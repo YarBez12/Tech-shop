@@ -98,11 +98,15 @@ def change_params(context, **kwargs):
         query.setlist(key, value if isinstance(value, list) else [value]) 
     return urlencode(query, doseq=True) 
 
+
 @register.simple_tag()
 def favourite_products(request):
     if request.user.is_authenticated:
-        fav_products = FavouriteProduct.objects.filter(user=request.user)
-        return [f.product for f in fav_products]
+        # fav_products = FavouriteProduct.objects.filter(user=request.user)
+        # return [f.product for f in fav_products]
+        redis_ids = r.smembers(f"favourite:user:{request.user.id}")
+        product_ids = [int(pid) for pid in redis_ids]
+        return Product.objects.filter(pk__in=product_ids, is_active=True)
     return []
 
 @register.filter()

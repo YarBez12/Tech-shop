@@ -20,7 +20,15 @@ from datetime import timedelta
 from django.utils import timezone
 from users.models import Action
 from django.contrib.contenttypes.models import ContentType
+import redis
+from django.conf import settings
 
+r = redis.Redis(host=settings.REDIS_HOST,
+ port=settings.REDIS_PORT,
+ db=settings.REDIS_DB)
+
+def get_user_favourites(user_id):
+    return r.smembers(f'favourite:user:{user_id}')
 
 
 
@@ -190,8 +198,11 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         news = Product.objects.filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago)
 
         sort_option = self.request.GET.get('sort', 'title')
-        fav_products = user.favourite_products.all()
-        product_ids = fav_products.values_list('product__pk', flat=True)
+        # fav_products = user.favourite_products.all()
+        # product_ids = fav_products.values_list('product__pk', flat=True)
+        # products = Product.objects.filter(pk__in=product_ids, is_active=True)
+        redis_product_ids = get_user_favourites(user.id)
+        product_ids = [int(pid) for pid in redis_product_ids]
         products = Product.objects.filter(pk__in=product_ids, is_active=True)
         if sort_option:
             products = sort_with_option(sort_option, products)

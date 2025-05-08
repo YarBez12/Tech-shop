@@ -106,3 +106,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('user', 'brand', 'created')
     list_filter = ('user', 'brand')
 
+
+@admin.register(FavouriteProduct)
+class FavouriteProductAdmin(admin.ModelAdmin):
+    list_display = ('user', 'product')
+    list_filter = ('user', 'product')

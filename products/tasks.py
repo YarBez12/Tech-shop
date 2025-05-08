@@ -1,7 +1,8 @@
 from celery import shared_task
-from products.models import Product
+from products.models import Product, FavouriteProduct
 import redis
 from django.conf import settings
+from users.models import User
 
 r = redis.Redis(
     host=settings.REDIS_HOST,
@@ -25,3 +26,21 @@ def sync_views_from_redis():
         except Product.DoesNotExist:
             continue
     return f'Synchronized {updated} products.'
+
+@shared_task
+def sync_favourites_to_db():
+
+    for user in User.objects.filter(is_active=True):
+        redis_key = f'favourite:user:{user.id}'
+        redis_product_ids = r.smembers(redis_key)
+        redis_product_ids = {int(pid) for pid in redis_product_ids}
+        db_product_ids = set(FavouriteProduct.objects.filter(user=user).values_list('product_id', flat=True))
+
+        for pid in redis_product_ids - db_product_ids:
+            if Product.objects.filter(id=pid).exists():
+                FavouriteProduct.objects.get_or_create(user=user, product_id=pid)
+
+        for pid in db_product_ids - redis_product_ids:
+            FavouriteProduct.objects.filter(user=user, product_id=pid).delete()
+
+    print("Favourite products synchronized.")
