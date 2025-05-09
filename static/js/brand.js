@@ -50,4 +50,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return cookieValue;
     }
+
+    document.getElementById('sortSelector').addEventListener('change', function() {
+        const selectedSort = this.value;
+        const slug = this.dataset.slug;
+        const url = this.dataset.url;
+        console.log(selectedSort, slug, url);
+      
+        fetch(url, {
+          method: "POST",
+          headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ sort: selectedSort, slug: slug })
+        }).then(() => {
+          location.reload(); 
+        });
+      });
 });

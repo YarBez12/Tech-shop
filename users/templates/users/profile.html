@@ -56,20 +56,20 @@
 
       <div class="ui top attached tabular menu">
         {% if products %}
-        <a href="?{% change_params tab='favourites' %}" class="{% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %} item" data-tab="favourites">❤️ Favourites</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
         {% endif %}
         {% if cart.cart_total_quantity > 0 %}
-        <a href="?{% change_params tab='cart' %}" class="{% if request.GET.tab == 'cart' %}active{% endif %} item" data-tab="cart">🛒 Cart</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'cart' %}active{% endif %} item" data-tab="cart" data-url="{% url 'products:save_tab' 'profile' %}">🛒 Cart</a>
         {% endif %}
         {% if completed_orders %}
-        <a href="?{% change_params tab='orders' %}" class="{% if request.GET.tab == 'orders' %}active{% endif %} item" data-tab="orders">📦 Orders</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'orders' %}active{% endif %} item" data-tab="orders" data-url="{% url 'products:save_tab' 'profile' %}">📦 Orders</a>
         {% endif %}
-        <a href="?{% change_params tab='user_products' %}" class="{% if request.GET.tab == 'user_products' %}active{% endif %} item" data-tab="user_products">🔧 Your products</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
         {% if other_actions %}
-        <a href="?{% change_params tab='other_actions' %}" class="{% if request.GET.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions">Other actions</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">Other actions</a>
         {% endif %}
         {% if news %}
-        <a href="?{% change_params tab='news' %}" class="{% if request.GET.tab == 'news' %}active{% endif %} item" data-tab="news">📰 News</a>
+        <a href="#" class="{% if saved_ui_state.tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
         {% endif %}
       </div>
 
@@ -78,17 +78,17 @@
 
       <div class="tab-content">
         {% if products %}
-        <div class="ui bottom attached {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %} tab segment" data-tab="favourites">
+        <div class="ui bottom attached {% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} tab segment" data-tab="favourites">
   <div class="ui large header">Your Favourite Products
 
   </div>
 
-          {% include "products/components/_favourite_list.html" %}
+          {% include "products/components/_favourite_list.html" with is_profile=True %}
         </div>
         {% endif %}
 
         {% if cart.cart_total_quantity > 0 %}
-          <div class="ui bottom attached {% if request.GET.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
+          <div class="ui bottom attached {% if saved_ui_state.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
   <div class="ui large header">Your Cart</div>
 
             {% include "carts/components/_cart_products.html" %}
@@ -100,7 +100,7 @@
         {% endif %}
 
         {% if completed_orders %}
-  <div class="ui bottom attached {% if request.GET.tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
+  <div class="ui bottom attached {% if saved_ui_state.tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
 
   <div class="ui large header">Completed Orders</div>
 
@@ -131,7 +131,7 @@
 
 
 
-<div class="ui bottom attached {% if request.GET.tab == 'user_products' %}active{% endif %} tab segment" data-tab="user_products">
+<div class="ui bottom attached {% if saved_ui_state.tab == 'user_products' %}active{% endif %} tab segment" data-tab="user_products">
   <button class="ui primary button" id="open-product-modal">
     <i class="plus icon"></i> Add product
   </button>
@@ -146,7 +146,7 @@
         </div>
 
         {% if other_actions %}
-        <div class="ui bottom attached {% if request.GET.tab == 'other_actions' %}active{% endif %} tab segment" data-tab="other_actions">
+        <div class="ui bottom attached {% if saved_ui_state.tab == 'other_actions' %}active{% endif %} tab segment" data-tab="other_actions">
   <div class="ui large header">Other actions</div>
 
   <div class="ui feed">
@@ -176,7 +176,7 @@
         {% endif %}
 
         {% if news %}
-        <div class="ui bottom attached {% if request.GET.tab == 'news' %}active{% endif %} tab segment" data-tab="news">
+        <div class="ui bottom attached {% if saved_ui_state.tab == 'news' %}active{% endif %} tab segment" data-tab="news">
   <div class="ui large header">News</div>
   <div class="ui three stackable cards">
     {% for product in news %}
@@ -206,5 +206,7 @@
 
 {% block additional_script %}
 <script src='{% static "js/toggle_completed_orders.js" %}'></script>
-<script src="{% static "js/profile.js" %}""></script>
+<script src="{% static "js/profile.js" %}"></script>
+<script src = '{% static "js/sort.js" %}' ></script>
+<script src = '{% static "js/tabs.js" %}' ></script>
 {% endblock additional_script %}

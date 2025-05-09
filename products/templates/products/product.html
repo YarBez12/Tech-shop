@@ -14,8 +14,10 @@
   {% include "products/components/_product_info.html" %}
 
     <div class="ui attached tabular menu">
-      <a href="?{% change_params tab='information' %}" class="{% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} item" data-tab="info">Product information</a>
-      <a href="?{% change_params tab='reviews' %}" class="{% if request.GET.tab == 'reviews' %}active{% endif %} item" data-tab="reviews">Users' reviews</a>
+      {% comment %} <a href="?{% change_params tab='information' %}" class="{% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} item" data-tab="info">Product information</a>
+      <a href="?{% change_params tab='reviews' %}" class="{% if request.GET.tab == 'reviews' %}active{% endif %} item" data-tab="reviews">Users' reviews</a> {% endcomment %}
+      <a href="#" data-tab-name="information" data-url="{% url 'products:save_tab' 'product' %}" data-slug="{{ product.slug }}" class="item {% if ui_state.tab == 'information' or not ui_state.tab %}active{% endif %}">Product information</a>
+      <a href="#" data-tab-name="reviews" data-url="{% url 'products:save_tab' 'product' %}" data-slug="{{ product.slug }}" class="item {% if ui_state.tab == 'reviews' %}active{% endif %}">Users' reviews</a>  
     </div>
     
 

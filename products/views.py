@@ -70,7 +70,9 @@ class SearchResults(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        sort_option = self.request.GET.get('sort', 'title')
+        session_key = "ui_state:search_results"
+        ui_state = self.request.session.get(session_key, {})
+        sort_option = ui_state.get('sort', 'title')
         search_query = self.request.GET.get('q', '').strip()
         products = filter_products(search_query)
         if sort_option:
@@ -83,10 +85,20 @@ class SearchResults(ListView):
         return [self.template_name]
 
     def get_context_data(self, **kwargs):
-        sort_option = self.request.GET.get('sort', 'title')
         context = super().get_context_data(**kwargs)
         search_query = self.request.GET.get('q', '').strip()
-        categories = filter_categories(search_query).annotate(price=Avg('products__price'))
+        categories = filter_categories(search_query).annotate(
+            price=Avg(
+                ExpressionWrapper(
+                F('products__price') * (Value(100) - Coalesce(F('products__discount'), Value(0))) / Value(100),
+                output_field=DecimalField(max_digits=10, decimal_places=2)
+                )
+            )
+        )
+        session_key = "ui_state:search_results"
+        ui_state = self.request.session.get(session_key, {})
+        context['saved_ui_state'] = ui_state
+        sort_option = ui_state.get('sort', 'title')
         if sort_option:
             categories = sort_with_option(sort_option, categories)
         context['categories'] = categories
@@ -124,7 +136,11 @@ class BrandDetails(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        sort_option = self.request.GET.get('sort', 'title')
+        brand = Brand.objects.get(slug=self.kwargs['slug'])
+        session_key = f"ui_state:brand:{brand.slug}"
+        ui_state = self.request.session.get(session_key, {})
+        sort_option = ui_state.get('sort', 'title')
+        print(ui_state)
         products = Product.objects.filter(
             brand__slug=self.kwargs['slug'],
             is_active=True
@@ -139,12 +155,14 @@ class BrandDetails(ListView):
         return [self.template_name]
 
     def get_context_data(self, **kwargs):
-        sort_option = self.request.GET.get('sort', 'title')
         context = super().get_context_data(**kwargs)
         brand = Brand.objects.get(slug=self.kwargs['slug'])
         context['title'] = brand.name
         context['brand'] = brand
         context['is_brand'] = True
+        session_key = f"ui_state:brand:{brand.slug}"
+        ui_state = self.request.session.get(session_key, {})
+        context['saved_ui_state'] = ui_state
         return context
     
     def render_to_response(self, context, **response_kwargs):
@@ -177,9 +195,6 @@ class FavouriteProducts(ListView):
     template_name = 'products/favourite_products.html'
     context_object_name = 'products'
     paginate_by = 2
-    extra_context = {
-        'title': 'Favourite products'
-    }
 
     def paginate_queryset(self, queryset, page_size):
         paginator = self.get_paginator(queryset, page_size,
@@ -196,21 +211,26 @@ class FavouriteProducts(ListView):
         return paginator, page, page.object_list, page.has_other_pages()
 
     def get_queryset(self):
-        sort_option = self.request.GET.get('sort', 'title')
         # fav_products = self.request.user.favourite_products.all()
         # product_ids = fav_products.values_list('product__pk', flat=True)
         # products = Product.objects.filter(pk__in=product_ids, is_active=True)
         redis_product_ids = get_user_favourites(self.request.user.id)
         product_ids = [int(pid) for pid in redis_product_ids]
         products = Product.objects.filter(pk__in=product_ids, is_active=True)
+        session_key = "ui_state:favourite_products"
+        ui_state = self.request.session.get(session_key, {})
+        sort_option = ui_state.get('sort', 'title')
         if sort_option:
             products = sort_with_option(sort_option, products)
         return products
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Favourite products'
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        session_key = "ui_state:favourite_products"
+        ui_state = self.request.session.get(session_key, {})
+        context['title'] = 'Favourite products'
+        context['saved_ui_state'] = ui_state
+        return context
 
 def filter_products(search_query):
     products = Product.objects.filter(is_active=True)
@@ -276,17 +296,22 @@ class CategoryDetailView(ListView):
 from django.db.models import F, ExpressionWrapper, DecimalField, Value
 from django.db.models.functions import Coalesce, Lower
 def sort_with_option(sort_option, items):
+    model = items.model
     if sort_option in ['price', '-price']:
-        items = items.annotate(
-            calculated_full_price=ExpressionWrapper(
-                F('price') * (Value(100) - Coalesce(F('discount'), Value(0))) / Value(100),
-                output_field=DecimalField(max_digits=10, decimal_places=2)
+        model_fields = [f.name for f in model._meta.get_fields()]
+        if 'price' in model_fields and 'discount' in model_fields:
+            items = items.annotate(
+                calculated_full_price=ExpressionWrapper(
+                    F('price') * (Value(100) - Coalesce(F('discount'), Value(0))) / Value(100),
+                    output_field=DecimalField(max_digits=10, decimal_places=2)
+                )
             )
-        )
-        if sort_option == 'price':
-            items = items.order_by('calculated_full_price')
+            if sort_option == 'price':
+                items = items.order_by('calculated_full_price')
+            else:
+                items = items.order_by('-calculated_full_price')
         else:
-            items = items.order_by('-calculated_full_price')
+            items = items.order_by(sort_option)
     elif sort_option == 'title':
         items = items.annotate(lower_title=Lower('title')).order_by('lower_title')
     elif sort_option == '-title':
@@ -454,17 +479,21 @@ class ProductDetailView(DetailView, FormMixin):
             .exclude(pk=self.object.pk)\
             .exclude(id__in=recommended_tag_related_products.values_list('id', flat=True))
         recommended_products = list(chain(recommended_tag_related_products, recommended_category_related_products))[:8]
-        filter_option = int(self.request.GET.get('rating', '0'))
+        # filter_option = int(self.request.GET.get('rating', '0'))
         product = self.get_object()
+        session_key = f"ui_state:product:{product.slug}"
+        ui_state = self.request.session.get(session_key, {})
+        rating = ui_state.get('rating')
         reviews = product.reviews.all()
-        if filter_option:
-            reviews = reviews.filter(grade=filter_option)
+        if rating:
+            reviews = reviews.filter(grade=rating)
         context['reviews'] = reviews
         context['title'] = self.object.title
         context['review_form'] = self.get_form()
         context['recommended_products'] = recommended_products
         context['small_images'] = self.object.images.all()[1:4]
         context['product_views'] = get_product_views(self.object.id)
+        context['ui_state'] = ui_state
         return context
     
     def post(self, request, *args, **kwargs):
@@ -638,19 +667,7 @@ def delete_action(user, verb, target=None):
     actions.delete()
 
 
-@csrf_exempt
-def save_sort(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        sort_value = data.get("sort")
-        slug = data.get("slug")
-        session_key = f"ui_state:subcategory:{slug}"
-        ui_state = request.session.get(session_key, {})
-        ui_state["sort"] = sort_value
-        request.session[session_key] = ui_state
-        request.session.modified = True
-        return JsonResponse({"status": "ok"})
-    return JsonResponse({"status": "error"}, status=400)
+
 
 
 @csrf_exempt
@@ -683,3 +700,54 @@ def reset_filters(request, category_slug, subcategory_slug):
         del request.session[session_key]
         request.session.modified = True
     return redirect('products:subcategory_detail', category_slug=category_slug, subcategory_slug=subcategory_slug)
+
+
+@csrf_exempt
+def save_sort(request, key):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        sort_value = data.get("sort")
+        slug = data.get("slug")
+        session_key = f"ui_state:{key}" + (f":{slug}" if slug else "")
+        print(session_key)
+        ui_state = request.session.get(session_key, {})
+        ui_state["sort"] = sort_value
+        request.session[session_key] = ui_state
+        request.session.modified = True
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
+@csrf_exempt
+def save_tab(request, key):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        slug = data.get("slug")
+        tab = data.get("tab")
+        session_key = f"ui_state:{key}" + (f":{slug}" if slug else "")
+        # session_key = f"ui_state:product:{slug}"
+        ui_state = request.session.get(session_key, {})
+        ui_state["tab"] = tab
+        request.session[session_key] = ui_state
+        request.session.modified = True
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
+
+
+@csrf_exempt
+def save_rating(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        slug = data.get("slug")
+        rating = data.get("rating")
+        session_key = f"ui_state:product:{slug}"
+        ui_state = request.session.get(session_key, {})
+        if rating is None:
+            ui_state.pop("rating", None)
+        else:
+            ui_state["rating"] = rating
+        request.session[session_key] = ui_state
+        request.session.modified = True
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "error"}, status=400)
+

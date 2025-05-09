@@ -1,5 +1,5 @@
 {% load products_tags %}
-  <div class="ui bottom attached {% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} tab segment" data-tab="info">
+  <div class="ui bottom attached {% if ui_state.tab == 'information' or not ui_state.tab %}active{% endif %} tab segment" data-tab="info">
     <div class="description-section">
       {% if product.summary %}
       <div class="ui medium centered header">Short description</div>
@@ -34,7 +34,7 @@
 
 
 
-    <div class="ui bottom attached {% if request.GET.tab == 'reviews' %}active{% endif %} tab segment" data-tab="reviews">
+    <div class="ui bottom attached {% if ui_state.tab == 'reviews' %}active{% endif %} tab segment" data-tab="reviews">
       <div class="ui grid">
         <div class="eight wide column">
           {% if not request.user == product.user %}
@@ -48,7 +48,7 @@
           <div class="ui form">
             <div class="field" style="margin-bottom: 0;">
               <label><strong>Filter by rating:</strong></label>
-              <select class="ui dropdown" id="ratingFilter">
+              <select class="ui dropdown" id="ratingFilter" data-url="{% url "products:save_rating" %}" data-slug="{{ product.slug }}" data-selected="{{ ui_state.rating|default_if_none:"" }}">
                 <option value="all">All Ratings</option>
                 <option value="5">★★★★★</option>
                 <option value="4">★★★★☆</option>

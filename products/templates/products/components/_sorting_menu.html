@@ -42,7 +42,24 @@
       {% with saved_ui_state.sort as selected_sort %}
       <div class="field" style="margin-bottom: 0;">
         <label><strong>Sort by:</strong></label>
-        <select name="sort" class="ui dropdown" id="sortSelector" {% if subcategory %}data-slug="{{ subcategory.slug }}"{% endif %} data-url="{% url "products:save_sort" %}">
+        <select name="sort" class="ui dropdown sort-selector" id="sortSelector" 
+        {% if subcategory %}
+        data-slug="{{ subcategory.slug }}" data-url="{% url "products:save_sort" 'subcategory' %}"
+        {% else %}
+        {% if brand %}
+        data-slug="{{ brand.slug }}" data-url="{% url "products:save_sort" 'brand' %}"
+        {% else %}
+        {% if is_search %}
+        data-url="{% url "products:save_sort" 'search_results' %}"
+        {% else %}
+        {% if is_profile %}
+        data-url="{% url "products:save_sort" 'profile' %}"
+        {% else %}
+        data-url="{% url "products:save_sort" 'favourite_products' %}"
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        {% endif %}>
           <option value="price" {% if selected_sort == "price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by ascending</option>
       <option value="-price" {% if selected_sort == "-price" %}selected{% endif %}>{% if is_category %}Average price{% else %}Price{% endif %}: by descending</option>
       <option value="title" {% if selected_sort == "title" or not selected_sort %}selected{% endif %}>Title: A-Z</option>

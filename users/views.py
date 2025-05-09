@@ -197,7 +197,10 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         two_weeks_ago = timezone.now() - timedelta(days=14)
         news = Product.objects.filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago)
 
-        sort_option = self.request.GET.get('sort', 'title')
+        session_key = "ui_state:profile"
+        ui_state = self.request.session.get(session_key, {})
+        sort_option = ui_state.get('sort', 'title')
+        context['saved_ui_state'] = ui_state
         # fav_products = user.favourite_products.all()
         # product_ids = fav_products.values_list('product__pk', flat=True)
         # products = Product.objects.filter(pk__in=product_ids, is_active=True)
@@ -216,6 +219,8 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
             paginated_products = paginator.page(paginator.num_pages)
 
         user_products = user.products.filter(is_active=True)
+        if sort_option:
+            user_products = sort_with_option(sort_option, user_products)
 
         product_ct = ContentType.objects.get_for_model(Product)
         other_actions = Action.objects.filter(

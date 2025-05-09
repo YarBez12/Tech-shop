@@ -4,7 +4,7 @@ from django import template
 from django.db.models import Sum
 from django.utils.http import urlencode
 from django.db.models import OuterRef, Subquery
-from products.models import FavouriteProduct
+from products.models import FavouriteProduct, Subcription
 from django.utils.safestring import mark_safe
 from django.db.models import Count
 
@@ -141,3 +141,7 @@ def display_tags(tags, query):
             'text': tag.name
         })
     return result
+
+@register.filter
+def is_subscribed(brand, user):
+    return Subcription.objects.filter(brand=brand, user=user).exists()

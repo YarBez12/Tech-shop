@@ -5,3 +5,6 @@
     <h2 class="ui centered massive header"><i class="red heart icon"></i> Favourite Products</h2>
 {% include "products/components/_favourite_list.html" %}
 {% endblock main %}
+{% block additional_script %}
+<script src = '{% static "js/sort.js" %}' ></script>
+{% endblock additional_script %}

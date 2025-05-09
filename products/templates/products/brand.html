@@ -5,11 +5,11 @@
 
   <div class="ui massive centered header">Brand: "{{ brand.name }}"
     <button id="subscribe-btn" 
-    class="ui primary button"
+    class="ui {% if brand|is_subscribed:user %}red{% else %}primary{% endif %} button"
     data-url="{% url 'products:subscribe_brand' %}" 
     data-brand-id="{{ brand.id }}"
-    data-action="{% if user in brand.subscribers.all %}unsubscribe{% else %}subscribe{% endif %}">
-    {% if user in brand.subscribers.all %}Unsubscribe{% else %}Subscribe{% endif %}
+    data-action="{% if brand|is_subscribed:user %}unsubscribe{% else %}subscribe{% endif %}">
+    {% if brand|is_subscribed:user %}Unsubscribe{% else %}Subscribe{% endif %}
       </button>
   </div>
   {% if products %}

@@ -1169,3 +1169,16 @@ footer .ui.inverted.link.list .item {
   margin-top: 2em !important;
 }
 
+.notification-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -3px;
+  font-size: 0.7rem;
+  padding: 0.3em 0.4em;
+  line-height: 1;
+  z-index: 10;
+}

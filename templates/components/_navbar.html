@@ -110,7 +110,9 @@
     <a class="item" href="{% url "users:login" %}"><i class="sign in icon"></i> Log in</a>
   {% endif %}
   <a class="item" href="{% url "carts:cart" %}"><i class="shopping cart icon"></i> Cart</a>
+  
           </div>
+
 
 
 
@@ -148,8 +150,9 @@
         <i class="shopping cart icon"></i>
       </a>
       {% if user.is_authenticated %}
-      <a href="{% url "users:profile" %}" class="item">
+      <a href="{% url "users:profile" %}" class="item notification-icon">
         <i class="user icon"></i>
+        <div class="ui red tiny circular label notification-badge">12</div>
       </a>
       <a href="{% url "users:logout" %}" class="item">
         <i class="sign out icon"></i> Log out 
@@ -205,8 +208,9 @@
 
 
 
-<div class="item mobile-toggle mobile-only">
+<div class="item mobile-toggle mobile-only notification-icon">
   <i class="bars icon" id="mobile-menu-toggle"></i>
+  <div class="ui red tiny circular label notification-badge">12</div>
 </div>
   </div>
 </nav>

@@ -12,24 +12,41 @@
   $('#ratingFilter').dropdown({
     onChange: function (value, text, $choice) {
       if (initializing) return;
-      const params = new URLSearchParams(window.location.search);
+      // const params = new URLSearchParams(window.location.search);
 
-      if (value === 'all') {
-        params.delete('rating');
-      } else {
-        params.set('rating', value);
-      }
+      // if (value === 'all') {
+      //   params.delete('rating');
+      // } else {
+      //   params.set('rating', value);
+      // }
 
-      window.location.search = params.toString();
+      // window.location.search = params.toString();
+      const url = this.dataset.url;
+      const productSlug = this.dataset.slug;
+      fetch(url, {
+        method: "POST",
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          rating: value === 'all' ? null : parseInt(value),
+          slug: productSlug
+        })
+      }).then(() => {
+        location.reload();
+      });
     }
   });
 
-  const currentRating = new URLSearchParams(window.location.search).get('rating');
-  if (currentRating) {
-    $('#ratingFilter').dropdown('set selected', currentRating);
-  } else {
-    $('#ratingFilter').dropdown('set selected', 'all');
-  }
+  // const currentRating = new URLSearchParams(window.location.search).get('rating');
+  const ratingFilter = document.getElementById('ratingFilter');
+  const currentRating = ratingFilter.dataset.selected;
+if (currentRating) {
+  $('#ratingFilter').dropdown('set selected', currentRating.toString());
+} else {
+  $('#ratingFilter').dropdown('set selected', 'all');
+}
   initializing = false;
 
     
@@ -130,3 +147,40 @@
         });
       });
   
+
+
+
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      document.querySelectorAll('[data-tab-name]').forEach(tab => {
+        tab.addEventListener('click', function (e) {
+          e.preventDefault();
+          const tabName = this.dataset.tabName;
+          const url = this.dataset.url;
+          const productSlug = this.dataset.slug;
+      
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": getCookie("csrftoken"),
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ tab: tabName, slug: productSlug })
+          }).then(() => {
+            location.reload();
+          });
+        });
+      });
