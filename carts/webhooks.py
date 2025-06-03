@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from users.models import Action
 from coupons.models import CouponUsage
+from products.recommender import Recommender
 
 
 @csrf_exempt
@@ -57,6 +58,11 @@ def stripe_webhook(request):
                     coupon.active = False
                 CouponUsage.objects.get_or_create(user=receiver.user, coupon=cart.coupon)
                 coupon.save()
+
+            products = [item.product for item in cart.ordered.all()]
+            r = Recommender()
+            r.products_bought(products)
+            
             send_receipt_email.delay(receiver.user.email, cart.id, receiver.id)
             create_action(receiver.user, 'purchased', product) 
         

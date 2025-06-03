@@ -24,6 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from decimal import Decimal
 from django.http import HttpResponseRedirect
+from .recommender import Recommender
 
 
 
@@ -470,6 +471,8 @@ class ProductDetailView(DetailView, FormMixin):
             zincrby_product_view(self.object.id)
             zincrby_category_view(self.object.category.id)
         context = super().get_context_data(**kwargs)
+        r = Recommender()
+        recommended_bought_products = r.suggest_products_for([self.object], 8)
         recommended_tag_related_products = Product.objects.exclude(pk=self.object.pk)\
             .filter(tags__in=self.object.tags.all(), is_active=True)\
             .annotate(same_tags=Count('tags', filter=Q(tags__in=self.object.tags.all())))\
@@ -478,7 +481,7 @@ class ProductDetailView(DetailView, FormMixin):
         recommended_category_related_products = Product.objects.filter(category=self.object.category, is_active=True)\
             .exclude(pk=self.object.pk)\
             .exclude(id__in=recommended_tag_related_products.values_list('id', flat=True))
-        recommended_products = list(chain(recommended_tag_related_products, recommended_category_related_products))[:8]
+        recommended_products = list(chain(recommended_bought_products, recommended_tag_related_products, recommended_category_related_products))[:8]
         # filter_option = int(self.request.GET.get('rating', '0'))
         product = self.get_object()
         session_key = f"ui_state:product:{product.slug}"

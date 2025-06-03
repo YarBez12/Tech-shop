@@ -75,6 +75,15 @@
       </div>
     </div>
 
+    {% if recommended_products %}
+    <div class="recommended-products">
+      <div class="ui large centered header">People who bought this also like</div>
+      {% with specific_products=recommended_products %}
+      {% include "products/components/_specific_products_list.html" with list_title="People who bought this also like" %}
+      {% endwith %}
+    </div>
+    {% endif %}
+
 
 
 
