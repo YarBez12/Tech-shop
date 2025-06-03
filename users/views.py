@@ -18,10 +18,11 @@ from django.views.generic.edit import FormMixin
 from products.forms import ProductForm
 from datetime import timedelta
 from django.utils import timezone
-from users.models import Action
+from users.models import Action, NotificationState
 from django.contrib.contenttypes.models import ContentType
 import redis
 from django.conf import settings
+from .tasks import send_email_task
 
 r = redis.Redis(host=settings.REDIS_HOST,
  port=settings.REDIS_PORT,
@@ -200,6 +201,14 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         session_key = "ui_state:profile"
         ui_state = self.request.session.get(session_key, {})
         sort_option = ui_state.get('sort', 'title')
+        state, _ = NotificationState.objects.get_or_create(user=user)
+        now = timezone.now()
+        tab = ui_state.get('tab')
+        if tab == 'news':
+            state.last_seen_news = now
+        elif tab == 'other_actions':
+            state.last_seen_actions = now
+        state.save() 
         context['saved_ui_state'] = ui_state
         # fav_products = user.favourite_products.all()
         # product_ids = fav_products.values_list('product__pk', flat=True)
@@ -336,14 +345,6 @@ class SendMainView(FormView):
         recipients = list(User.objects.all().values_list('email', flat=True))
         
         for recipient in recipients:
-            email = EmailMultiAlternatives(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [recipient]
-            )
-            if html_message:
-                email.attach_alternative(html_message, "text/html")
-            email.send()
+            send_email_task.delay(subject, message, html_message, recipient)
         return super().form_valid(form)
     

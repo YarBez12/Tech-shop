@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+
 class CustomUserManager(UserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
@@ -81,3 +82,12 @@ class Action(models.Model):
             models.Index(fields=['target_ct', 'target_id']),
         ]
         ordering = ['-created']
+
+
+class NotificationState(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_seen_news = models.DateTimeField(null=True, blank=True)
+    last_seen_actions = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Notification state for {self.user.email}"

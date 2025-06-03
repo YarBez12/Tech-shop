@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import DetailView
 from .models import Cart, Receiver, OrderedProduct
 from users.models import Address
@@ -18,8 +18,17 @@ from io import BytesIO
 from django.core.mail import EmailMultiAlternatives
 from users.models import Action
 from django.contrib.contenttypes.models import ContentType
+from .tasks import send_receipt_email
+from django.contrib.admin.views.decorators import staff_member_required
 
 
+
+@staff_member_required
+def admin_cart_detail(request, cart_id):
+    cart = get_object_or_404(Cart, id=cart_id)
+    return render(request,
+                'admin/carts/cart/detail.html',
+                {'cart': cart})
 
 class CartView(DetailView):
     model = Cart
@@ -171,6 +180,7 @@ class PaymentView(View):
 
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
+            customer_email=request.user.email,
             line_items=line_items,
             mode='payment',
             success_url=request.build_absolute_uri(reverse_lazy('carts:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}",
@@ -190,48 +200,27 @@ class PaymentView(View):
 
 
 def payment_success(request):
-    receiver, _ = Receiver.objects.get_or_create(user= request.user)
-    cart, _ = Cart.objects.get_or_create(receiver = receiver, is_completed = False)
-    cart.is_completed = True
-    cart.date_completed = timezone.now().date()
-    for ordered_product in cart.ordered.all():
-        product = ordered_product.product
-        product.quantity -= ordered_product.quantity
-        product.save()
-    cart.save()
+    # receiver, _ = Receiver.objects.get_or_create(user= request.user)
+    # cart, _ = Cart.objects.get_or_create(receiver = receiver, is_completed = False)
+    # cart.is_completed = True
+    # cart.date_completed = timezone.now().date()
+    # for ordered_product in cart.ordered.all():
+    #     product = ordered_product.product
+    #     if ordered_product.price_at_purchase is None:
+    #         ordered_product.price_at_purchase = product.full_price
+    #         ordered_product.save()
+    #     product.quantity -= ordered_product.quantity
+    #     product.save()
+    # cart.save()
     messages.success(request, 'Your payment was successful')
-    context = {
-        'order': cart,
-        'receiver': receiver   
-    }
-    
-    html_content = render_to_string('carts/email_receipt.html', context, request)
-    pdf_content = render_to_pdf('carts/pdf_receipt.html', context)
-    
-    subject = "Payment Successful - Your Order Receipt"
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [request.user.email]
-    
-    email = EmailMultiAlternatives(subject, html_content, from_email, recipient_list)
-    email.attach_alternative(html_content, "text/html")
-    if pdf_content:
-        email.attach('receipt.pdf', pdf_content, 'application/pdf')
-    
-    email.send() 
-    create_action(request.user, 'purchased', product) 
+    # send_receipt_email.delay(request.user.email, cart.id, receiver.id)
+    # create_action(request.user, 'purchased', product) 
     return redirect('main:index')
 
 def payment_cancel(request):
     return redirect('carts:payment')
 
 
-def render_to_pdf(template_src, context_dict={}):
-    template_string = render_to_string(template_src, context_dict)
-    result = BytesIO()
-    pdf = pisa.CreatePDF(BytesIO(template_string.encode("UTF-8")), dest=result)
-    if pdf.err:
-        return None
-    return result.getvalue()
 
 
 def create_action(user, verb, target=None):

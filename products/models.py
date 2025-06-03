@@ -164,7 +164,7 @@ class FavouriteProduct(models.Model):
         return self.product.title
     
 class Subcription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contacts')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subcriptions')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='subscribers')
     created = models.DateTimeField(auto_now_add=True)
 

@@ -4,6 +4,8 @@ from users.models import Address, User
 from products.models import Product
 import uuid
 from django.utils import timezone
+from decimal import Decimal
+from django.conf import settings
 
 class Receiver(models.Model):
     first_name = models.CharField(max_length=200)
@@ -37,6 +39,7 @@ class Cart(models.Model):
     is_completed = models.BooleanField(default=False)
     date_completed = models.DateField(null=True, blank=True)
     order_number = models.CharField(max_length=20, unique=True, blank=True)
+    stripe_id = models.CharField(max_length=250, blank=True)
 
 
 
@@ -51,7 +54,7 @@ class Cart(models.Model):
     def cart_total_price(self):
         order_products = self.ordered.all()
         total_price = sum([product.total_price for product in order_products])
-        return total_price
+        return round(total_price, 2)
 
     @property
     def cart_total_quantity(self):
@@ -63,16 +66,28 @@ class Cart(models.Model):
         if self.receiver:
             return self.receiver.first_name
         return str(self.session_key)
+    
+    def get_stripe_url(self):
+        if not self.stripe_id:
+            return ''
+        if '_test_' in settings.STRIPE_SECRET_KEY:
+            path = '/test/'
+        else:
+            path = '/'
+        return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
 
 class OrderedProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='ordered')
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, related_name='ordered')
     quantity = models.IntegerField(default=0, blank=True, null=True)
     added_at = models.DateTimeField(auto_now_add=True)
+    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return self.product.title
     
     @property
     def total_price(self):
-        return self.product.price * self.quantity
+        if self.price_at_purchase is not None:
+            return round(self.price_at_purchase * Decimal(self.quantity), 2)
+        return round(Decimal(self.product.full_price) * Decimal(self.quantity),2)

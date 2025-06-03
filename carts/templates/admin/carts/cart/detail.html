@@ -1,0 +1,87 @@
+{% extends "admin/base_site.html" %}
+{% block title %}
+ Cart {{ cart.id }} {{ block.super }}
+{% endblock %}
+{% block breadcrumbs %}
+ <div class="breadcrumbs">
+    <a href="{% url "admin:index" %}">Home</a> &rsaquo;
+ <a href="{% url "admin:carts_cart_changelist" %}">Carts</a>
+ &rsaquo;
+ <a href="{% url "admin:carts_cart_change" cart.id %}">Cart {{ cart.id }}</a>
+ &rsaquo; Detail
+ </div>
+{% endblock %}
+{% block content %}
+<div class="module">
+ <h1>Cart {{ cart.id }}</h1>
+ <ul class="object-tools">
+ <li>
+ <a href="#" onclick="window.print();">
+ Print cart
+ </a>
+ </li>
+ </ul>
+ <table>
+ <tr>
+ <th>Created</th>
+ <td>{{ cart.created_at }}</td>
+ </tr>
+ <tr>
+ <th>Receiver</th>
+ <td>{{ cart.receiver }}</td>
+ </tr>
+ <tr>
+ <th>E-mail</th>
+ <td><a href="mailto:{{ cart.receiver.email }}">{{ cart.receiver.email }}</a></td>
+ </tr>
+ <tr>
+ <th>Address</th>
+ <td>
+ {{ cart.receiver.address }},
+ {{ cart.receiver.address.postal_code }} {{ cart.receiver.address.city }}
+ </td>
+ </tr>
+ <tr>
+ <th>Total amount</th>
+ <td>${{ cart.cart_total_price }}</td>
+ </tr>
+ <tr>
+    <th>Stripe payment</th>
+ <td>
+ {% if cart.stripe_id %}
+ <a href="{{ cart.get_stripe_url }}" target="_blank">
+ {{ cart.stripe_id }}
+ </a>
+ {% endif %}
+ </td>
+ </tr>
+</table>
+</div>
+<div class="module">
+ <h2>Items bought</h2>
+ <table style="width:100%">
+ <thead>
+ <tr>
+ <th>Product</th>
+ <th>Price</th>
+ <th>Quantity</th>
+ <th>Total</th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for item in cart.ordered.all %}
+ <tr class="row{% cycle "1" "2" %}">
+ <td>{{ item.product.title }}</td>
+ <td class="num">$ {% if item.price_at_purchase %}{{item.price_at_purchase}}{% else %}{{item.product.price}}{% endif %} {{ item.price }}</td>
+ <td class="num">{{ item.quantity }}</td>
+ <td class="num">${{ item.total_price }}</td>
+ </tr>
+ {% endfor %}
+ <tr class="total">
+ <td colspan="3">Total</td>
+ <td class="num">${{ cart.cart_total_price }}</td>
+ </tr>
+ </tbody>
+ </table>
+</div>
+{% endblock %}

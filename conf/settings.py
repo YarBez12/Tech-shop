@@ -79,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.notification_counts'
             ],
         },
     },
@@ -186,3 +187,5 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+STRIPE_WEBHOOK_SECRET = 'whsec_b248af81d6c338c874032e158d0faad47f99feb7b82c762007436eae67eb6465'

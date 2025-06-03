@@ -54,7 +54,7 @@
 
 
 
-      <div class="ui top attached tabular menu">
+      <div class="ui top attached stackable tabular menu">
         {% if products %}
         <a href="#" class="{% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
         {% endif %}
@@ -66,10 +66,20 @@
         {% endif %}
         <a href="#" class="{% if saved_ui_state.tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
         {% if other_actions %}
-        <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">Other actions</a>
+        <div class="notification-icon">
+          <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">Other actions</a>
+          {% if unread_actions_count %}
+          <div class="ui red tiny circular label notification-badge">{{ unread_actions_count }}</div>
+          {% endif %}
+        </div>
         {% endif %}
         {% if news %}
-        <a href="#" class="{% if saved_ui_state.tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
+        <div class="notification-icon">
+          <a href="#" class="{% if saved_ui_state.tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
+          {% if unread_news_count %}
+          <div class="ui red tiny circular label notification-badge">{{ unread_news_count }}</div>
+          {% endif %}
+        </div>
         {% endif %}
       </div>
 
@@ -117,7 +127,7 @@
       {% for ordered_product in order.ordered.all %}
           {% if ordered_product.quantity > 0 %}
           <div class="item">
-            <strong>{{ ordered_product.product.title }}</strong> — ${{ ordered_product.product.full_price }} × {{ ordered_product.quantity }} = <strong>${{ ordered_product.total_price }}</strong>
+            <strong>{{ ordered_product.product.title }}</strong> — ${{ ordered_product.price_at_purchase }} × {{ ordered_product.quantity }} = <strong>${{ ordered_product.total_price }}</strong>
           </div>
           {% endif %}
           {% endfor %}
