@@ -35,6 +35,7 @@ urlpatterns = [
     path('sitemap.xml/', sitemap, {'sitemaps': sitemaps}, name = 'django.contrib.sitemaps.views.sitemap'),
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('coupons/', include('coupons.urls', namespace='coupons')),
     path('', include('main.urls', namespace='main')),
     path('user/', include('users.urls', namespace='users')),
     path('products/', include('products.urls', namespace='products')),

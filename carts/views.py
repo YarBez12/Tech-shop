@@ -20,6 +20,7 @@ from users.models import Action
 from django.contrib.contenttypes.models import ContentType
 from .tasks import send_receipt_email
 from django.contrib.admin.views.decorators import staff_member_required
+from coupons.forms import CouponApplyForm
 
 
 
@@ -34,19 +35,17 @@ class CartView(DetailView):
     model = Cart
     context_object_name = 'cart'
     template_name = 'carts/cart.html'
-    extra_context = {
-        'title': 'Cart'
-    }
     
     def get_object(self, queryset = ...):
         if self.request.user.is_authenticated:
             receiver, _ = Receiver.objects.get_or_create(user= self.request.user)
-            cart = (Cart.objects.get_or_create(receiver = receiver, is_completed = False))[0]
+            cart = Cart.objects.get_or_create_with_session(self.request, receiver = receiver, is_completed = False)
         else:
             if not self.request.session.session_key:
                 self.request.session.create()
             session_key = self.request.session.session_key
-            cart = (Cart.objects.get_or_create(session_key = session_key, is_completed = False))[0]
+            cart = Cart.objects.get_or_create_with_session(self.request, session_key = session_key, is_completed = False)
+        # print(cart.coupon_id)
         return cart
     
     def get_context_data(self, **kwargs):
@@ -59,6 +58,8 @@ class CartView(DetailView):
                 break
         context['title'] = 'Cart'
         context['disable_payment'] = disable_payment
+        coupon_apply_form = CouponApplyForm()
+        context['coupon_apply_form'] = coupon_apply_form
         return context
     
     
@@ -84,12 +85,12 @@ def get_ordered_product(request, product_slug):
     product = Product.objects.get(slug=product_slug)
     if request.user.is_authenticated:
         receiver, _ = Receiver.objects.get_or_create(user= request.user)
-        cart = (Cart.objects.get_or_create(receiver = receiver, is_completed = False))[0]
+        cart = Cart.objects.get_or_create_with_session(request, receiver = receiver, is_completed = False)
     else:
         if not request.session.session_key:
             request.session.create()
         session_key = request.session.session_key
-        cart = (Cart.objects.get_or_create(session_key = session_key, is_completed = False))[0]
+        cart = Cart.objects.get_or_create_with_session(request, session_key = session_key, is_completed = False)
     ordered_product, _ = OrderedProduct.objects.get_or_create(product=product, cart=cart)
     return ordered_product
 
@@ -159,7 +160,7 @@ class PaymentView(View):
     def get(self, request, *args, **kwargs):
 
         receiver, _ = Receiver.objects.get_or_create(user= self.request.user)
-        cart, _ = Cart.objects.get_or_create(receiver = receiver, is_completed = False)
+        cart = Cart.objects.get_or_create_with_session(request, receiver = receiver, is_completed = False)
 
         line_items = []
         order_description_parts = []
@@ -172,23 +173,36 @@ class PaymentView(View):
                         'product_data': {
                             'name': ordered_product.product.title,
                         },
-                        'unit_amount': int(ordered_product.product.price * 100),
+                        'unit_amount': int(ordered_product.product.full_price * 100),
                     },
                     'quantity': ordered_product.quantity,
                 })
                 order_description_parts.append(f"{ordered_product.product.title} x {ordered_product.quantity}")
+        if cart.coupon:
+            stripe_coupon = stripe.Coupon.create(name=cart.coupon.code, percent_off=cart.discount, duration='once')
 
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            customer_email=request.user.email,
-            line_items=line_items,
-            mode='payment',
-            success_url=request.build_absolute_uri(reverse_lazy('carts:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=request.build_absolute_uri(reverse_lazy('carts:payment_cancel')),
-            metadata={
+        
+        session_data = {
+            'payment_method_types': ['card'],
+            'customer_email': request.user.email,
+            'line_items': line_items,
+            'mode': 'payment',
+            'success_url': request.build_absolute_uri(reverse_lazy('carts:payment_success')) + "?session_id={CHECKOUT_SESSION_ID}",
+            'cancel_url': request.build_absolute_uri(reverse_lazy('carts:payment_cancel')),
+            'metadata': {
                 'order_description': ", ".join(order_description_parts)
             }
-        )
+        }
+
+        if cart.coupon:
+            stripe_coupon = stripe.Coupon.create(name=cart.coupon.code, percent_off=cart.discount, duration='once'
+            )
+            session_data['discounts'] = [{'coupon': stripe_coupon.id}]
+
+        session = stripe.checkout.Session.create(**session_data)
+
+
+
         
         return redirect(session.url)
     
@@ -212,6 +226,8 @@ def payment_success(request):
     #     product.quantity -= ordered_product.quantity
     #     product.save()
     # cart.save()
+    if 'coupon_id' in request.session:
+        del request.session['coupon_id']
     messages.success(request, 'Your payment was successful')
     # send_receipt_email.delay(request.user.email, cart.id, receiver.id)
     # create_action(request.user, 'purchased', product) 

@@ -120,7 +120,7 @@
   <div class="title">
     <i class="dropdown icon"></i>
     <strong>Order #{{ order.order_number }}</strong> — <span>📅 {{ order.date_completed|date:"d.m.Y" }}</span> — 
-    <span><strong>Total:</strong> ${{ order.cart_total_price }}</span>
+    <span><strong>Total:</strong> ${{ order.cart_total_price_after_discount }}</span>
   </div>
   <div class="content">
     <div class="ui bulleted list">
@@ -132,6 +132,18 @@
           {% endif %}
           {% endfor %}
     </div>
+    {% if order.discount %}
+    <div class="ui blue message" style="margin-top: 1em;">
+      <div class="header">
+        {% if order.coupon %} Coupon Applied: <strong>{{ order.coupon.code }}</strong>{% endif %}
+      </div>
+      <p>Discount: <strong>{{ order.discount }}%</strong></p>
+      <p>You saved: <strong>${{ order.cart_discount|floatformat:2 }}</strong></p>
+    </div>
+  {% endif %}
+  
+  <div class="ui divider"></div>
+  <div><strong>Total after discount:</strong> ${{ order.cart_total_price_after_discount }}</div>
   </div>
   {% endfor %}
 </div>

@@ -8,7 +8,7 @@
   <div class="order-info">
     <h2>Order #{{ order.order_number|default:"" }}</h2>
     <p>Date: {{ order.date_completed|date:"d.m.Y" }}</p>
-    <p>Total Price: {{ order.cart_total_price }} $</p>
+    <p>Total Price: {{ order.cart_total_price_after_discount }} $</p>
     <p>Thank you for your purchase!</p>
   </div>
   
@@ -43,6 +43,15 @@
       {% endfor %}
     </tbody>
   </table>
+  <p><strong>Final Price:</strong> {{ order.cart_total_price }} $</p>
+
+  {% if order.discount %}
+    <div class="coupon-info" style="margin-top: 10px; padding: 10px; background-color: #f0f8ff; border: 1px solid #b5d6f6; border-radius: 6px;">
+      {% if order.coupon %} <p><strong>Coupon applied:</strong> {{ order.coupon.code }}</p>{% endif %}
+      <p><strong>Discount:</strong> {{ order.discount }}%</p>
+      <p><strong>Final Price after discount:</strong> {{ order.cart_total_price_after_discount }} $</p>
+    </div>
+  {% endif %}
   
   <div class="footer">
     <p>Your order will be processed shortly.</p>

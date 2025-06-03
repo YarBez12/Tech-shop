@@ -7,6 +7,7 @@ from .tasks import send_receipt_email
 from django.utils import timezone
 from django.contrib.contenttypes.models import ContentType
 from users.models import Action
+from coupons.models import CouponUsage
 
 
 @csrf_exempt
@@ -48,6 +49,14 @@ def stripe_webhook(request):
                 product.save()
             cart.stripe_id = session.payment_intent
             cart.save()
+            if cart.coupon:
+                print('uuuuuuuuuuuuu')
+                coupon = cart.coupon
+                coupon.used_count += 1
+                if coupon.used_count >= coupon.usage_limit:
+                    coupon.active = False
+                CouponUsage.objects.get_or_create(user=receiver.user, coupon=cart.coupon)
+                coupon.save()
             send_receipt_email.delay(receiver.user.email, cart.id, receiver.id)
             create_action(receiver.user, 'purchased', product) 
         

@@ -6,6 +6,8 @@ import uuid
 from django.utils import timezone
 from decimal import Decimal
 from django.conf import settings
+from coupons.models import Coupon
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Receiver(models.Model):
     first_name = models.CharField(max_length=200)
@@ -31,6 +33,35 @@ class Receiver(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+
+class CartManager(models.Manager):
+    def create_with_session(self, request, **kwargs):
+        coupon_id = request.session.get('coupon_id')
+        if coupon_id:
+            try:
+                coupon = Coupon.objects.get(id=coupon_id)
+                kwargs['coupon'] = coupon
+                kwargs['discount'] = coupon.discount
+            except Coupon.DoesNotExist:
+                pass 
+        return self.create(**kwargs)
+    
+    def get_or_create_with_session(self, request, **kwargs):
+        cart, created = self.get_or_create(**kwargs)
+        session_coupon_id = request.session.get('coupon_id')
+        if created:
+            cart.session_key = request.session.session_key
+        if session_coupon_id:
+            try:
+                coupon = Coupon.objects.get(id=session_coupon_id)
+                if cart.coupon != coupon:
+                    cart.coupon = coupon
+                    cart.discount = coupon.discount
+                    cart.save()
+            except Coupon.DoesNotExist:
+                pass
+        return cart
 
 class Cart(models.Model):
     receiver = models.ForeignKey(Receiver, on_delete=models.SET_NULL, blank=True, null=True, related_name='carts')
@@ -40,6 +71,12 @@ class Cart(models.Model):
     date_completed = models.DateField(null=True, blank=True)
     order_number = models.CharField(max_length=20, unique=True, blank=True)
     stripe_id = models.CharField(max_length=250, blank=True)
+    # coupon_id = models.CharField(max_length=50, blank=True, null=True)
+
+    coupon = models.ForeignKey(Coupon, related_name='orders', null=True, blank=True, on_delete=models.SET_NULL)
+    discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
+
+    objects = CartManager()
 
 
 
@@ -75,6 +112,25 @@ class Cart(models.Model):
         else:
             path = '/'
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
+    
+    # @property
+    # def coupon(self):
+    #     if self.coupon_id:
+    #         try:
+    #             return Coupon.objects.get(id=self.coupon_id)
+    #         except Coupon.DoesNotExist:
+    #             pass
+    #     return None
+    
+    @property
+    def cart_discount(self):
+        if self.discount:
+            return (self.discount / Decimal(100)) * self.cart_total_price
+        return Decimal(0)
+    
+    @property
+    def cart_total_price_after_discount(self):
+        return self.cart_total_price - self.cart_discount
 
 class OrderedProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='ordered')

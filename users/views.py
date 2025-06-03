@@ -191,7 +191,7 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
         receiver, _ = Receiver.objects.get_or_create(user= user)
-        cart, _ = Cart.objects.get_or_create(receiver = receiver, is_completed = False)
+        cart = Cart.objects.get_or_create_with_session(self.request, receiver = receiver, is_completed = False)
         completed_orders = Cart.objects.filter(receiver = receiver, is_completed = True).order_by('-date_completed')
 
         brand_ids = Subcription.objects.filter(user=user).values_list('brand_id', flat=True)

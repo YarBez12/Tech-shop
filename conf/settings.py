@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'carts',
     'taggit',
+    'coupons',
     'django.contrib.sitemaps',
     'social_django',
     'debug_toolbar',

@@ -39,6 +39,38 @@
         <h3 class="ui header">Final information</h3>
         <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
         <p>Total price: <strong>${{ cart.cart_total_price }}</strong></p>
+
+        {% if request.user.is_authenticated %}
+        <form class="ui form" method="post" action="{% url 'coupons:apply' %}">
+          {% csrf_token %}
+          <div class="field">
+            <label>Apply a coupon</label>
+            <div class="ui action input">
+              {{ coupon_apply_form.code }}
+              <button type="submit" class="ui teal button">Apply</button>
+            </div>
+          </div>
+        </form>
+        {% endif %}
+
+        {% if cart.coupon %}
+        <div class="ui teal message">
+          <div class="header">
+            Coupon applied: <strong>{{cart.coupon.code}}</strong>
+          </div>
+          <p>You saved <strong>{{cart.coupon.discount}}%</strong> on your order!</p>
+          <p>Discount amount: <strong>${{cart.cart_discount}}</strong></p>
+        </div>
+      
+        <div class="ui large yellow segment">
+          <h4 class="ui header">Final price after discount</h4>
+          <p class="ui big green text">
+            <strong>${{cart.cart_total_price_after_discount}}</strong>
+          </p>
+        </div>
+        {% endif %}
+
+
         <a href="{% if disable_payment %}#{% else %}{% url "carts:checkout" %}{% endif %}" class="ui primary button">Checkout</a>
       </div>
     </div>

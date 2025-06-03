@@ -77,9 +77,28 @@
  <td class="num">${{ item.total_price }}</td>
  </tr>
  {% endfor %}
+
+ {% if cart.discount %}
+ <tr class="subtotal">
+ <td colspan="3">Subtotal</td>
+ <td class="num">
+ ${{ cart.cart_total_price|floatformat:2 }}
+ </td>
+ </tr>
+ <tr>
+ <td colspan="3">
+ "{{ cart.coupon.code }}" coupon
+ ({{ cart.discount }}% off)
+ </td>
+ <td class="num neg">
+ – ${{ cart.cart_discount|floatformat:2 }}
+ </td>
+ </tr>
+ {% endif %}
+
  <tr class="total">
  <td colspan="3">Total</td>
- <td class="num">${{ cart.cart_total_price }}</td>
+ <td class="num">${{ cart.cart_total_price_after_discount }}</td>
  </tr>
  </tbody>
  </table>
