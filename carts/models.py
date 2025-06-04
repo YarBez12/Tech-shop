@@ -15,8 +15,8 @@ class Receiver(models.Model):
     last_name = models.CharField(_('last_name'),max_length=200)
     phone = PhoneNumberField(_('phone'),blank=True, null=True)
     email = models.EmailField(_('email'),)
-    user = models.OneToOneField(_('user'),User, on_delete=models.SET_NULL, null=True, blank=True, related_name='receiver')
-    address = models.ForeignKey(_('address'),Address, on_delete=models.SET_NULL, null=True)
+    user = models.OneToOneField(User, verbose_name=_('user'), on_delete=models.SET_NULL, null=True, blank=True, related_name='receiver')
+    address = models.ForeignKey(Address, verbose_name=_('address'), on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
         if self.user:

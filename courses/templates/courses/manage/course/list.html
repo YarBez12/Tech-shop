@@ -1,0 +1,85 @@
+
+{% extends "base_main.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+<div class="ui container" style="padding: 2em 0;">
+  <div class="ui huge header" style="margin-bottom: 2em; text-align: center;">
+    <i class="graduation cap icon"></i>
+    <div class="content">
+      {{ title }}
+      <div class="sub header">Manage and organize your educational content</div>
+    </div>
+  </div>
+
+  <div class="category-grid" style="margin-bottom: 3em;">
+    {% for course in object_list %}
+    <div class="ui card subcategory">
+      <div class="content">
+        <div class="header">{{ course.title }}</div>
+        <div class="meta">
+          <span class="date">Created {{ course.created|timesince }} ago</span>
+        </div>
+        <div class="description">
+            {{ course.overview }}
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui grid">
+            <div class="two column row">
+              <div class="column">
+                <a href="{% url 'courses:course_edit' course.id %}" class="ui basic blue button fluid">
+                  <i class="edit icon"></i>
+                  Edit
+                </a>
+              </div>
+              <div class="column">
+                <a href="{% url 'courses:course_delete' course.id %}" class="ui basic red button fluid">
+                  <i class="trash icon"></i>
+                  Delete
+                </a>
+              </div>
+            </div>
+            <div class="two column row">
+              <div class="column">
+                <a href="{% url 'courses:course' course.id %}" class="ui basic green button fluid">
+                  <i class="cogs icon"></i>
+                  Edit modules
+                </a>
+              </div>
+              {% if course.modules.count > 0 %}
+              <div class="column">
+                <a href="{% url 'courses:module_content_list' course.modules.first.id %}" class="ui basic purple button fluid">
+                  <i class="cogs icon"></i>
+                  Manage contents
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+      </div>
+    </div>
+    {% empty %}
+
+    <div class="ui card subcategory" style="border: 2px dashed #ddd; text-align: center; opacity: 0.7;">
+      <div class="content" style="padding: 3em;">
+        <div class="ui icon header">
+          <i class="plus circle outline icon" style="color: #ccc;"></i>
+          <div class="content" style="color: #999;">
+            No courses yet
+            <div class="sub header">You haven't created any courses yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="ui center aligned container">
+    <a href="{% url "courses:course_create" %}" class="ui large primary button">
+      <i class="plus icon"></i>
+      Create New Course
+    </a>
+  </div>
+
+</div>
+{% endblock %}

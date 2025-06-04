@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {% if object %}
+    Edit content "{{ object.title }}"
+  {% else %}
+    Add new content
+  {% endif %}
+{% endblock %}
+
+{% block main %}
+<div class="ui container" style="padding: 2em 0;">
+  <h1 class="ui dividing header">
+    {% if object %}
+      <i class="edit outline icon"></i>
+      <div class="content">
+        Edit content "{{ object.title }}"
+        <div class="sub header">Update your course content details</div>
+      </div>
+    {% else %}
+      <i class="plus circle icon"></i>
+      <div class="content">
+        Add new content
+        <div class="sub header">Create new content for your course</div>
+      </div>
+    {% endif %}
+  </h1>
+
+  <div class="ui segment">
+    <h2 class="ui header">
+      <i class="info circle icon"></i>
+      <div class="content">Course info</div>
+    </h2>
+
+    <form action="" method="post" enctype="multipart/form-data" class="ui form">
+      {% csrf_token %}
+      
+      {% for field in form %}
+        <div class="field{% if field.errors %} error{% endif %}">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.help_text %}
+            <div class="ui small grey text">{{ field.help_text }}</div>
+          {% endif %}
+          {% for error in field.errors %}
+            <div class="ui pointing red basic label">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+      
+      <button type="submit" class="ui primary button">
+        <i class="save icon"></i>
+        Save content
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Edit "{{ course.title }}"{% endblock %}
+
+{% block main %}
+<div class="ui container" style="padding: 2em 0;">
+  <h1 class="ui dividing header">
+    <i class="settings icon"></i>
+    <div class="content">
+      Edit "{{ course.title }}"
+      <div class="sub header">Customize modules for your course</div>
+    </div>
+  </h1>
+
+  <div class="ui segment">
+    <h2 class="ui header">
+      <i class="list layout icon"></i>
+      <div class="content">
+        Course Modules
+        <div class="sub header">Add, remove or update the modules</div>
+      </div>
+    </h2>
+
+    <form method="post" class="ui form">
+      {% csrf_token %}
+      {{ formset.management_form }}
+
+      {% for form in formset %}
+        <div class="ui segment">
+          {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+
+          {% for field in form.visible_fields %}
+            <div class="field{% if field.errors %} error{% endif %}">
+              {{ field.label_tag }}
+              {{ field }}
+              {% if field.help_text %}
+                <div class="ui small gray text">{{ field.help_text }}</div>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="ui pointing red basic label">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="ui primary button">
+        <i class="save icon"></i>
+        Save Modules
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

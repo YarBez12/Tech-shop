@@ -36,6 +36,7 @@ urlpatterns = [
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('coupons/', include('coupons.urls', namespace='coupons')),
+    path('course/', include('courses.urls', namespace='courses')),
     path('', include('main.urls', namespace='main')),
     path('user/', include('users.urls', namespace='users')),
     path('products/', include('products.urls', namespace='products')),

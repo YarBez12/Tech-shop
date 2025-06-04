@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block main %}
+ {% comment %} <h1>Delete course "{{ object.title }}"</h1>
+ <div class="module">
+ <form action="" method="post">
+ {% csrf_token %}
+ <p>Are you sure you want to delete "{{ object }}"?</p>
+ <input type="submit" value="Confirm">
+ </form>
+ </div> {% endcomment %}
+
+ <div class="delete-box">
+    <h2 class="ui center aligned icon header">
+      <i class="trash alternate icon red"></i>
+      <div class="content">
+        Delete Course
+        <div class="sub header">Are you sure you want to permanently delete course "{{object}}"?</div>
+      </div>
+    </h2>
+    <div class="ui divider"></div>
+
+
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="ui two buttons">
+        <button class="ui red button" type="submit"><i class="trash icon"></i>
+      Delete
+    </button>
+    <a href="{% url "courses:manage_course_list" %}" class="ui basic grey button">
+      <i class="arrow left icon"></i>
+      Cancel
+    </a>
+  </div>
+    </form>
+</div>
+{% endblock %}

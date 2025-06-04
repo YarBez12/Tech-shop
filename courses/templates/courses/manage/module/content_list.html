@@ -1,0 +1,107 @@
+{% extends "base_main.html" %}
+{% load course %}
+{% load static %}
+
+{% block title %}
+  Module {{ module.order|add:1 }}: {{ module.title }}
+{% endblock %}
+
+{% block main %}
+{% with course=module.course %}
+<div id="module-list" data-url="{% url 'courses:module_order' %}"></div>
+<div id="content-list" data-url="{% url 'courses:content_order' %}"></div>
+<div class="ui container" style="padding: 3em 0;">
+
+  <h1 class="ui center aligned header">
+    <i class="book icon"></i>
+    <div class="content">
+      Course: "{{ course.title }}"
+      <div class="sub header">Module {{ module.order|add:1 }}: {{ module.title }}</div>
+    </div>
+  </h1>
+
+  <div class="ui stackable grid" style="margin-top: 3em;">
+    <div class="four wide column">
+      <div class="ui segment">
+        <h4 class="ui dividing header">Modules</h4>
+        <div class="ui relaxed divided list" id="modules">
+          {% for m in course.modules.all %}
+          <div class="item {% if m == module %}active{% endif %}" data-id="{{ m.id }}">
+            <div class="content">
+              <a href="{% url 'courses:module_content_list' m.id %}">
+                <div class="header">Module {{ m.order|add:1 }}: {{ m.title }}</div>
+              </a>
+            </div>
+          </div>
+          {% empty %}
+            <div class="item">No modules yet.</div>
+          {% endfor %}
+        </div>
+        <a href="{% url 'courses:course' course.id %}" class="ui fluid primary button" style="margin-top: 1em;">
+          <i class="edit icon"></i> Edit modules
+        </a>
+      </div>
+    </div>
+
+    <div class="twelve wide column">
+      <div class="ui raised very padded segment">
+        <h3 class="ui dividing header">Contents of "{{ module.title }}"</h3>
+
+        {% if module.contents.all %}
+        <div class="ui divided items" id="module-contents">
+          {% for content in module.contents.all %}
+          {% with item=content.item %}
+          <div class="item" data-id="{{ content.id }}">
+            <div class="content">
+              <div class="header">{{ item }}</div>
+              <div class="meta">{{ item|model_name }}</div>
+              <div class="extra">
+                <a href="{% url 'courses:module_content_update' module.id item|model_name item.id %}" class="ui blue small button">
+                  <i class="edit icon"></i> Edit
+                </a>
+                <form action="{% url 'courses:module_content_delete' content.id %}" method="post" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="ui red small button">
+                    <i class="trash icon"></i> Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+          {% endfor %}
+        </div>
+        {% else %}
+          <div class="ui message">
+            <div class="header">No content yet</div>
+            <p>You can add new content using the buttons below.</p>
+          </div>
+        {% endif %}
+
+        <h4 class="ui dividing header" style="margin-top: 2em;">Add new content</h4>
+        <div class="ui four item menu">
+          <a class="item" href="{% url 'courses:module_content_create' module.id 'text' %}">
+            <i class="file alternate outline icon"></i> Text
+          </a>
+          <a class="item" href="{% url 'courses:module_content_create' module.id 'image' %}">
+            <i class="image icon"></i> Image
+          </a>
+          <a class="item" href="{% url 'courses:module_content_create' module.id 'video' %}">
+            <i class="video icon"></i> Video
+          </a>
+          <a class="item" href="{% url 'courses:module_content_create' module.id 'file' %}">
+            <i class="file icon"></i> File
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endwith %}
+{% endblock %}
+{% block additional_script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5sortable/0.13.3/html5sortable.min.js"></script>
+<script src="{% static "js/content_list.js" %}"></script>
+{% endblock additional_script %}
+
