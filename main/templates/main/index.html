@@ -1,39 +1,29 @@
 {% extends "base_main.html" %} {% block main %}
 {% load products_tags %}
+{% load i18n %}
 {% load static %}
 
 
 
 
 <div class="shop-description">
-  <div class="ui massive centered header">About Our Shop</div>
+  <div class="ui massive centered header">{% trans "About Our Shop" %}</div>
   <p>
-    Welcome to Tech Shop - your trusted online store for electronics and
-    gadgets.
-    At Tech Shop, we offer a vast selection of products, including the latest
-    smartphones, laptops, tablets, PC components, home appliances, and more. Our
-    commitment is to provide customers with high-quality products at competitive
-    prices, along with fast and reliable delivery. We partner with leading
-    brands such as Apple, Samsung, HP, Dell, Lenovo, Asus, and many others.
+    {% blocktrans trimmed %}
+    Welcome to Tech Shop - your trusted online store for electronics and gadgets. At Tech Shop, we offer a vast selection of products, including the latest smartphones, laptops, tablets, PC components, home appliances, and more. Our commitment is to provide customers with high-quality products at competitive prices, along with fast and reliable delivery. We partner with leading brands such as Apple, Samsung, HP, Dell, Lenovo, Asus, and many others.
+    {% endblocktrans %}
   </p>
   <p>
-    Shopping with us means enjoying a seamless and secure experience. We offer
-    24/7 customer support, multiple payment options, and a hassle-free return
-    policy. Whether you're looking for cutting-edge technology or everyday
-    essentials, we have something for everyone.
-    Our online store is designed for convenience, allowing you to browse,
-    compare, and purchase products with ease. We provide detailed descriptions,
-    customer reviews, and expert recommendations to help you make informed
-    decisions.
-    Stay ahead with the latest technology trends by exploring our collection. We
-    frequently update our inventory to ensure you have access to the newest
-    innovations in the market. Sign up for our newsletter to receive exclusive
-    deals, discounts, and tech news.
+    {% blocktrans trimmed %}
+    Shopping with us means enjoying a seamless and secure experience. We offer 24/7 customer support, multiple payment options, and a hassle-free return policy. Whether you're looking for cutting-edge technology or everyday essentials, we have something for everyone. Our online store is designed for convenience, allowing you to browse, compare, and purchase products with ease. We provide detailed descriptions, customer reviews, and expert recommendations to help you make informed decisions. Stay ahead with the latest technology trends by exploring our collection. We frequently update our inventory to ensure you have access to the newest innovations in the market. Sign up for our newsletter to receive exclusive deals, discounts, and tech news.
+    {% endblocktrans %}
   </p>
   <p>
-    Thank you for choosing Tech Shop. We are dedicated to bringing you the best
-    technology shopping experience.
+    {% blocktrans trimmed %}
+    Thank you for choosing Tech Shop. We are dedicated to bringing you the best technology shopping experience.
+    {% endblocktrans %}
   </p>
+  
 </div>
 
 

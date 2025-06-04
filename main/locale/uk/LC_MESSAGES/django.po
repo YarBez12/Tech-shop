@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-04 01:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+
+#: main/templates/main/index.html:10
+msgid "About Our Shop"
+msgstr "Про наш магазин"
+
+#: main/templates/main/index.html:12
+msgid ""
+"Welcome to Tech Shop - your trusted online store for electronics and "
+"gadgets. At Tech Shop, we offer a vast selection of products, including the "
+"latest smartphones, laptops, tablets, PC components, home appliances, and "
+"more. Our commitment is to provide customers with high-quality products at "
+"competitive prices, along with fast and reliable delivery. We partner with "
+"leading brands such as Apple, Samsung, HP, Dell, Lenovo, Asus, and many "
+"others."
+msgstr ""
+"Ласкаво просимо до Tech Shop — вашого надійного онлайн-магазину електроніки та гаджетів. У Tech Shop ми пропонуємо широкий вибір товарів, включаючи найновіші смартфони, ноутбуки, планшети, комплектуючі для ПК, побутову техніку та багато іншого. Наша мета — надавати клієнтам якісну продукцію за конкурентними цінами з швидкою та надійною доставкою. Ми співпрацюємо з провідними брендами, такими як Apple, Samsung, HP, Dell, Lenovo, Asus та багатьма іншими."
+
+#: main/templates/main/index.html:17
+msgid ""
+"Shopping with us means enjoying a seamless and secure experience. We offer "
+"24/7 customer support, multiple payment options, and a hassle-free return "
+"policy. Whether you're looking for cutting-edge technology or everyday "
+"essentials, we have something for everyone. Our online store is designed for "
+"convenience, allowing you to browse, compare, and purchase products with "
+"ease. We provide detailed descriptions, customer reviews, and expert "
+"recommendations to help you make informed decisions. Stay ahead with the "
+"latest technology trends by exploring our collection. We frequently update "
+"our inventory to ensure you have access to the newest innovations in the "
+"market. Sign up for our newsletter to receive exclusive deals, discounts, "
+"and tech news."
+msgstr ""
+"Купівля в нашому магазині — це зручний і безпечний досвід. Ми надаємо цілодобову підтримку клієнтів, різноманітні способи оплати та просту політику повернення. Незалежно від того, чи шукаєте ви передові технології або повсякденні речі, у нас знайдеться щось для кожного. Наш інтернет-магазин створено для зручності: ви можете легко переглядати, порівнювати та купувати товари. Ми пропонуємо детальні описи, відгуки клієнтів та експертні рекомендації, щоб допомогти вам зробити правильний вибір. Будьте на крок попереду з нашими технологічними новинками — ми регулярно оновлюємо асортимент. Підпишіться на нашу розсилку, щоб отримувати ексклюзивні пропозиції, знижки та новини зі світу технологій."
+
+#: main/templates/main/index.html:22
+msgid ""
+"Thank you for choosing Tech Shop. We are dedicated to bringing you the best "
+"technology shopping experience."
+msgstr ""
+"Дякуємо, що обрали Tech Shop. Ми прагнемо забезпечити вам найкращий досвід покупок у сфері технологій."

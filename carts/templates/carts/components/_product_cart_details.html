@@ -1,9 +1,10 @@
+{% load i18n %}
 <a href="{{ ordered_product.product.get_absolute_url }}">
     <img src="{{ ordered_product.product.first_photo }}" alt="" class="product-image">
   </a>
   <div class="product-details">
     <a href="{{ ordered_product.product.get_absolute_url }}"><div class="ui medium blue header">{{ ordered_product.product.title }}</div></a>
-    <p>Price per item:</p>
+    <p>{% trans "Price per item:" %}</p>
     {% if ordered_product.product.discount %}
     <div class="price-block">
       <span class="old-price">${{ ordered_product.product.price }}</span>
@@ -18,6 +19,6 @@
       <span class="quantity">{{ ordered_product.quantity }}</span>
       <a class="ui mini button" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
     </div>
-    <p>Total product price: <strong>${{ ordered_product.total_price }}</strong></p>
+    <p>{% trans "Total product price:" %} <strong>${{ ordered_product.total_price }}</strong></p>
   </div>
-  <a class="ui red button delete-btn" href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}">Delete</a>
+  <a class="ui red button delete-btn" href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}">{% trans "Delete" %}</a>

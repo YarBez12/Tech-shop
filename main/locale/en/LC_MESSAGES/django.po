@@ -1,0 +1,55 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-04 01:06+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: main/templates/main/index.html:10
+msgid "About Our Shop"
+msgstr ""
+
+#: main/templates/main/index.html:12
+msgid ""
+"Welcome to Tech Shop - your trusted online store for electronics and "
+"gadgets. At Tech Shop, we offer a vast selection of products, including the "
+"latest smartphones, laptops, tablets, PC components, home appliances, and "
+"more. Our commitment is to provide customers with high-quality products at "
+"competitive prices, along with fast and reliable delivery. We partner with "
+"leading brands such as Apple, Samsung, HP, Dell, Lenovo, Asus, and many "
+"others."
+msgstr ""
+
+#: main/templates/main/index.html:17
+msgid ""
+"Shopping with us means enjoying a seamless and secure experience. We offer "
+"24/7 customer support, multiple payment options, and a hassle-free return "
+"policy. Whether you're looking for cutting-edge technology or everyday "
+"essentials, we have something for everyone. Our online store is designed for "
+"convenience, allowing you to browse, compare, and purchase products with "
+"ease. We provide detailed descriptions, customer reviews, and expert "
+"recommendations to help you make informed decisions. Stay ahead with the "
+"latest technology trends by exploring our collection. We frequently update "
+"our inventory to ensure you have access to the newest innovations in the "
+"market. Sign up for our newsletter to receive exclusive deals, discounts, "
+"and tech news."
+msgstr ""
+
+#: main/templates/main/index.html:22
+msgid ""
+"Thank you for choosing Tech Shop. We are dedicated to bringing you the best "
+"technology shopping experience."
+msgstr ""

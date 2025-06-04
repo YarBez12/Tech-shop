@@ -8,14 +8,15 @@ from decimal import Decimal
 from django.conf import settings
 from coupons.models import Coupon
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.translation import gettext_lazy as _
 
 class Receiver(models.Model):
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
-    phone = PhoneNumberField(blank=True, null=True)
-    email = models.EmailField()
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='receiver')
-    address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+    first_name = models.CharField(_('first_name'), max_length=200)
+    last_name = models.CharField(_('last_name'),max_length=200)
+    phone = PhoneNumberField(_('phone'),blank=True, null=True)
+    email = models.EmailField(_('email'),)
+    user = models.OneToOneField(_('user'),User, on_delete=models.SET_NULL, null=True, blank=True, related_name='receiver')
+    address = models.ForeignKey(_('address'),Address, on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
         if self.user:

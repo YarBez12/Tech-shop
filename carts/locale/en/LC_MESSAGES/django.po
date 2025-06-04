@@ -1,0 +1,72 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-04 01:01+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: carts/models.py:14
+msgid "first_name"
+msgstr ""
+
+#: carts/models.py:15
+msgid "last_name"
+msgstr ""
+
+#: carts/models.py:16
+msgid "phone"
+msgstr ""
+
+#: carts/models.py:17
+msgid "email"
+msgstr ""
+
+#: carts/models.py:18
+msgid "user"
+msgstr ""
+
+#: carts/models.py:19
+msgid "address"
+msgstr ""
+
+#: carts/templates/carts/cart.html:26
+msgid "Cart"
+msgstr ""
+
+#: carts/templates/carts/cart.html:82
+msgid "People who bought this also like"
+msgstr ""
+
+#: carts/templates/carts/components/_cart_products.html:52
+#, python-format
+msgid "Available stock: %(stock)s"
+msgstr ""
+
+#: carts/templates/carts/components/_cart_products.html:53
+msgid "Reduce quantity"
+msgstr ""
+
+#: carts/templates/carts/components/_product_cart_details.html:7
+msgid "Price per item:"
+msgstr ""
+
+#: carts/templates/carts/components/_product_cart_details.html:22
+msgid "Total product price:"
+msgstr ""
+
+#: carts/templates/carts/components/_product_cart_details.html:24
+msgid "Delete"
+msgstr ""
