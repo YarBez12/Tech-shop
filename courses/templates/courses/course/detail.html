@@ -1,0 +1,52 @@
+{% extends "base_main.html" %}
+
+{% block title %}
+  {{ object.title }}
+{% endblock %}
+
+{% block main %}
+{% with subject=object.subject %}
+<div class="ui container" style="padding: 3em 0;">
+
+  <h1 class="ui center aligned header">
+    <i class="book open icon"></i>
+    <div class="content">
+      {{ object.title }}
+      <div class="sub header">Subject: {{ subject.title }}</div>
+    </div>
+  </h1>
+
+  <div class="ui raised very padded text container segment" style="margin-top: 2em;">
+    <h3 class="ui dividing header">Course Overview</h3>
+    <p>
+      <strong>Subject:</strong>
+      <a href="{% url 'courses:course_list_subject' subject.slug %}">
+        {{ subject.title }}
+      </a>
+      <br>
+      <strong>Modules:</strong> {{ object.modules.count }}
+      <br>
+      <strong>Instructor:</strong> {{ object.owner.get_full_name }}
+    </p>
+
+    <div class="ui divider"></div>
+
+    <div class="ui content">
+      {{ object.overview|linebreaks }}
+    </div>
+
+    
+    <div class="ui center aligned container" style="margin-top: 2em;">
+        <form action="{% url 'students:student_enroll_course' %}" method="post" class="ui form">
+          {% csrf_token %}
+          {{ enroll_form }}
+          <button type="submit" class="ui primary large button">
+            <i class="signup icon"></i> Enroll now
+          </button>
+        </form>
+    </div>
+  </div>
+
+</div>
+{% endwith %}
+{% endblock %}

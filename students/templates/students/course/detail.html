@@ -1,0 +1,55 @@
+{% extends "base_main.html" %}
+{% load cache %}
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block main %}
+<div class="ui container" style="padding: 3em 0;">
+  <h1 class="ui center aligned header">
+    <i class="book icon"></i>
+    <div class="content">{{ object.title }}</div>
+    <div class="sub header">Module: {{ module.title }}</div>
+  </h1>
+
+  <div class="ui stackable grid" style="margin-top: 2em;">
+    <div class="four wide column">
+      <div class="ui vertical fluid menu">
+        <div class="header item">Modules</div>
+        {% for m in object.modules.all %}
+          <a class="item {% if m == module %}active{% endif %}" href="{% url 'students:student_course_detail_module' object.slug m.slug %}">
+            <strong>Module {{ m.order|add:1 }}</strong><br>
+            {{ m.title }}
+          </a>
+        {% empty %}
+          <div class="item">No modules yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="twelve wide column">
+      <div class="ui segment">
+        <h3 class="ui dividing header">{{ module.title }}</h3>
+
+        {% if module.contents.all %}
+        {% cache 600 module_contents module %}
+          {% for content in module.contents.all %}
+            {% with item=content.item %}
+            <div class="ui segment">
+              <h4 class="ui header">{{ item.title }}</h4>
+              <div class="ui content">
+                {{ item.render }}
+              </div>
+            </div>
+            {% endwith %}
+          {% endfor %}
+          {% endcache %}
+        {% else %}
+          <div class="ui message">
+            <div class="header">No content yet</div>
+            <p>This module does not contain any content at the moment.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

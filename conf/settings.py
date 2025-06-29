@@ -48,10 +48,13 @@ INSTALLED_APPS = [
     'taggit',
     'coupons',
     'courses',
+    'students',
     'django.contrib.sitemaps',
     'social_django',
     'debug_toolbar',
     'django_celery_beat',
+    'embed_video',
+    'redisboard',
 ]
 
 
@@ -61,7 +64,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    #  'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
+    #  'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -202,3 +207,14 @@ REDIS_DB = 0
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 STRIPE_WEBHOOK_SECRET = 'whsec_b248af81d6c338c874032e158d0faad47f99feb7b82c762007436eae67eb6465'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
+
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 60 * 15 
+CACHE_MIDDLEWARE_KEY_PREFIX = 'tech_shop'

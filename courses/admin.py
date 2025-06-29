@@ -17,4 +17,6 @@ class CourseAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     inlines = [ModuleInline]
 
-admin.site.register(Module)
+@admin.register(Module)
+class ModuleAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('title',)}

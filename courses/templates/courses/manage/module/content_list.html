@@ -28,7 +28,7 @@
           {% for m in course.modules.all %}
           <div class="item {% if m == module %}active{% endif %}" data-id="{{ m.id }}">
             <div class="content">
-              <a href="{% url 'courses:module_content_list' m.id %}">
+              <a href="{% url 'courses:module_content_list' m.slug %}">
                 <div class="header">Module {{ m.order|add:1 }}: {{ m.title }}</div>
               </a>
             </div>
@@ -37,7 +37,7 @@
             <div class="item">No modules yet.</div>
           {% endfor %}
         </div>
-        <a href="{% url 'courses:course' course.id %}" class="ui fluid primary button" style="margin-top: 1em;">
+        <a href="{% url 'courses:course' course.slug %}" class="ui fluid primary button" style="margin-top: 1em;">
           <i class="edit icon"></i> Edit modules
         </a>
       </div>
@@ -56,7 +56,7 @@
               <div class="header">{{ item }}</div>
               <div class="meta">{{ item|model_name }}</div>
               <div class="extra">
-                <a href="{% url 'courses:module_content_update' module.id item|model_name item.id %}" class="ui blue small button">
+                <a href="{% url 'courses:module_content_update' module.slug item|model_name item.id %}" class="ui blue small button">
                   <i class="edit icon"></i> Edit
                 </a>
                 <form action="{% url 'courses:module_content_delete' content.id %}" method="post" style="display:inline;">
@@ -80,16 +80,16 @@
 
         <h4 class="ui dividing header" style="margin-top: 2em;">Add new content</h4>
         <div class="ui four item menu">
-          <a class="item" href="{% url 'courses:module_content_create' module.id 'text' %}">
+          <a class="item" href="{% url 'courses:module_content_create' module.slug 'text' %}">
             <i class="file alternate outline icon"></i> Text
           </a>
-          <a class="item" href="{% url 'courses:module_content_create' module.id 'image' %}">
+          <a class="item" href="{% url 'courses:module_content_create' module.slug 'image' %}">
             <i class="image icon"></i> Image
           </a>
-          <a class="item" href="{% url 'courses:module_content_create' module.id 'video' %}">
+          <a class="item" href="{% url 'courses:module_content_create' module.slug 'video' %}">
             <i class="video icon"></i> Video
           </a>
-          <a class="item" href="{% url 'courses:module_content_create' module.id 'file' %}">
+          <a class="item" href="{% url 'courses:module_content_create' module.slug 'file' %}">
             <i class="file icon"></i> File
           </a>
         </div>

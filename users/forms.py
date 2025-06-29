@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from .models import User, Address
+from courses.models import Course
 from phonenumber_field.formfields import PhoneNumberField
 
 class LoginForm(AuthenticationForm):
@@ -154,5 +155,6 @@ class MailForm(forms.Form):
         required=False,
         label="HTML Message"
     )
+
 
     

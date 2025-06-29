@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from .fields import OrderField
 from django.utils.text import slugify
+from django.template.loader import render_to_string
 
 
 class Subject(models.Model):
@@ -20,6 +21,7 @@ class Course(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     overview = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
+    students = models.ManyToManyField(User, related_name='courses_joined', blank=True)
     class Meta:
         ordering = ['-created']
     def __str__(self):
@@ -39,6 +41,7 @@ class Course(models.Model):
 class Module(models.Model):
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField(blank=True)
     order = OrderField(blank=True, for_fields=['course'])
 
@@ -75,6 +78,9 @@ class ItemBase(models.Model):
         abstract = True
     def __str__(self):
         return self.title
+    
+    def render(self):
+        return render_to_string(f'courses/content/{self._meta.model_name}.html', {'item': self})
 class Text(ItemBase):
     content = models.TextField()
 class File(ItemBase):
@@ -83,3 +89,5 @@ class Image(ItemBase):
     file = models.FileField(upload_to='learning_images')
 class Video(ItemBase):
     url = models.URLField()
+
+

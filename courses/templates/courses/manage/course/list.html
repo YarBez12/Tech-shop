@@ -27,13 +27,13 @@
         <div class="ui grid">
             <div class="two column row">
               <div class="column">
-                <a href="{% url 'courses:course_edit' course.id %}" class="ui basic blue button fluid">
+                <a href="{% url 'courses:course_edit' course.slug %}" class="ui basic blue button fluid">
                   <i class="edit icon"></i>
                   Edit
                 </a>
               </div>
               <div class="column">
-                <a href="{% url 'courses:course_delete' course.id %}" class="ui basic red button fluid">
+                <a href="{% url 'courses:course_delete' course.slug %}" class="ui basic red button fluid">
                   <i class="trash icon"></i>
                   Delete
                 </a>
@@ -41,14 +41,14 @@
             </div>
             <div class="two column row">
               <div class="column">
-                <a href="{% url 'courses:course' course.id %}" class="ui basic green button fluid">
+                <a href="{% url 'courses:course' course.slug %}" class="ui basic green button fluid">
                   <i class="cogs icon"></i>
                   Edit modules
                 </a>
               </div>
               {% if course.modules.count > 0 %}
               <div class="column">
-                <a href="{% url 'courses:module_content_list' course.modules.first.id %}" class="ui basic purple button fluid">
+                <a href="{% url 'courses:module_content_list' course.modules.first.slug %}" class="ui basic purple button fluid">
                   <i class="cogs icon"></i>
                   Manage contents
                 </a>
