@@ -11,9 +11,38 @@
         <label>Upload Images</label>
         <input type="file" name="images" multiple>
       </div>
+      {% if existing_images %}
+  <div class="field">
+    <label>Existing Images</label>
+
+    <div id="product-edit-gallery" class="ui grid stackable">
+      {% for image in existing_images %}
+        <div class="four wide column">
+          <a href="{{ image.image.url }}">
+            <img class="ui review bordered image" src="{{ image.image.url }}" alt="Product image" style="margin-bottom: 0.5em;">
+          </a>
+          <div class="ui checkbox">
+            <input type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}">
+            <label for="delete_image_{{ image.id }}">Delete</label>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+
+
+
+
+  </div>
+{% endif %}
   </form>
   </div>
   <div class="actions">
+    {% if is_edit %}
+    <a class="ui grey button" href= "{{ product.get_absolute_url }}">Cancel</a>
+    {% else %}
     <div class="ui grey button" id="cancel-product">Cancel</div>
+    {% endif %}
     <button type="submit" form="product-form" class="ui primary button">Post Product</button>
+
   </div>

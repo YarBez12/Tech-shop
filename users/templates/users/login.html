@@ -47,6 +47,12 @@
   
           <button class="ui fluid primary button" type="submit">Log in</button>
         </form>
+        <div class="ui horizontal divider">Or</div>
+
+    <a href="{% url "social:begin" "google-oauth2" %}" class="ui fluid red google button">
+      <i class="google icon"></i>
+      Sign in with Google
+    </a>
   
         <div class="actions-text">
           <a href="{% url 'users:password_reset' %}">Forgot password?</a> |
@@ -54,6 +60,7 @@
         </div>
       </div>
     </div>
+                         
 {% endblock main %}
 {% block additional_script %}
 <script src="{% static "js/login.js" %}"></script>

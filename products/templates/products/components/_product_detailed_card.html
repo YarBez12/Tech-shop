@@ -40,8 +40,12 @@
           {% if product.discount %}
           <div class="ui red tiny label">-{{ product.discount }}%</div>
           {% endif %}
-          <div class="ui third blue header">{{ product.title|highlight:query }}</div>
-          <div class="ui labels" style="margin-top: 0.5em;">
+          <div class="ui third blue header">{% if not product.is_active %}
+        <div class="ui grey tiny label" >
+          Not active
+        </div>
+        {% endif %}{{ product.title|highlight:query }}</div>
+          <div class="ui labels" style="margin-left: 0.5em;">
           {% for tag in product.tags.all|display_tags:query  %}
             <div class="ui small grey label">{{ tag.text|safe }}</div>
             {% endfor %}
@@ -72,8 +76,10 @@
     {% endwith %}
     <div class="overlay">
       <div class="overlay-content">
+        {% if not product.user == request.user %}
         {% include "products/components/_favourite_button.html" %}
         <a href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon" title="To cart"></i></a>
+        {% endif %}
         <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
       </div>
     </div>

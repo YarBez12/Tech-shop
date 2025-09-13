@@ -6,7 +6,7 @@ from django.utils.http import urlencode
 from django.db.models import OuterRef, Subquery
 from products.models import FavouriteProduct, Subcription
 from django.utils.safestring import mark_safe
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 
@@ -31,7 +31,19 @@ def child_categories(parent_category, count):
     #     total_watched = Sum('products__watched')
     # ).order_by('-total_watched')[:int(count)]
 
-    categories = Category.objects.filter(parent=parent_category)
+    categories = (
+        Category.objects
+        .filter(parent=parent_category)
+        .annotate(
+            product_count=Count(
+                "products",
+                filter=Q(products__is_active=True, products__quantity__gt=0),
+                distinct=True,
+            )
+        )
+        .filter(product_count__gt=0)
+    )
+
     categories = sorted(
         categories,
         key=lambda c: get_category_views(c.id),
@@ -41,11 +53,33 @@ def child_categories(parent_category, count):
 
 @register.simple_tag()
 def parent_categories():
-    return Category.objects.filter(parent=None)
+    return (
+        Category.objects
+        .filter(parent=None)
+        .annotate(
+            child_products=Count(
+                "children__products",
+                filter=Q(children__products__is_active=True, children__products__quantity__gt=0),
+                distinct=True,
+            )
+        )
+        .filter(child_products__gt=0)
+    )
 
 @register.simple_tag()
 def brands(count = 15):
-    return Brand.objects.annotate(product_count=Count('products')).order_by('-product_count')[:count]
+    return (
+        Brand.objects
+        .annotate(
+            product_count=Count(
+                'products',
+                filter=Q(products__is_active=True, products__quantity__gt=0),
+                distinct=True,
+            )
+        )
+        .filter(product_count__gt=0)
+        .order_by('-product_count')[:count]
+    )
 
 @register.simple_tag()
 def product_number_by_page(parent_count, count):

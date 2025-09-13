@@ -9,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 from .forms import *
 from django.views.generic import CreateView
 from carts.models import Cart, Receiver
-from products.models import Product, FavouriteProduct, ProductImage, Subcription
+from products.models import Product, FavouriteProduct, ProductImage, Subcription, Brand
 from django.db.models.functions import Lower
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.mail import EmailMultiAlternatives
@@ -23,6 +23,9 @@ from django.contrib.contenttypes.models import ContentType
 import redis
 from django.conf import settings
 from .tasks import send_email_task
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
+
 
 r = redis.Redis(host=settings.REDIS_HOST,
  port=settings.REDIS_PORT,
@@ -126,13 +129,24 @@ class UserRegistrationView(CreateView):
     
     def form_invalid(self, user_form, address_form = None):
         error_messages = []
+        def label_for(form, field_name):
+            if field_name == '__all__':
+                return 'General'
+            f = form.fields.get(field_name)
+            return f.label if f and f.label else field_name
         for form_instance in [user_form, address_form]:
             if form_instance:
                 for field, errors in form_instance.errors.items():
-                    field_label = field if field != '__all__' else 'General'
-                    error_messages.append(f"{field_label}: {', '.join(errors)}")
-        full_error_message = "Please correct the following errors: " + "; ".join(error_messages)
-        messages.error(self.request, full_error_message)
+                #     field_label = field if field != '__all__' else 'General'
+                #     error_messages.append(f"{field_label}: {', '.join(errors)}")
+                    lbl = escape(label_for(form_instance, field))
+                    for err in errors:
+                        error_messages.append(f"<li><strong>{lbl}</strong>: {escape(err)}</li>")
+        full_error_message = (
+            "<div>Please correct the following errors:</div>"
+            f"<ul class='ui list' style='margin: .5em 0 0 0'>{''.join(error_messages)}</ul>"
+        )
+        messages.error(self.request, mark_safe(full_error_message))
         self.object = None
         if address_form:
             return self.render_to_response(self.get_context_data(form=user_form, address_form=address_form))
@@ -193,8 +207,11 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         receiver, _ = Receiver.objects.get_or_create(user= user)
         cart = Cart.objects.get_or_create_with_session(self.request, receiver = receiver, is_completed = False)
         completed_orders = Cart.objects.filter(receiver = receiver, is_completed = True).order_by('-date_completed')
-
-        brand_ids = Subcription.objects.filter(user=user).values_list('brand_id', flat=True)
+        subcriptions = Subcription.objects.filter(user=user)
+        brand_ids = subcriptions.values_list('brand_id', flat=True)
+        brands = Brand.objects.filter(subscribers__user=user)
+        context['brands'] = brands
+        print(brands)
         two_weeks_ago = timezone.now() - timedelta(days=14)
         news = Product.objects.filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago)
 
@@ -227,7 +244,7 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         except EmptyPage:
             paginated_products = paginator.page(paginator.num_pages)
 
-        user_products = user.products.filter(is_active=True)
+        user_products = user.products.all()
         if sort_option:
             user_products = sort_with_option(sort_option, user_products)
 

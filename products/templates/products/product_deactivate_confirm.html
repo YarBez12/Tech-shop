@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block main %}
+
+
+
+<div class="delete-box">
+  <h2 class="ui center aligned icon header">
+    <i class="ban alternate icon red"></i>
+    <div class="content">
+      Deactivate Product
+      <div class="sub header">Are you sure you want to deactivate this product?</div>
+    </div>
+  </h2>
+
+  <div class="review-preview">
+    {% include "products/components/_product_detailed_card.html" %}
+  </div>
+
+  <div class="ui divider"></div>
+
+
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="ui two buttons">
+        <button class="ui red button" type="submit"><i class="trash icon"></i>
+      Deactivate
+    </button>
+    <a href="{{ product.get_absolute_url }}" class="ui basic grey button">
+      <i class="arrow left icon"></i>
+      Cancel
+    </a>
+  </div>
+    </form>
+    
+</div>
+{% endblock main %}

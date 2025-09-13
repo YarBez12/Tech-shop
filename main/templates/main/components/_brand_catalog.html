@@ -1,9 +1,13 @@
 {% load products_tags %}
 
 <div class="catalog">
+  {% if not is_profile %}
   <div class="ui massive centered header">Brands</div>
+  {% endif %}
   <div class="ui three stackable cards">
+    {% if not is_profile %}
     {% brands as brands %}
+    {% endif %}
       {% for brand in brands  %}
       {% include "main/components/_brand_card.html" %}
       {% endfor %}

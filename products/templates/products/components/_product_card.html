@@ -5,8 +5,10 @@
   <div class="ui card product-card {% if product.discount %}discount-card{% endif %}">
     <div class="overlay">
       <div class="overlay-content">
+        {% if not product.user == request.user %}
         {% include "products/components/_favourite_button.html" %}
         <a href="{% url "carts:add_to_cart" product.slug %}"><i class="shopping cart icon" title="To cart"></i></a>
+        {% endif %}
         <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
       </div>
     </div>

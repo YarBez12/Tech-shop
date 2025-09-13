@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from .models import Characteristic, Category, Product, ReviewImage, Review, FavouriteProduct, CustomTag, Brand, Subcription
-from .forms import ReviewForm
+from .models import Characteristic, Category, Product, ReviewImage, Review, FavouriteProduct, CustomTag, Brand, Subcription, ProductImage, ProductActivationRequest
+from .forms import ReviewForm, ProductForm
 from django.views.generic import DetailView, ListView, DeleteView, UpdateView
 from django.views.generic.edit import FormMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.db.models.functions import Lower
-from django.db.models import Min, Max, Avg
+from django.db.models import Min, Max, Avg, Case, When, Value, BooleanField
 from django.db.models import Q, F
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
@@ -25,6 +25,11 @@ import json
 from decimal import Decimal
 from django.http import HttpResponseRedirect
 from .recommender import Recommender
+from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+
+
 
 
 
@@ -141,10 +146,10 @@ class BrandDetails(ListView):
         session_key = f"ui_state:brand:{brand.slug}"
         ui_state = self.request.session.get(session_key, {})
         sort_option = ui_state.get('sort', 'title')
-        print(ui_state)
         products = Product.objects.filter(
             brand__slug=self.kwargs['slug'],
-            is_active=True
+            is_active=True,
+            quantity__gt=0
         )
         if sort_option:
             products = sort_with_option(sort_option, products)
@@ -284,7 +289,16 @@ class CategoryDetailView(ListView):
 
     def get_queryset(self):
         parent_category = Category.objects.get(slug=self.kwargs['category_slug'])
-        subcategories = Category.objects.filter(parent=parent_category)
+        subcategories = (
+            Category.objects.filter(parent=parent_category)
+            .annotate(
+                active_products=Count(
+                    'products',
+                    filter=Q(products__is_active=True, products__quantity__gt=0)
+                )
+            )
+            .filter(active_products__gt=0)
+        )
 
         return subcategories
     
@@ -325,7 +339,7 @@ class SubcategoryDetailView(ListView):
     model = Product
     context_object_name = 'products'
     template_name = 'products/subcategory.html'
-    paginate_by = 1
+    paginate_by = 2
 
     def paginate_queryset(self, queryset, page_size):
         paginator = self.get_paginator(queryset, page_size,
@@ -347,7 +361,7 @@ class SubcategoryDetailView(ListView):
         ui_state = self.request.session.get(session_key, {})
         sort_option = ui_state.get('sort', 'title')
         filters = {k: v for k, v in ui_state.items() if k != 'sort'}
-        products = Product.objects.filter(category=subcategory, is_active=True)
+        products = Product.objects.filter(category=subcategory, is_active=True, quantity__gt=0)
         products = products.annotate(
             calculated_full_price=ExpressionWrapper(
                 F('price') * (Value(100) - Coalesce(F('discount'), Value(0))) / Value(100),
@@ -421,7 +435,7 @@ class SubcategoryProductsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['products'] = self.object.products.filter(is_active=True)[:6]
+        context['products'] = self.object.products.filter(is_active=True, quantity__gt=0)[:6]
         return context
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -443,7 +457,8 @@ class TagProductsView(DetailView):
 
         context['products'] = Product.objects.filter(
             tags__in=[self.object],
-            is_active=True
+            is_active=True,
+            quantity__gt=0
         ).exclude(slug=self.kwargs.get('product_slug')).distinct()[:5]
         return context
     def get(self, request, *args, **kwargs):
@@ -487,7 +502,14 @@ class ProductDetailView(DetailView, FormMixin):
         session_key = f"ui_state:product:{product.slug}"
         ui_state = self.request.session.get(session_key, {})
         rating = ui_state.get('rating')
-        reviews = product.reviews.all()
+        reviews = (product.reviews.all().annotate(
+            is_current_user = Case(
+                When(user=self.request.user, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        )
+        .order_by('-is_current_user'))
         if rating:
             reviews = reviews.filter(grade=rating)
         context['reviews'] = reviews
@@ -531,6 +553,108 @@ class ReviewDelete(DeleteView):
     def get_success_url(self):
         messages.warning(self.request, 'Review has been deleated', extra_tags='deleted')
         return self.object.get_absolute_url()
+    
+# class ProductDeactivate(DeleteView):
+#     model = Product
+#     context_object_name = 'product'
+#     extra_context = {
+#         'title': 'Deactivate product'
+#     }
+#     def delete(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         self.object.quantity = 0
+#         self.object.is_active = False
+#         self.object.save(update_fields=["quantity", "is_active"])
+
+#         messages.warning(request, 'Product has been deactivated (hidden from catalog).', extra_tags='deleted')
+#         return redirect(self.get_success_url())
+    
+#     def get_success_url(self):
+#         return reverse("users:profile")
+
+class ProductDeactivate(LoginRequiredMixin, View):
+
+    template_name = "products/product_deactivate_confirm.html"
+
+    def get(self, request, product_slug):
+        product = get_object_or_404(Product, slug=product_slug, user=request.user)
+        context = {
+            "product": product,
+            "title": "Deactivate product",
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, product_slug):
+        product = get_object_or_404(Product, slug=product_slug, user=request.user)
+        product.is_active = False
+        product.quantity = 0
+        product.save(update_fields=["is_active", "quantity"])
+
+        messages.warning(request, "Product has been deactivated (hidden from catalog).", extra_tags="deleted",)
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse("users:profile")
+    
+
+
+class RequestActivationView(LoginRequiredMixin, View):
+    def post(self, request, product_slug):
+        product = get_object_or_404(Product, slug=product_slug)
+
+        if product.is_active:
+            messages.info(request, "The product is already active.")
+            return redirect(product.get_absolute_url())
+        exists = ProductActivationRequest.objects.filter(
+            product=product, user=request.user, status='pending'
+        ).exists()
+        if exists:
+            messages.info(request, "You already have a pending activation request for this product.")
+            return redirect(product.get_absolute_url())
+
+        req = ProductActivationRequest.objects.create(
+            product=product, user=request.user, status='pending'
+        )
+
+        messages.success(request, "Activation request has been sent. We'll review it soon.")
+        return redirect(product.get_absolute_url())
+class ProductEdit(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'products/product_edit.html'
+    extra_context = {
+        'title': 'Update review'
+    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_form'] = context.get('form')
+        context['existing_images'] = self.object.images.all()
+        return context
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        
+        new_images = self.request.FILES.getlist('images')
+        for image in new_images:
+            self.object.images.create(image=image)
+        
+        delete_images_ids = self.request.POST.getlist('delete_images')
+        for image_id in delete_images_ids:
+            image = get_object_or_404(ProductImage, id=image_id)
+            image.delete()
+        messages.success(self.request, 'Product has been updated')
+        
+        return response
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        error_messages = []
+        for field, errors in form.errors.items():
+            field_label = field if field != '__all__' else 'General'
+            error_messages.append(f"{field_label}: {', '.join(errors)}")
+        full_error_message = "Please correct the following errors: " + "; ".join(error_messages)
+        messages.error(self.request, full_error_message)
+
+        return response
     
 class ReviewEdit(UpdateView):
     model = Review
@@ -609,8 +733,9 @@ def add_to_favourites(request, product_slug):
     # user = request.user
     # FavouriteProduct.objects.create(product=product, user=user)
     product = get_object_or_404(Product, slug=product_slug)
-    like_product(request.user.id, product.id)
-    create_action(request.user, 'liked', product)
+    if not request.user == product.user:
+        like_product(request.user.id, product.id)
+        create_action(request.user, 'liked', product)
     next_page = request.META.get('HTTP_REFERER', '/')
     if "login" in next_page:
         next_page = product.get_absolute_url()

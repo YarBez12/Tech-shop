@@ -75,7 +75,7 @@ class CartView(DetailView):
 def add_to_cart(request, product_slug):
     ordered_product = get_ordered_product(request, product_slug)
     if ordered_product.quantity >= ordered_product.product.quantity:
-        messages.warning(request, 'We hava no such items left!')
+        messages.warning(request, 'We have no such items left!')
     else:
         ordered_product.quantity += 1
         ordered_product.save()

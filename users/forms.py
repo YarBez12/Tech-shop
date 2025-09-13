@@ -40,6 +40,7 @@ class UserRegistrationForm(UserCreationForm):
     phone = PhoneNumberField(
         label='Phone',
         required=False,
+        region='IE',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Enter your phone number'
@@ -81,6 +82,7 @@ class UserEditForm(forms.ModelForm):
     phone = PhoneNumberField(
         label='Phone',
         required=False,
+        region='IE',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Enter your phone number'

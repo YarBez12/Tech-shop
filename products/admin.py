@@ -2,6 +2,9 @@ from django.contrib import admin
 from django import forms
 from .models import *
 from taggit.models import Tag
+from django.db import transaction
+from django.utils.html import escape
+from users.tasks import send_email_task
 
 class ProductCharacteristicInline(admin.TabularInline):
     model = ProductCharacteristic
@@ -16,6 +19,62 @@ class ProductCharacteristicInline(admin.TabularInline):
             formset.form.base_fields['characteristic'].queryset = Characteristic.objects.none()
 
         return formset
+
+
+@admin.register(ProductActivationRequest)
+class ProductActivationRequestAdmin(admin.ModelAdmin):
+    list_display = ('product','user','status','created')
+    list_filter = ('status','created')
+    search_fields = ('product__title','user__email')
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if not (change and "status" in form.changed_data):
+            return
+
+        p = obj.product
+        owner = getattr(p, "user", None)
+        owner_email = getattr(owner, "email", None)
+
+        try:
+            product_url = request.build_absolute_uri(p.get_absolute_url())
+        except Exception:
+            product_url = p.get_absolute_url()
+
+        if obj.status == ProductActivationRequest.Status.APPROVED:
+            if p.quantity <= 0:
+                p.quantity = 1
+            p.is_active = True
+            p.save(update_fields=["is_active", "quantity"])
+
+            if owner_email:
+                subject = "Your product has been approved ✅"
+                text = (
+                    f"Hi!\n\nYour product \"{p.title}\" has been approved and is now visible in the catalog.\n"
+                    f"Link: {product_url}\n\nHave a great day!"
+                )
+                html = (
+                    f"<p>Hi!</p>"
+                    f"<p>Your product <strong>{escape(p.title)}</strong> has been approved and is now visible in the catalog.</p>"
+                    f"<p><a href='{product_url}'>Open product</a></p>"
+                    f"<p>Have a great day!</p>"
+                )
+                send_email_task.delay(subject, text, html, owner_email)
+
+        elif obj.status == ProductActivationRequest.Status.REJECTED:
+            if owner_email:
+                subject = "Your product was not approved ❌"
+                text = (
+                    f"Hi!\n\nUnfortunately, your product \"{p.title}\" was not approved and has been removed."
+                )
+                html = (
+                    f"<p>Hi!</p>"
+                    f"<p>Unfortunately, your product <strong>{escape(p.title)}</strong> was not approved and has been removed.</p>"
+                )
+                send_email_task.delay(subject, text, html, owner_email)
+            p.delete()
+
 
 class ImageInline(admin.TabularInline):
     extra = 1

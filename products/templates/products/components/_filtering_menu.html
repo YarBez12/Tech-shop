@@ -53,7 +53,7 @@
 
     <form class="ui form" method="get">
       {% comment %} <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}"> {% endcomment %}
-      
+      <div class="filter-scroll">
       {% for characteristic in characteristics  %}
       <div class="grouped fields" data-section-name="{{ characteristic.title }}">
         <label>{{ characteristic.title }}</label>
@@ -97,9 +97,10 @@
           {% endfor %}
         </div>
       </div>
+    </div>
 
 
-
+        <div class="filter-footer">
       <div class="field">
         <label>Price</label>
         <div class="ui two column grid">
@@ -121,5 +122,6 @@
         <div class="or"></div>
       <a href="{% url 'products:reset_filters' category_slug=subcategory.parent.slug subcategory_slug=subcategory.slug %}" class="ui button">Reset filters</a>
       </div>
+    </div>
     </form>
   </div>

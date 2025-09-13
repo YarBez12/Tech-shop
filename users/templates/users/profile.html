@@ -58,6 +58,9 @@
         {% if products %}
         <a href="#" class="{% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
         {% endif %}
+        {% if brands  %}
+        <a href="#" class="{% if saved_ui_state.tab == 'brands' %}active{% endif %} item" data-tab="brands" data-url="{% url 'products:save_tab' 'profile' %}">⭐️ Subscriptions</a>
+        {% endif %}
         {% if cart.cart_total_quantity > 0 %}
         <a href="#" class="{% if saved_ui_state.tab == 'cart' %}active{% endif %} item" data-tab="cart" data-url="{% url 'products:save_tab' 'profile' %}">🛒 Cart</a>
         {% endif %}
@@ -67,7 +70,7 @@
         <a href="#" class="{% if saved_ui_state.tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
         {% if other_actions %}
         <div class="notification-icon">
-          <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">Other actions</a>
+          <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">👀 Other actions</a>
           {% if unread_actions_count %}
           <div class="ui red tiny circular label notification-badge">{{ unread_actions_count }}</div>
           {% endif %}
@@ -96,6 +99,14 @@
           {% include "products/components/_favourite_list.html" with is_profile=True %}
         </div>
         {% endif %}
+
+        {% if brands %}
+        <div class="ui bottom attached {% if saved_ui_state.tab == 'brands' %}active{% endif %} tab segment" data-tab="brands">
+  <div class="ui large header">Your Favourite Brands</div>
+        {% include "main/components/_brand_catalog.html" with brands=brands is_profile=True %}
+        </div>
+        {% endif %}
+
 
         {% if cart.cart_total_quantity > 0 %}
           <div class="ui bottom attached {% if saved_ui_state.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
@@ -162,7 +173,7 @@
   {% if not products %}
   <p>You have not added any products yet</p>
   {% else %}
-  {% include "products/components/_product_list.html" with is_user_products=True %}
+  {% include "products/components/_product_list.html" with is_user_products=True is_profile=True %}
   {% endif %}
   {% endwith %}
         </div>

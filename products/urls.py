@@ -7,6 +7,9 @@ app_name = 'products'
 
 urlpatterns = [
     path('product/<slug:product_slug>/', ProductDetailView.as_view(), name = 'product_detail'),
+    path('product/<slug:product_slug>/deactivate/', ProductDeactivate.as_view(), name='product_deactivate'),
+    path('product/<slug:product_slug>/request-activation/', RequestActivationView.as_view(), name='product_request_activation'),
+    path('product/<slug:slug>/update/', ProductEdit.as_view(), name='product_edit'),
     path('subscribe-brand/', subscribe_brand, name='subscribe_brand'),
     path('save-sort/<str:key>/', save_sort, name='save_sort'),
     path('save-filters/', save_filters, name="save_filters"),

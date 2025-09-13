@@ -1,32 +1,43 @@
-<footer>
+{% load static %}
+<footer class="site-footer">
   <div class="ui container">
-    <div class="ui stackable three column grid">
-      <div class="column">
-        <h4 class="ui inverted header">About Us</h4>
-        <div class="ui inverted link list">
-          <a href="#" class="item">Company Info</a>
-          <a href="#" class="item">News</a>
-          <a href="#" class="item">Careers</a>
+    <div class="ui stackable grid">
+      
+      <div class="six wide column">
+        <h3 class="ui inverted header">
+          <img src="{% static "images/icon.png" %}" alt="Logo">
+          Tech Shop
+        </h3>
+        <p style="opacity: 0.8;">
+          Your favorite place to discover and buy tech products.
+        </p>
+      </div>
+
+      <div class="five wide column center aligned">
+        <h4 class="ui inverted header">Follow us</h4>
+        <div class="ui horizontal list">
+          <a href="https://facebook.com" target="_blank" class="item"><i class="big facebook f icon"></i></a>
+          <a href="https://instagram.com" target="_blank" class="item"><i class="big instagram icon"></i></a>
+          <a href="https://twitter.com" target="_blank" class="item"><i class="big twitter icon"></i></a>
+          <a href="https://youtube.com" target="_blank" class="item"><i class="big youtube icon"></i></a>
         </div>
       </div>
-      <div class="column">
-        <h4 class="ui inverted header">Support</h4>
+
+      <div class="five wide column">
+        <h4 class="ui inverted header">Quick Links</h4>
         <div class="ui inverted link list">
-          <a href="#" class="item">Shipping</a>
-          <a href="#" class="item">Returns</a>
-          <a href="#" class="item">FAQ</a>
+          <a href="{% url 'products:favourites' %}" class="item">Your Favourites</a>
+          <a href="{% url 'users:profile' %}" class="item">Your Profile</a>
+          <a href="{% url 'products:search_results' %}" class="item">Browse All Products</a>
         </div>
       </div>
-    
-      <div class="column">
-        <h4 class="ui inverted header">Contact</h4>
-        <p>Dublin, Ireland</p>
-        <p>+353 (1) 234 5678</p>
-      </div>
+
     </div>
 
     <div class="ui divider inverted"></div>
 
-    <p class="footer-copy">&copy; 2025 Tech Shop. All rights reserved.</p>
+    <div class="ui center aligned" style="margin-top: 1em;">
+      <p class="footer-copy">&copy; 2025 Tech Shop. All rights reserved.</p>
+    </div>
   </div>
 </footer>

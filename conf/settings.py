@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
+from celery.schedules import crontab
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,6 +32,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
 
 SITE_ID = 3
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY  = '193232505602-9apkdg8e8i4bbr5tjipr97om5adi5u6d.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 # Application definition
 
 INSTALLED_APPS = [
@@ -55,6 +60,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'embed_video',
     'redisboard',
+    'django_extensions',
 ]
 
 
@@ -120,6 +126,7 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  
+    'social_core.backends.google.GoogleOAuth2',
 ]
 
 
@@ -215,6 +222,32 @@ CACHES = {
     }
 }
 
+CELERY_BEAT_SCHEDULE = {
+    'sync-views-every-5m': {
+        'task': 'products.tasks.sync_views_from_redis',
+        'schedule': crontab(minute='*/5'),
+    },
+    'sync-favs-to-db-every-10m': {
+        'task': 'products.tasks.sync_favourites_to_db',
+        'schedule': crontab(minute='*/10'),
+    },
+}
+
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 60 * 15 
 CACHE_MIDDLEWARE_KEY_PREFIX = 'tech_shop'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'users.pipeline.associate_by_email',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'users.pipeline.save_user_details_once',
+)
+
+
+LOGIN_REDIRECT_URL = '/'

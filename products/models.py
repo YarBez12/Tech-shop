@@ -7,6 +7,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, GenericTaggedItemBase
 from django.utils.text import slugify
 
+from django.utils import timezone
 
 
 from users.models import User
@@ -116,6 +117,21 @@ class Product(models.Model):
         first_image = self.images.first()
         return first_image.image.url if first_image else None
 
+
+class ProductActivationRequest(models.Model):
+    class Status(models.TextChoices):
+        PENDING  = 'pending',  'Pending'
+        APPROVED = 'approved', 'Approved'
+        REJECTED = 'rejected', 'Rejected'
+
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='activation_requests')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activation_requests')
+    status = models.CharField(max_length=10, choices=Status.choices, default='pending')
+    created = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.product} — {self.user} — {self.status}"
+    
 class ProductCharacteristic(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_characteristics')
     characteristic = models.ForeignKey(Characteristic, on_delete=models.CASCADE, related_name='product_characteristics')

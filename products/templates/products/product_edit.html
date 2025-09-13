@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main %}
+<div class="ui massive centered header">Product update</div>
+            {% include "products/components/_product_form.html" with is_edit=True%}
+{% endblock main %}
+{% block additional_script %}
+<script src = '{% static "js/product_edit.js" %}' ></script>
+{% endblock additional_script %}
