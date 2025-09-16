@@ -2,6 +2,8 @@ from products.models import Review, ReviewImage
 from django.contrib import messages
 from products.forms import ReviewForm
 from django.shortcuts import get_object_or_404
+from django.views.generic import DeleteView, UpdateView
+
 
 
 

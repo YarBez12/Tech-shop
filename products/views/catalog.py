@@ -2,12 +2,14 @@ from products.models import Product, Brand, Category, CustomTag, Characteristic,
 from products.utils.filters import sort_with_option
 from django.http import HttpResponse
 from django.core.paginator import EmptyPage, PageNotAnInteger
-from django.db.models import F, ExpressionWrapper, DecimalField, Value, Count, Min, Max
+from django.db.models import F, ExpressionWrapper, DecimalField, Value, Count, Min, Max, Q
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView, ListView
+
 
 
 class BrandDetails(ListView):

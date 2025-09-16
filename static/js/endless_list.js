@@ -1,34 +1,26 @@
-let page = 1;
-let emptyPage = false;
-let blockRequest = false;
+$u.onReady(()=>{
+  const container = document.getElementById('product-endless-list');
+  if (!container) return;
 
-window.addEventListener('scroll', function () {
-  const margin = document.body.scrollHeight - window.innerHeight - 200;
+  let page = 1, empty = false, loading = false;
+  const sentinel = document.createElement('div');
+  sentinel.id = 'endless-sentinel';
+  container.after(sentinel);
 
-  if (window.pageYOffset > margin && !emptyPage && !blockRequest) {
-    blockRequest = true;
-    page += 1;
+  const loadMore = async ()=>{
+    if (empty || loading) return;
+    loading = true;
+    const params = new URLSearchParams(location.search);
+    params.set('products_only','1');
+    params.set('page', String(++page));
+    const html = await (await fetch(`?${params.toString()}`)).text();
+    if (html.trim()==='') empty = true;
+    else container.insertAdjacentHTML('beforeend', html);
+    loading = false;
+  };
 
-    const params = new URLSearchParams(window.location.search);
-    params.set('products_only', '1');
-    params.set('page', page);
-
-    fetch('?' + params.toString())
-      .then(response => response.text())
-      .then(html => {
-        if (html.trim() === '') {
-          emptyPage = true; 
-        } else {
-          const productList = document.getElementById('product-endless-list');
-          productList.insertAdjacentHTML('beforeend', html);
-          blockRequest = false; 
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        blockRequest = false;
-      });
-  }
+  const io = new IntersectionObserver((entries)=>{
+    if (entries.some(e=>e.isIntersecting)) loadMore();
+  }, {rootMargin:'200px'});
+  io.observe(sentinel);
 });
-
-window.dispatchEvent(new Event('scroll'));

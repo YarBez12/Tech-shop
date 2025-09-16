@@ -1,67 +1,50 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let searchInput = document.getElementById("search-input");
-    let suggestionsBox = document.getElementById("search-suggestions");
-    let searchBtn = document.getElementById("search-btn");
-    let searchUrl = document.getElementById("search-suggestions-url").value;
-    
+$u.onReady(()=>{
+  const input = document.getElementById('search-input');
+  const box = document.getElementById('search-suggestions');
+  const btn = document.getElementById('search-btn');
+  const urlEl = document.getElementById('search-suggestions-url');
+  if (!input || !box || !btn || !urlEl) return;
+  const searchUrl = urlEl.value;
 
-    searchInput.addEventListener("input", function () {
-        let query = this.value.trim();
-        if (query.length === 0) {
-            suggestionsBox.style.display = "none";
-            return;
-        }
+  let t = null;
+  const debounce = (fn, ms)=>{
+  let t;
+  return function(...args){
+    const ctx = this;
+    clearTimeout(t);
+    t = setTimeout(()=> fn.apply(ctx, args), ms);
+  };
+};
 
-        fetch(`${searchUrl}?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                suggestionsBox.innerHTML = "";
-                let totalResults = data.categories.length + data.products.length;
-                if (totalResults > 0) {
-                    suggestionsBox.style.display = "block";
-                    if (data.categories.length > 0) {
+  async function fetchSuggestions(q){
+    const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`);
+    return res.json();
+  }
 
-                        data.categories.forEach(category => {
-                            let listItem = document.createElement("li");
-                            listItem.classList.add("list-group-item");
-                            listItem.innerHTML = `<strong>${category.title}</strong>`;
-                            listItem.addEventListener("click", function () {
-                                window.location.href = category.url;
-                            });
-                            suggestionsBox.appendChild(listItem);
-                        });
-                    }
+  input.addEventListener('input', debounce(async function(){
+    const q = this.value.trim();
+    if (!q) { box.style.display='none'; box.innerHTML=''; return; }
 
-                    if (data.products.length > 0) {
+    const data = await fetchSuggestions(q);
+    box.innerHTML='';
+    const total = data.categories.length + data.products.length;
+    if (!total) { box.style.display='none'; return; }
 
-                        data.products.forEach(product => {
-                            let listItem = document.createElement("li");
-                            listItem.classList.add("list-group-item");
-                            listItem.innerHTML = `<strong>${product.title}</strong>`;
-                            listItem.addEventListener("click", function () {
-                                window.location.href = product.url;
-                            });
-                            suggestionsBox.appendChild(listItem);
-                        });
-                    }
-                } else {
-                    suggestionsBox.style.display = "none";
-                }
-            });
-    });
+    box.style.display='block';
+    const addItem = (title, href)=>{
+      const li = document.createElement('li');
+      li.className = 'list-group-item';
+      li.innerHTML = `<strong>${title}</strong>`;
+      li.addEventListener('click', ()=> window.location.href = href);
+      box.appendChild(li);
+    };
+    data.categories.forEach(c=> addItem(c.title, c.url));
+    data.products.forEach(p=> addItem(p.title, p.url));
+  }, 200));
 
-    document.addEventListener("click", function (e) {
-        if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
-            suggestionsBox.style.display = "none";
-        }
-    });
+  document.addEventListener('click', (e)=>{
+    if (!input.contains(e.target) && !box.contains(e.target)) box.style.display='none';
+  });
 
-
-    searchInput.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") {
-            searchBtn.click();
-        }
-    });
+  input.addEventListener('keypress', (e)=>{ if (e.key==='Enter') btn.click(); });
 });
-
-  

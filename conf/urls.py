@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from conf import settings
 from django.conf.urls.static import static
-from products.views import get_characteristics
+from products.views.catalog import get_characteristics
 from django.conf.urls import handler404
 from main.views import custom_404, test_404
 from django.contrib.sitemaps.views import sitemap

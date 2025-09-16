@@ -1,186 +1,95 @@
+$u.onReady(()=>{
 
+  $('#openReviewModal').on('click', ()=> $('#reviewModal').modal('show'));
+  $('#cancelReview').on('click', ()=> $('#reviewModal').modal('hide'));
 
-  $('#openReviewModal').on('click', function () {
-    $('#reviewModal').modal('show');
-  });
-  
-  $('#cancelReview').on('click', function () {
-    $('#reviewModal').modal('hide');
-  });
-
-  let initializing = true; 
-  $('#ratingFilter').dropdown({
-    onChange: function (value, text, $choice) {
-      if (initializing) return;
-      // const params = new URLSearchParams(window.location.search);
-
-      // if (value === 'all') {
-      //   params.delete('rating');
-      // } else {
-      //   params.set('rating', value);
-      // }
-
-      // window.location.search = params.toString();
-      const url = this.dataset.url;
-      const productSlug = this.dataset.slug;
-      fetch(url, {
-        method: "POST",
-        headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          rating: value === 'all' ? null : parseInt(value),
-          slug: productSlug
-        })
-      }).then(() => {
+  (function(){
+    const dd = $('#ratingFilter');
+    if (!dd.length) return;
+    let initializing = true;
+    dd.dropdown({
+      onChange: async function(value){
+        if (initializing) return;
+        const url = this.dataset.url;
+        const slug = this.dataset.slug;
+        await $u.csrfFetch(url, { body: JSON.stringify({ rating: value==='all' ? null : parseInt(value), slug }) });
         location.reload();
-      });
-    }
-  });
-
-  // const currentRating = new URLSearchParams(window.location.search).get('rating');
-  const ratingFilter = document.getElementById('ratingFilter');
-  const currentRating = ratingFilter.dataset.selected;
-if (currentRating) {
-  $('#ratingFilter').dropdown('set selected', currentRating.toString());
-} else {
-  $('#ratingFilter').dropdown('set selected', 'all');
-}
-  initializing = false;
-
-    
-  
-
-
-    var images = [];
-    
-    var mainImage = $('#mainProductImage');
-    images.push(mainImage.attr('src'));
-    
-    $('.preview-image').each(function(){
-      images.push( $(this).attr('src'));
+      }
     });
-    
+    const cur = dd.data('selected');
+    dd.dropdown('set selected', cur ? String(cur) : 'all');
+    initializing = false;
+  })();
+
+  (function(){
+    const main = $('#mainProductImage');
+    if (!main.length) return;
+
+    const images = [];
+    images.push(main.attr('src'));
+    $('.preview-image').each(function(){ images.push($(this).attr('src')); });
+
+    let current = 0;
+    const modal = $('#imagePreviewModal');
+    const img = $('#modalPreviewImage');
+
+    function updateThumbs(){
+      $('.modal-thumbnails img').css('border-color','transparent');
+      $(`.modal-thumbnails img[data-index="${current}"]`).css('border-color','#2185d0');
+    }
+    function open(index){
+      current = index;
+      img.attr('src', images[current]);
+      const box = $('.modal-thumbnails').empty();
+      images.forEach((src, i)=>{
+        const t = $('<img>').attr({src, 'data-index': i}).css({width:'60px', cursor:'pointer', border:'2px solid transparent', 'border-radius':'4px'});
+        box.append(t);
+      });
+      updateThumbs();
+      modal.modal('show');
+    }
+
     $('#mainProductImage, .preview-image').on('click', function(){
-      var index = parseInt($(this).data('index'));
-      openImageModal(index);
+      open(parseInt($(this).data('index')));
     });
-    
-    var currentIndex = 0;
-    
-    function openImageModal(index) {
-      currentIndex = index;
-      $('#modalPreviewImage').attr('src', images[currentIndex]);
-      
-      var thumbContainer = $('.modal-thumbnails');
-      thumbContainer.empty();
-      images.forEach(function(image, idx){
-        var thumb = $('<img>')
-          .attr('src', image)
-          .attr('data-index', idx)
-          .css({
-            'width': '60px',
-            'cursor': 'pointer',
-            'border': '2px solid transparent',
-            'border-radius': '4px'
-          });
-        if(idx === currentIndex){
-          thumb.css('border-color', '#2185d0');
-        }
-        thumbContainer.append(thumb);
-      });
-      
-      $('#imagePreviewModal').modal('show');
-    }
-    
+
     $('.nav-arrow.left').on('click', function(e){
       e.stopPropagation();
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      $('#modalPreviewImage').attr('src', images[currentIndex]);
-      updateModalThumbnails();
+      current = (current - 1 + images.length) % images.length;
+      img.attr('src', images[current]); updateThumbs();
     });
-    
     $('.nav-arrow.right').on('click', function(e){
       e.stopPropagation();
-      currentIndex = (currentIndex + 1) % images.length;
-      $('#modalPreviewImage').attr('src', images[currentIndex]);
-      updateModalThumbnails();
+      current = (current + 1) % images.length;
+      img.attr('src', images[current]); updateThumbs();
     });
-    
     $('.modal-thumbnails').on('click', 'img', function(){
-      currentIndex = parseInt($(this).attr('data-index'));
-      $('#modalPreviewImage').attr('src', images[currentIndex]);
-      updateModalThumbnails();
+      current = parseInt($(this).attr('data-index')); img.attr('src', images[current]); updateThumbs();
     });
-    
-    function updateModalThumbnails(){
-      $('.modal-thumbnails img').css('border-color', 'transparent');
-      $('.modal-thumbnails img[data-index="'+currentIndex+'"]').css('border-color', '#2185d0');
-    }
+  })();
 
+  $u.delegate(document, '.custom-tag', 'click', async (e, el)=>{
+    const url = el.dataset.url;
+    try {
+      const html = await (await fetch(url)).text();
+      $('#tag-modal').remove();
+      $('body').append(html);
+      $('#tag-modal').modal('show');
+    } catch { alert('Error while loading products with this tag'); }
+  });
 
+  document.querySelectorAll('[id^="review-gallery-"]').forEach(g=>{
+    lightGallery(g, { selector:'a', plugins:[lgZoom, lgThumbnail], speed:400 });
+  });
 
-      $('.custom-tag').on('click', function () {
-        const url = $(this).data('url');
-    
-        $.ajax({
-          url: url,
-          method: 'GET',
-          success: function (html) {
-            $('#tag-modal').remove();
-              $('body').append(html);
-              $('#tag-modal').modal('show');
-          },
-          error: function () {
-            alert('Error while loading products with this tag');
-          }
-        });
-      });
-
-
-      document.querySelectorAll('[id^="review-gallery-"]').forEach(gallery => {
-        lightGallery(gallery, {
-          selector: 'a',
-          plugins: [lgZoom, lgThumbnail],
-          speed: 400
-        });
-      });
-  
-
-
-
-
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-            }
-          }
-        }
-        return cookieValue;
-      }
-      document.querySelectorAll('[data-tab-name]').forEach(tab => {
-        tab.addEventListener('click', function (e) {
-          e.preventDefault();
-          const tabName = this.dataset.tabName;
-          const url = this.dataset.url;
-          const productSlug = this.dataset.slug;
-      
-          fetch(url, {
-            method: "POST",
-            headers: {
-              "X-CSRFToken": getCookie("csrftoken"),
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ tab: tabName, slug: productSlug })
-          }).then(() => {
-            location.reload();
-          });
-        });
-      });
+  $u.qsa('[data-tab-name]').forEach(tab=>{
+    tab.addEventListener('click', async (e)=>{
+      e.preventDefault();
+      const url = tab.dataset.url;
+      const slug = tab.dataset.slug;
+      const name = tab.dataset.tabName;
+      await $u.csrfFetch(url, { body: JSON.stringify({ tab: name, slug }) });
+      location.reload();
+    });
+  });
+});

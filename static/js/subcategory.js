@@ -1,103 +1,40 @@
+$u.onReady(()=>{
+  const applyBtn = document.getElementById('applyFilters');
+  if (applyBtn) {
+    applyBtn.addEventListener('click', async function(){
+      const form = this.closest('form');
+      const url = this.dataset.url;
+      const slug = this.dataset.slug;
 
-
-
-
-document.getElementById('sortSelector').addEventListener('change', function() {
-  const selectedSort = this.value;
-  const slug = this.dataset.slug;
-  const url = this.dataset.url
-
-  fetch(url, {
-    method: "POST",
-    headers: {
-          'X-CSRFToken': getCookie('csrftoken'),
-          'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ sort: selectedSort, slug: slug })
-  }).then(() => {
-    location.reload(); 
-  });
-});
-
-
-
-document.getElementById("applyFilters").addEventListener("click", function () {
-  const form = this.closest("form");
-  const slug = this.dataset.slug;
-  const url = this.dataset.url;
-
-  const formData = new FormData(form);
-  const filters = {};
-  for (const [key, value] of formData.entries()) {
-    if (filters[key]) {
-      if (Array.isArray(filters[key])) {
-        filters[key].push(value);
-      } else {
-        filters[key] = [filters[key], value];
+      const fd = new FormData(form);
+      const filters = {};
+      for (const [k,v] of fd.entries()){
+        if (filters[k]) filters[k] = Array.isArray(filters[k]) ? [...filters[k], v] : [filters[k], v];
+        else filters[k] = v;
       }
-    } else {
-      filters[key] = value;
-    }
+      filters.slug = slug;
+
+      await $u.csrfFetch(url, { body: JSON.stringify(filters) });
+      location.reload();
+    });
   }
 
-  filters["slug"] = slug;
-  console.log(filters);
+  const slider = $("#rangeSlider");
+  if (slider.length){
+    const priceFrom = $("#price_from");
+    const priceTo = $("#price_to");
+    const min = parseFloat(slider.data("min-price"));
+    const max = parseFloat(slider.data("max-price"));
+    const initialMin = parseFloat(slider.data("initial-min-price")) || min;
+    const initialMax = parseFloat(slider.data("initial-max-price")) || max;
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      'X-CSRFToken': getCookie('csrftoken'),
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(filters)
-  }).then(() => {
-    location.reload();
-  });
-});
-
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
+    slider.slider({
+      range:true, min, max, values:[initialMin, initialMax],
+      slide: function(_e, ui){ priceFrom.val(ui.values[0]); priceTo.val(ui.values[1]); }
+    });
+    priceFrom.val(slider.slider("values", 0));
+    priceTo.val(slider.slider("values", 1));
+    priceFrom.on("change", function(){ slider.slider("values", 0, this.value); });
+    priceTo.on("change", function(){ slider.slider("values", 1, this.value); });
   }
-  return cookieValue;
-}
-
-
-const slider = $("#rangeSlider");
-const priceFromInput = $("#price_from");
-const priceToInput = $("#price_to");
-
-const min = parseFloat(slider.data("min-price"));
-const max = parseFloat(slider.data("max-price"));
-let initialMin = parseFloat(slider.data("initial-min-price")) || min;
-let initialMax = parseFloat(slider.data("initial-max-price")) || max;
-
-slider.slider({
-  range: true,
-  min: min,
-  max: max,
-  values: [initialMin, initialMax],
-  slide: function (event, ui) {
-    priceFromInput.val(ui.values[0]);
-    priceToInput.val(ui.values[1]);
-  }
-});
-
-priceFromInput.val(slider.slider("values", 0));
-priceToInput.val(slider.slider("values", 1));
-
-priceFromInput.on("change", function () {
-  slider.slider("values", 0, this.value);
-});
-
-priceToInput.on("change", function () {
-  slider.slider("values", 1, this.value);
 });

@@ -1,1 +1,3 @@
-$('.ui.accordion').accordion();
+$u.onReady(()=>{
+  $('.ui.accordion').accordion();
+});

@@ -5,6 +5,7 @@ from django.db.models.functions import Coalesce
 from django.http import HttpResponse
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
+from django.views.generic import ListView
 
 
 

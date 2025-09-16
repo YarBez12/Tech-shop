@@ -1,12 +1,17 @@
-$('.ui.checkbox').checkbox();
+$u.onReady(()=>{
+  $('.ui.checkbox').checkbox();
 
-  $('#toggle-password, #toggle-label').on('click', function () {
-    const passwordField = $('#id_password');
-    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
-    passwordField.attr('type', type);
-    
-    const icon = $('#toggle-password');
+  const icon = $('#toggle-password');
+  const label = $('#toggle-label');
+  const pass = $('#id_password');
+  if (!icon.length || !label.length || !pass.length) return;
+
+  function toggle(){
+    const type = pass.attr('type') === 'password' ? 'text' : 'password';
+    pass.attr('type', type);
     icon.toggleClass('eye').toggleClass('eye slash');
-
-    $('#toggle-label').text(type === 'password' ? 'Show password' : 'Hide password');
-  });
+    label.text(type === 'password' ? 'Show password' : 'Hide password');
+  }
+  icon.on('click', toggle);
+  label.on('click', toggle);
+});
