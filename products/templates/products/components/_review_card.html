@@ -15,21 +15,16 @@
     <div class="extra">
       <span style="color: green;">+ {{ review.pros }}</span><br>
       <span style="color: red;">- {{ review.cons }}</span>
-    
-      {% comment %} <div class="ui small images" style="margin-top: 1em;">
-        {% for image in review.images.all  %}
-        <img class="ui review image" src="{{ image.image.url }}" alt="">
-      {% endfor %}
-       
-      </div> {% endcomment %}
 
-      <div id="review-gallery-{{ review.slug }}" class="ui small images" style="margin-top: 1em;">
+      {% if review.images.exists %}
+      <div id="review-gallery-{{ review.id }}" class="ui small images" style="margin-top: 1em;">
         {% for image in review.images.all %}
           <a href="{{ image.image.url }}">
             <img class="ui review image" src="{{ image.image.url }}" alt="">
           </a>
         {% endfor %}
       </div>
+      {% endif %}
       
     </div>
 

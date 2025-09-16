@@ -1,33 +1,3 @@
-{% comment %} <form action="" method="post" class="review-form" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% for item in review_form  %}
-      <div class="mb-3">
-          <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
-          {{ item }}
-      </div>
-    {% endfor %}
-    <div class="mb-3">
-      <label for="id_images">Images</label>
-      <input type="file" name="images" id="id_images" class="form-control" multiple>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Existing Images</label>
-        <div class="row">
-            {% for image in existing_images %}
-                <div class="col-md-3">
-                    <img src="{{ image.image.url }}" class="img-thumbnail" alt="Review Image">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="delete_images" value="{{ image.id }}" id="delete_image_{{ image.id }}">
-                        <label class="form-check-label" for="delete_image_{{ image.id }}">
-                            Delete
-                        </label>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit Review</button>
-  </form> {% endcomment %}
   <div class="content">
   <form id="reviewForm" action="" method="post" class="ui form review-form" enctype="multipart/form-data">
     {% csrf_token %}

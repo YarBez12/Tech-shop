@@ -1,6 +1,5 @@
 {% extends "base_main.html" %}
 {% load static %}
-{% load products_tags %}
 {% block main %}
   <div class="ui breadcrumb">
     <a href="{% url 'main:index' %}" class="section">Home</a>
@@ -14,8 +13,6 @@
   {% include "products/components/_product_info.html" %}
 
     <div class="ui attached tabular menu">
-      {% comment %} <a href="?{% change_params tab='information' %}" class="{% if request.GET.tab == 'information' or not request.GET.tab %}active{% endif %} item" data-tab="info">Product information</a>
-      <a href="?{% change_params tab='reviews' %}" class="{% if request.GET.tab == 'reviews' %}active{% endif %} item" data-tab="reviews">Users' reviews</a> {% endcomment %}
       <a href="#" data-tab-name="information" data-url="{% url 'products:save_tab' 'product' %}" data-slug="{{ product.slug }}" class="item {% if ui_state.tab == 'information' or not ui_state.tab %}active{% endif %}">Product information</a>
       <a href="#" data-tab-name="reviews" data-url="{% url 'products:save_tab' 'product' %}" data-slug="{{ product.slug }}" class="item {% if ui_state.tab == 'reviews' %}active{% endif %}">Users' reviews</a>  
     </div>
@@ -28,8 +25,6 @@
     
   {% endblock main %}
 {% block additional_script %}
-{% comment %} <script src = '{% static "js/toggle_tabs.js" %}' ></script> {% endcomment %}
 <script src = '{% static "js/product.js" %}' ></script>
 <script src="{% static "js/products_carousel.js" %}"></script>
-
 {% endblock additional_script %}

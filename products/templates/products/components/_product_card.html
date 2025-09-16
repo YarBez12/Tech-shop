@@ -1,6 +1,8 @@
+{% load static %}
 {% load products_tags %}
 
 
+{% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
 
   <div class="ui card product-card {% if product.discount %}discount-card{% endif %}">
     <div class="overlay">
@@ -12,12 +14,13 @@
         <a href="{{ product.get_absolute_url }}" class="ui mini inverted button">Details</a>
       </div>
     </div>
-    {% if product.first_photo %}
     <div class="image product-image-container">
-      <img src="{{ product.first_photo }}" alt="{{ product.title }}">
-  
+      <img
+        loading="lazy"
+        src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+        alt="{{ product.title }}"
+      >  
     </div>
-    {% endif %}
   
     <div class="content">
   <div class="ui medium centered header">{{ product.title }}</div>

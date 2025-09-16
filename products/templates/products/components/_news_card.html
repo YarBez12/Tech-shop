@@ -1,9 +1,13 @@
 {% load products_tags %}
 {% load main_tags %}
+{% load static %}
+{% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
 <div class="card">
     {% if product.first_photo %}
     <div class="image">
-      <img src="{{ product.first_photo }}" alt="{{ product.title }}">
+      <img loading="lazy"
+         src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+         alt="{{ product.title }}">
     </div>
     {% endif %}
     <div class="content">

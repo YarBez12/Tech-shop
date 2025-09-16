@@ -9,7 +9,7 @@
         <button class="arrow left" onclick="prevPhoto()">&#9664;</button>
         <div class="thumbs-container">
           {% for image in product.images.all  %}
-          <img src="{{ image.image.url }}" alt="" class="thumb" onclick="selectPhoto('{{ image.image.url }}')">
+          <img src="{{ image.image.url }}" alt="" class="thumb" onclick="selectPhoto('{{ image.image.url }}')" alt="{{ product.title }}">
           {% endfor %}
         </div>
         <button class="arrow right" onclick="nextPhoto()">&#9654;</button>

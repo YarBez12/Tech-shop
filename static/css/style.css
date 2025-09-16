@@ -696,7 +696,7 @@ a.item:hover, a.header:hover, a.link:hover {
 .delete-box h2.ui.header {
   margin-bottom: 1em;
 }
-.review-preview {
+.preview-box {
   margin-top: 1em;
   background: #f4f4f4;
   padding: 1em 1.5em;

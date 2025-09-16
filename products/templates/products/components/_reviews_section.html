@@ -1,0 +1,43 @@
+      <div class="ui grid">
+        <div class="eight wide column">
+          {% if not request.user == product.user %}
+          <button class="ui primary button" id="openReviewModal">
+            <i class="plus icon"></i> Add review
+          </button>
+          {% endif %}
+        </div>
+        
+        <div class="eight wide column right aligned">
+          <div class="ui form">
+            <div class="field" style="margin-bottom: 0;">
+              <label><strong>Filter by rating:</strong></label>
+              <select class="ui dropdown" id="ratingFilter" data-url="{% url "products:save_rating" %}" data-slug="{{ product.slug }}" data-selected="{{ ui_state.rating|default_if_none:"" }}">
+                <option value="all">All Ratings</option>
+                <option value="5">★★★★★</option>
+                <option value="4">★★★★☆</option>
+                <option value="3">★★★☆☆</option>
+                <option value="2">★★☆☆☆</option>
+                <option value="1">★☆☆☆☆</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    
+      <div class="ui divided items" id="reviewList" style="margin-top: 2em;">
+        {% for review in reviews  %}
+        <div class="item">
+          <div class="content">
+          {% include "products/components/_review_card.html" %}
+          {% if request.user == review.user %}
+          <div class="ui right floated">
+            <a href="{{ review.delete_review }}"><i class="trash alternate outline icon red" title="Delete" style="cursor:pointer;"></i></a>
+            <a href="{{ review.edit_review }}"><i class="edit outline icon blue" title="Edit" style="cursor:pointer;"></i></a>
+          </div>
+          {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+  
+      </div>

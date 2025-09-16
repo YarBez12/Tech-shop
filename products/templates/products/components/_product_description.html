@@ -1,0 +1,14 @@
+<div class="description-section">
+      {% if product.summary %}
+      <div class="ui medium centered header">Short description</div>
+      <p class="ui text">
+        {{ product.summary }}
+      </p>
+      {% endif %}
+      {% if product.description %}
+      <div class="ui medium centered header">Detailed description</div>
+      <p class="ui text">
+        {{ product.description }}
+      </p>
+      {% endif %}
+    </div>

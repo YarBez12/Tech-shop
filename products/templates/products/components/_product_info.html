@@ -36,7 +36,9 @@
           {% if product.user == request.user %}
           <a class="ui small teal label" href="{% url 'users:profile' %}">Your product</a>
           {% endif %}
+          {% if product.brand %}
           <a class="ui small red label" href="{% url 'products:brand_details' product.brand.slug %}">{{ product.brand.name }}</a>
+          {% endif %}
           {% for tag in product.tags.all  %}
             <a class="ui small grey custom-tag label" data-url="{% url 'products:tag_products' product.slug tag.slug %}">{{ tag.name }}</a>
             {% endfor %}
@@ -73,23 +75,6 @@
   <div><strong>Views:</strong> {{ product_views }}</div>
   <div><strong>Created at:</strong> {{ product.created_at }}</div>
   <div><strong>Updated at:</strong> {{ product.updated_at }}</div>
-  {% comment %} <div><strong>Status:</strong> 
-    {% if product.is_active %}
-      <span class="ui green label">Active</span>
-    {% else %}
-      <span class="ui red label">Inactive</span>
-    {% endif %}
-      </div> {% endcomment %}
-    {% comment %} {% if not product.is_active %}
-  {% with has_pending=product.activation_requests.all|dictsort:"-created"|first %}
-  <form method="post" action="{% url 'products:product_request_activation' product.slug %}" style="display:inline">
-    {% csrf_token %}
-    <button class="ui orange button">
-      <i class="flag outline icon"></i> Request activation
-    </button>
-  </form>
-  {% endwith %}
-{% endif %} {% endcomment %}
 <div class="owner-info-row">
   <div>
     <strong>Status:</strong>

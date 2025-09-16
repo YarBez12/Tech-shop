@@ -1,85 +1,14 @@
-{% load products_tags %}
   <div class="ui bottom attached {% if ui_state.tab == 'information' or not ui_state.tab %}active{% endif %} tab segment" data-tab="info">
-    <div class="description-section">
-      {% if product.summary %}
-      <div class="ui medium centered header">Short description</div>
-      <p class="ui text">
-        {{ product.summary }}
-      </p>
-      {% endif %}
-      {% if product.description %}
-      <div class="ui medium centered header">Detailed description</div>
-      <p class="ui text">
-        {{ product.description }}
-      </p>
-      {% endif %}
-    </div>
+    {% include "products/components/_product_description.html" %}
 
     {% if recommended_products %}
-    <div class="recommended-products">
-      <div class="ui large centered header">Recommended products</div>
-      {% with specific_products=recommended_products %}
-      {% include "products/components/_specific_products_list.html" with list_title="Popular products" %}
-      {% endwith %}
-    </div>
+      {% include "products/components/_recommended_products.html" %}
     {% endif %}
-    
-
-
- 
-
 
     </div>
-
-
-
 
     <div class="ui bottom attached {% if ui_state.tab == 'reviews' %}active{% endif %} tab segment" data-tab="reviews">
-      <div class="ui grid">
-        <div class="eight wide column">
-          {% if not request.user == product.user %}
-          <button class="ui primary button" id="openReviewModal">
-            <i class="plus icon"></i> Add review
-          </button>
-          {% endif %}
-        </div>
-        
-        <div class="eight wide column right aligned">
-          <div class="ui form">
-            <div class="field" style="margin-bottom: 0;">
-              <label><strong>Filter by rating:</strong></label>
-              <select class="ui dropdown" id="ratingFilter" data-url="{% url "products:save_rating" %}" data-slug="{{ product.slug }}" data-selected="{{ ui_state.rating|default_if_none:"" }}">
-                <option value="all">All Ratings</option>
-                <option value="5">★★★★★</option>
-                <option value="4">★★★★☆</option>
-                <option value="3">★★★☆☆</option>
-                <option value="2">★★☆☆☆</option>
-                <option value="1">★☆☆☆☆</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-    
-      <div class="ui divided items" id="reviewList" style="margin-top: 2em;">
-        {% for review in reviews  %}
-        <div class="item">
-          <div class="content">
-          {% include "products/components/_review_card.html" %}
-          {% if request.user == review.user %}
-          <div class="ui right floated">
-            <a href="{{ review.delete_review }}"><i class="trash alternate outline icon red" title="Delete" style="cursor:pointer;"></i></a>
-            <a href="{{ review.edit_review }}"><i class="edit outline icon blue" title="Edit" style="cursor:pointer;"></i></a>
-          </div>
-          {% endif %}
-          </div>
-        </div>
-        {% endfor %}
-  
-      </div>
-    
-    
+        {% include "products/components/_reviews_section.html" %}
   </div>
   <div class="ui modal" id="reviewModal">
     <div class="header">

@@ -1,24 +1,5 @@
-{% comment %} <div class="col-md-9" >
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Product list</h4>
-     {% include "products/components/_sorting_menu.html" %}
-    </div>
-    <div class="product-list">
-        {% for product in products  %}
-      {% include "products/components/_product_detailed_card.html" %}
-      {% endfor %}
-    </div>
-    {% include "products/components/_pagination.html" %}
-  </div> {% endcomment %}
-
-
-
-
-
-
-  <div class="ui grid section-header">
+<div class="ui grid section-header">
     <div class="eight wide column">
-      {% comment %} <h3>Product list</h3> {% endcomment %}
     </div>
     <div class="eight wide column right aligned">
       {% include "products/components/_sorting_menu.html" %}
@@ -30,4 +11,4 @@
   {% if not is_search and not is_brand and not is_user_products %}
   {% include "products/components/_pagination.html" %}
   {% endif %}
-  {% comment %} {% include "products/components/_pagination.html" %} {% endcomment %}
+\

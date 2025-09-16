@@ -1,12 +1,13 @@
-
-
-
-
-      <div class="ui subcategory card">
-        <div class="image">
-          <img src="{% if category.image %}{{ category.image.url }}{% else %}{{ category.products.all.0.first_photo }}{% endif %}" class="card-img-top" alt="{{ category.title }}" alt="">
-        </div>
-        <div class="content">
-          <div class="header">{{ category.title }}</div>
-        </div>
-      </div>
+{% load static %}
+{% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
+<div class="ui subcategory card">
+  <div class="image">
+    <img
+      loading="lazy"
+      src="{% firstof category.image.url category.products.first.first_photo IMG_PLACEHOLDER %}"
+      alt="{{ category.title }}">
+  </div>
+  <div class="content">
+    <div class="header">{{ category.title }}</div>
+  </div>
+</div>

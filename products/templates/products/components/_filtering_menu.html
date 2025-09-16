@@ -1,51 +1,5 @@
 {% load products_tags %}
 {% load main_tags %}
-{% comment %} <div class="col-md-3">
-    <h4>Filtering</h4>
-    <form method='get'>
-      <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}">
-      <!-- Чекбоксы для разделов -->
-      {% for characteristic in characteristics  %}
-      <div class="mb-3" data-section-name="{{ characteristic.title }}">
-        <label class="form-label">{{ characteristic.title }}</label>
-        <div class="d-flex flex-wrap">
-          {% for product_characteristic in characteristic|get_product_characteristics  %}
-          <div class="form-check me-3">
-            <input class="form-check-input" type="checkbox" name="{{ characteristic.slug }}" value="{{ product_characteristic.value }}" id="{{ product_characteristic.product }}-{{ characteristic.title }}" data-label="{{ product_characteristic.value }}"
-            {% if product_characteristic.value in selected_filters|get_item_from_dict:characteristic.slug %}checked{% endif %}>
-            <label class="form-check-label" for="{{ product_characteristic.product }}-{{ characteristic.title }}">{{ product_characteristic.value }}</label>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endfor %}
-      <!-- Фильтрация по цене -->
-      <div class="mb-3">
-        <label class="form-label">Price</label>
-        <div class="row g-2">
-          <div class="col">
-            <input type="number" id="price_from" class="form-control" name = 'price_from' placeholder="From" value="{{ request.GET.price_from|default:"" }}">
-          </div>
-          <div class="col">
-            <input type="number" id="price_to" class="form-control" name = 'price_to' placeholder="To" value="{{ request.GET.price_to|default:"" }}">
-          </div>
-        </div>
-      </div>
-      <!-- Ползунки для диапазона цены -->
-      <div class="mb-3">
-        <label class="form-label">Price range</label>
-        <div id="rangeSlider" data-min-price="{{ min_price|floor_int }}" data-max-price="{{ max_price|ceil_int }}"
-        data-initial-min-price = "{{ request.GET.price_from|default:"" }}"
-        data-initial-max-price= "{{ request.GET.price_to|default:"" }}"></div>
-      </div>
-      <!-- Кнопка применения фильтра -->
-      <button type="submit" class="btn btn-primary w-100">Apply filters</button>
-      <a href="{{ subcategory.get_absolute_url }}" class="btn btn-primary w-100">Reset filters</a>
-    </form>
-  </div> {% endcomment %}
-
-
-
 
 
 
@@ -53,7 +7,6 @@
     <div class="ui medium header">Filtering</div>
 
     <form class="ui form" method="get">
-      {% comment %} <input type="hidden" name="sort" value="{{ request.GET.sort|default:"title" }}"> {% endcomment %}
       <div class="filter-scroll">
       {% for characteristic in characteristics  %}
       <div class="grouped fields" data-section-name="{{ characteristic.title }}">
