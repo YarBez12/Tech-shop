@@ -32,64 +32,6 @@
 
 {% include "main/components/_product_catalog.html" %}
 {% include "main/components/_brand_catalog.html" %}
-{% comment %} <div
-  id="carouselExampleDark"
-  class="carousel carousel-dark slide"
-  data-bs-ride="carousel">
-  <h1 class="text-center">Popular Products</h1>
-  <div class="carousel-indicators">
-    <button
-      type="button"
-      data-bs-target="#carouselExampleDark"
-      data-bs-slide-to="0"
-      class="active"
-      aria-current="true"
-      aria-label="Slide 1"
-    ></button>
-    {% with count_of_slides|add:"-1" as count %}
-  {% for i in ""|center:count %}
-    <button
-      type="button"
-      data-bs-target="#carouselExampleDark"
-      data-bs-slide-to="{{ forloop.counter }}"
-      aria-label="Slide {{ forloop.counter|add:'1' }}">
-    </button>
-    {% endfor %}
-    {% endwith %}
-
-  </div>
-  <div class="carousel-inner">
-    {% for i in ""|center:count_of_slides %}
-    <div class="carousel-item {% if forloop.counter == 1 %}active{% endif %}" data-bs-interval="10000">
-      <div class="row justify-content-center g-4 mb-5">
-        {% for i in ""|center:4 %}
-        {% product_number_by_page forloop.parentloop.counter0 forloop.counter0 as prod_num %}
-        {% with product=popular_products|get_item:prod_num %}
-            {% include "products/components/_product_card.html" with width=18 %}
-            {% endwith %}
-        {% endfor %}
-      </div>
-    </div>
-    {% endfor %}
-
-    <button
-      class="carousel-control-prev"
-      type="button"
-      data-bs-target="#carouselExampleDark"
-      data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button
-      class="carousel-control-next"
-      type="button"
-      data-bs-target="#carouselExampleDark"
-      data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-  </div>
-</div> {% endcomment %}
 {% with specific_products=popular_products %}
 <div class="popular-products">
   <div class="ui massive centered header">Popular products</div>

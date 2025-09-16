@@ -1,6 +1,5 @@
 {% extends "base_main.html" %}
 {% load static %}
-{% load products_tags %}
 {% block main %}
   <div class="ui massive centered header">Search Results for "{{ request.GET.q }}"</div>
       <div class="ui top attached tabular menu">
@@ -29,5 +28,4 @@
 <script src = '{% static "js/endless_list.js" %}' ></script>
 <script src = '{% static "js/sort.js" %}' ></script>
 <script src = '{% static "js/tabs.js" %}' ></script>
-{% comment %} <script src = '{% static "js/toggle_tabs.js" %}' ></script> {% endcomment %}
 {% endblock additional_script %}

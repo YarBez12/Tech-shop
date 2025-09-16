@@ -3,12 +3,7 @@ from products.models import Product, FavouriteProduct
 import redis
 from django.conf import settings
 from users.models import User
-
-r = redis.Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=settings.REDIS_DB
-)
+from conf.utils import r
 
 @shared_task
 def sync_views_from_redis():

@@ -27,9 +27,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 
-r = redis.Redis(host=settings.REDIS_HOST,
- port=settings.REDIS_PORT,
- db=settings.REDIS_DB)
+r = redis.Redis.from_url(settings.REDIS_URL)
 
 def get_user_favourites(user_id):
     return r.smembers(f'favourite:user:{user_id}')

@@ -20,17 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (totalResults > 0) {
                     suggestionsBox.style.display = "block";
                     if (data.categories.length > 0) {
-                        // let categoryHeader = document.createElement("li");
-                        // categoryHeader.classList.add("list-group-item", "fw-bold", "text-primary");
-                        // categoryHeader.textContent = "Categories";
-                        // suggestionsBox.appendChild(categoryHeader);
 
                         data.categories.forEach(category => {
                             let listItem = document.createElement("li");
                             listItem.classList.add("list-group-item");
                             listItem.innerHTML = `<strong>${category.title}</strong>`;
-                            // listItem.dataset.slug = category.slug;
-                            // listItem.dataset.type = "category";
                             listItem.addEventListener("click", function () {
                                 window.location.href = category.url;
                             });
@@ -39,17 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                     if (data.products.length > 0) {
-                        // let productHeader = document.createElement("li");
-                        // productHeader.classList.add("list-group-item", "fw-bold", "text-success");
-                        // productHeader.textContent = "Products";
-                        // suggestionsBox.appendChild(productHeader);
 
                         data.products.forEach(product => {
                             let listItem = document.createElement("li");
                             listItem.classList.add("list-group-item");
                             listItem.innerHTML = `<strong>${product.title}</strong>`;
-                            // listItem.dataset.slug = product.slug;
-                            // listItem.dataset.type = "product";
                             listItem.addEventListener("click", function () {
                                 window.location.href = product.url;
                             });

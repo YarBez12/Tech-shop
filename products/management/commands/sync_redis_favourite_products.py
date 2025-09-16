@@ -3,12 +3,8 @@ from users.models import User
 from products.models import FavouriteProduct, Product
 import redis
 from django.conf import settings
+from conf.utils import r
 
-r = redis.Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=settings.REDIS_DB
-)
 
 
 class Command(BaseCommand):

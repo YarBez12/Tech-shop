@@ -1,3 +1,4 @@
+{% load products_tags %}
 <div class="card">
     {% if product.first_photo %}
     <div class="image">
@@ -8,7 +9,7 @@
       <a class="header" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
       <div class="meta">
         <span class="date">
-          Updated {{ product.updated_at|timesince|cut:"minutes"|cut:"hours"|cut:"days"|cut:"weeks" }} ago
+          Updated {{ product.updated_at|days_since }} ago
         </span>
       </div>
       <div class="description">

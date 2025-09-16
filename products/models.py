@@ -32,14 +32,13 @@ class Category(models.Model):
                                                                   'subcategory_slug': self.slug})
         return reverse('products:category_detail', kwargs={'category_slug': self.slug})
     
+    class Meta:
+        verbose_name_plural = "Categories"
+        indexes = [
+            models.Index(fields=['slug']),
+        ]
+    
 
-# class Tag(models.Model):
-#     tag = models.CharField(max_length=100)
-#     display = models.BooleanField(default=False)
-    
-#     def __str__(self):
-#         return self.tag
-    
 class CustomTag(TagBase):
     display = models.BooleanField(default=False)
 
@@ -61,6 +60,11 @@ class Brand(models.Model):
 
     def get_absolute_url(self):
         return reverse("products:brand_details", kwargs={"slug": self.slug})
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['slug']),
+        ]
 
 
 class Characteristic(models.Model):
@@ -84,7 +88,6 @@ class Product(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     warranty = models.DecimalField(decimal_places=2, max_digits=5, null=True, blank=True)
-    # tags = models.ManyToManyField(Tag, blank=True, related_name='products')
     tags = TaggableManager(through=CustomTaggedItem, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, blank=True, related_name='products')
@@ -116,6 +119,13 @@ class Product(models.Model):
     def first_photo(self):
         first_image = self.images.first()
         return first_image.image.url if first_image else None
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['slug']),
+            models.Index(fields=['is_active', 'quantity']),
+        ]
+        ordering = ['-created_at']
 
 
 class ProductActivationRequest(models.Model):
@@ -140,6 +150,9 @@ class ProductCharacteristic(models.Model):
 
     def __str__(self):
         return f"{self.characteristic.title}: {self.value}"
+    
+    class Meta:
+        unique_together = ('product', 'characteristic')  
 
 class Review(models.Model):
     title = models.CharField(max_length=300)
@@ -162,6 +175,11 @@ class Review(models.Model):
     
     def get_absolute_url(self):
         return reverse("products:product_detail", kwargs={"product_slug": self.product.slug})
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['product']),
+        ]
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/')

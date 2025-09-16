@@ -116,9 +116,11 @@
     <a class="ui icon button" title="Edit product" href={% url "products:product_edit" product.slug %}>
       <i class="edit icon"></i>
     </a>
+    {% if product.is_active %}
     <a class="ui icon button" title="Delete product" href={% url "products:product_deactivate" product.slug %}>
       <i class="ban icon"></i>
     </a>
+    {% endif %}
   </div>
 </div>
 {% endif %}

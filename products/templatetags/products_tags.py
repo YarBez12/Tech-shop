@@ -1,36 +1,16 @@
-import math
-import re
 from django import template
-from django.db.models import Sum
-from django.utils.http import urlencode
 from django.db.models import OuterRef, Subquery
-from products.models import FavouriteProduct, Subcription
-from django.utils.safestring import mark_safe
+from products.models import Subcription
 from django.db.models import Count, Q
-
-
-
-from products.models import Category, Product, Characteristic, ProductCharacteristic, Brand
-import redis
+from conf.utils import r
+from products.models import Category, Product, ProductCharacteristic, Brand
 from django.conf import settings
-r = redis.Redis(host=settings.REDIS_HOST,
- port=settings.REDIS_PORT,
- db=settings.REDIS_DB)
-
-
-
-def get_category_views(category_id):
-    score = r.zscore('category:views:zset', category_id)
-    return int(score) if score else 0
+from products.utils.redis_utils import get_category_views
 
 register = template.Library()
 
 @register.simple_tag()
 def child_categories(parent_category, count):
-    # return Category.objects.filter(parent=parent_category).annotate(
-    #     total_watched = Sum('products__watched')
-    # ).order_by('-total_watched')[:int(count)]
-
     categories = (
         Category.objects
         .filter(parent=parent_category)
@@ -86,30 +66,9 @@ def product_number_by_page(parent_count, count):
     return int(parent_count)*4 + int(count)
 
 @register.filter()
-def get_item(queryset, index):
-    return queryset[int(index)]
-
-# @register.simple_tag()
-# def get_top_subcategory_products(subcategory):
-#     return Product.objects.filter(category=subcategory).order_by('watched')[:6]
-
-@register.filter()
 def get_grade_range(grade):
     return list(range(grade))
 
-@register.filter
-def floor_int(value):
-    try:
-        return math.floor(float(value))
-    except (ValueError, TypeError):
-        return value
-    
-@register.filter
-def ceil_int(value):
-    try:
-        return math.ceil(float(value))
-    except (ValueError, TypeError):
-        return value
     
 @register.filter()
 def get_product_characteristics(characteristic):
@@ -121,40 +80,18 @@ def get_product_characteristics(characteristic):
     return ProductCharacteristic.objects.filter(
         id__in=Subquery(subquery)
     )
-@register.filter
-def get_item_from_dict(dictionary, key):
-    return dictionary.get(key, [])
 
-@register.simple_tag(takes_context=True)
-def change_params(context, **kwargs):
-    query = context['request'].GET.copy()  
-    for key, value in kwargs.items():
-        query.setlist(key, value if isinstance(value, list) else [value]) 
-    return urlencode(query, doseq=True) 
+
 
 
 @register.simple_tag()
 def favourite_products(request):
     if request.user.is_authenticated:
-        # fav_products = FavouriteProduct.objects.filter(user=request.user)
-        # return [f.product for f in fav_products]
         redis_ids = r.smembers(f"favourite:user:{request.user.id}")
         product_ids = [int(pid) for pid in redis_ids]
         return Product.objects.filter(pk__in=product_ids, is_active=True)
     return []
 
-@register.filter()
-def highlight(text, query):
-    if not text:
-        return ""
-    if  query:
-        terms = query.split()
-        pattern = re.compile("|".join(re.escape(term) for term in terms), re.IGNORECASE)
-        def replacer(match):
-            return f"<strong>{match.group(0)}</strong>"
-        highlighted_text = pattern.sub(replacer, text)
-        return mark_safe(highlighted_text)
-    return text
 
 @register.filter()
 def display_tags(tags, query):

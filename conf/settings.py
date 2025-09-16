@@ -13,28 +13,35 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from celery.schedules import crontab
+import environ
+
+env = environ.Env(
+    DEBUG=(bool, False),
+)
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-whe1v%7-4m_k(!q7gq3-y0gj_0yw81shp3olqfw^12(@_!b#n!'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
 
-SITE_ID = 3
+SITE_ID = env.int('SITE_ID', default=1)
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY  = '193232505602-9apkdg8e8i4bbr5tjipr97om5adi5u6d.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY  = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 # Application definition
 
 INSTALLED_APPS = [
@@ -70,9 +77,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    #  'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #  'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -106,21 +111,16 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tech_shop',
-        'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': env('POSTGRES_DB', default='tech_shop'),
+        'USER': env('POSTGRES_USER', default='root'),
+        'PASSWORD': env('POSTGRES_PASSWORD', default='123456'),
+        'HOST': env('POSTGRES_HOST', default='localhost'),
+        'PORT': env('POSTGRES_PORT', default='5432'),
     }
 }
 
@@ -192,33 +192,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/user/login/'
 
-STRIPE_PUBLIC_KEY='pk_test_51QuvHEI80SgAAELDATSOhMUIwyhRwtHRep1helJePBhaYoQmWfrdHtV33YWHBqClSouPC5xJIzajPrBALLSH3FAU00F7TSFmXm'
-STRIPE_SECRET_KEY='sk_test_51QuvHEI80SgAAELDpxJPK8htJvqiWmNmFospCt55oz6Oiahdm7CzE6FAmg9yna6OaeaHNlhb9ipS8wCx1GqOvv1O000YJopwVl'
+STRIPE_PUBLIC_KEY=env('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY=env('STRIPE_SECRET_KEY')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'        
-EMAIL_PORT = 587                     
-EMAIL_USE_TLS = True                 
-EMAIL_HOST_USER = 'styleghg126@gmail.com'
-EMAIL_HOST_PASSWORD = 'bnlobjrycqffsbhz'
+EMAIL_HOST = env('EMAIL_HOST')   
+EMAIL_PORT = env.int('EMAIL_PORT')                     
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=True)             
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 INTERNAL_IPS = [
  '127.0.0.1',
 ]
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
-REDIS_DB = 0
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
-STRIPE_WEBHOOK_SECRET = 'whsec_b248af81d6c338c874032e158d0faad47f99feb7b82c762007436eae67eb6465'
-
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
+REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/0')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379',
+        'LOCATION': REDIS_URL,
     }
 }
 
@@ -250,4 +247,4 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = env('LOGIN_REDIRECT_URL', default='/')
