@@ -4,16 +4,13 @@ from .models import User
 def associate_by_email(strategy, details, user=None, *args, **kwargs):
     if user:
         return {"user": user}
-
     email = details.get("email")
     if not email:
         return
-
     try:
         existing_user = User.objects.get(email=email)
     except User.DoesNotExist:
         return
-
     return {"user": existing_user}
 
 

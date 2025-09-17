@@ -4,17 +4,13 @@
 {% block main %}
             <div class="ui card register-card">
         <div class="ui centered massive header">Editing user's info</div>
-
                     <form method='post' action="{% url "users:user_edit" %}" class="ui form">
                         {% csrf_token %}
                         {% with form=user_form %}
                         {% include "users/components/_contact_information_form.html" %}
                         {% endwith %}
-
                         {% include "users/components/_address_information_form.html" %}
-
                         <button type="submit" class="ui fluid primary button">Edit</button>
-
                     </form>
             </div>
 {% endblock main %}

@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block main %}
 <div class="ui massive centered header">Send mail</div>
-                    <form method='post' action='{% url "users:send_mail" %}' class="ui form">
-                        {% csrf_token %}
-                        {% for item in form  %}
-                        <div class="field">
-                            <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
-                            {{ item }}
-                        </div>
-                        {% endfor %}
-  <button type="submit"  class="ui primary button">Send</button>
-                    </form>
+    <form method='post' action='{% url "users:send_mail" %}' class="ui form">
+        {% csrf_token %}
+        {% for item in form  %}
+        <div class="field">
+            <label for="{{ item.id_for_label }}" class="form-label">{{ item.label }}</label>
+            {{ item }}
+        </div>
+        {% endfor %}
+        <button type="submit"  class="ui primary button">Send</button>
+    </form>
 {% endblock main %}

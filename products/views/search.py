@@ -6,10 +6,11 @@ from django.http import HttpResponse
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.views.generic import ListView
+from products.utils.mixins import EndlessPaginationMixin
 
 
 
-class SearchResults(ListView):
+class SearchResults(EndlessPaginationMixin, ListView):
     model = Product
     template_name = 'products/search_results.html'
     context_object_name = 'products'
@@ -52,24 +53,24 @@ class SearchResults(ListView):
         context['is_search'] = True
         return context
     
-    def render_to_response(self, context, **response_kwargs):
-        page = context.get('page_obj')
-        if self.request.GET.get('products_only') and (not page or not page.object_list):
-            return HttpResponse('')
-        return super().render_to_response(context, **response_kwargs)
+    # def render_to_response(self, context, **response_kwargs):
+    #     page = context.get('page_obj')
+    #     if self.request.GET.get('products_only') and (not page or not page.object_list):
+    #         return HttpResponse('')
+    #     return super().render_to_response(context, **response_kwargs)
     
 
-    def paginate_queryset(self, queryset, page_size):
-        paginator = self.get_paginator(queryset, page_size)
-        page = self.request.GET.get(self.page_kwarg) or 1
-        try:
-            page_number = paginator.validate_number(page)
-            page_obj = paginator.page(page_number)
-            return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
-        except (PageNotAnInteger, EmptyPage):
-            if self.request.GET.get('products_only'):
-                return paginator, None, [], False
-            raise
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = self.get_paginator(queryset, page_size)
+    #     page = self.request.GET.get(self.page_kwarg) or 1
+    #     try:
+    #         page_number = paginator.validate_number(page)
+    #         page_obj = paginator.page(page_number)
+    #         return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
+    #     except (PageNotAnInteger, EmptyPage):
+    #         if self.request.GET.get('products_only'):
+    #             return paginator, None, [], False
+    #         raise
 
 
 

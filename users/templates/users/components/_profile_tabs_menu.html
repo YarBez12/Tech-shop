@@ -1,0 +1,31 @@
+      <div class="ui top attached stackable tabular menu">
+        {% if products %}
+        <a href="#" class="{% if active_tab == 'favourites' %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
+        {% endif %}
+        {% if brands  %}
+        <a href="#" class="{% if active_tab == 'brands' %}active{% endif %} item" data-tab="brands" data-url="{% url 'products:save_tab' 'profile' %}">⭐️ Subscriptions</a>
+        {% endif %}
+        {% if cart.cart_total_quantity > 0 %}
+        <a href="#" class="{% if active_tab == 'cart' %}active{% endif %} item" data-tab="cart" data-url="{% url 'products:save_tab' 'profile' %}">🛒 Cart</a>
+        {% endif %}
+        {% if completed_orders %}
+        <a href="#" class="{% if active_tab == 'orders' %}active{% endif %} item" data-tab="orders" data-url="{% url 'products:save_tab' 'profile' %}">📦 Orders</a>
+        {% endif %}
+        <a href="#" class="{% if active_tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
+        {% if other_actions %}
+        <div class="notification-icon">
+          <a href="#" class="{% if active_tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">👀 Other actions</a>
+          {% if unread_actions_count %}
+          <div class="ui red tiny circular label notification-badge">{{ unread_actions_count }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if news %}
+        <div class="notification-icon">
+          <a href="#" class="{% if active_tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
+          {% if unread_news_count %}
+          <div class="ui red tiny circular label notification-badge">{{ unread_news_count }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>

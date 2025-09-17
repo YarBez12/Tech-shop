@@ -1,0 +1,11 @@
+  <button class="ui primary button" id="open-product-modal">
+    <i class="plus icon"></i> Add product
+  </button>
+  <div class="ui large header">Your Added Products</div>
+  {% with user_products as products  %}
+  {% if not products %}
+  <p>You have not added any products yet</p>
+  {% else %}
+  {% include "products/components/_product_list.html" with is_user_products=True is_profile=True %}
+  {% endif %}
+  {% endwith %}

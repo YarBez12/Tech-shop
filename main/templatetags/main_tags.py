@@ -4,6 +4,9 @@ from django import template
 from django.utils.http import urlencode
 from django.utils.safestring import mark_safe
 from datetime import date
+from datetime import datetime
+from django.utils import timezone
+
 
 register = template.Library()
 
@@ -59,8 +62,12 @@ def highlight(text, query):
 def days_since(value):
     if not value:
         return ""
-    today = date.today()
-    diff = (today - value).days
+    if isinstance(value, datetime):
+        val_date = timezone.localtime(value).date()
+    else:
+        val_date = value
+    today = timezone.localdate()
+    diff = (today - val_date).days
     if diff <= 0:
         return "less than a day"
     return f"{diff} day{'s' if diff > 1 else ''}"

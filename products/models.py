@@ -86,7 +86,7 @@ class Product(models.Model):
     quantity = models.IntegerField()
     watched = models.IntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
     warranty = models.DecimalField(decimal_places=2, max_digits=5, null=True, blank=True)
     tags = TaggableManager(through=CustomTaggedItem, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')

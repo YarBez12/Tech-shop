@@ -1,0 +1,25 @@
+      <div class="ui segment profile-section">
+        <div class="ui grid">
+          <div class="thirteen wide column">
+      {% if user.first_name %}
+            <p><strong>Firstname:</strong> {{ user.first_name }}</p>
+            {% endif %}
+      {% if user.last_name %}
+            <p><strong>Lastname:</strong> {{ user.last_name }}</p>
+            {% endif %}
+            <p><strong>Email:</strong> {{ user.email }}</p>
+      {% if user.phone %}
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            {% endif %}
+      {% if user.address %}
+            <p><strong>Address:</strong> {{ user.address.address_field1 }}, {% if user.address.address_field2 %}{{ user.address.address_field2 }},{% endif %} 
+              {{ user.address.city }}, {% if user.address.state %}{{ user.address.state }},{% endif %} {{ user.address.country }}, {{ user.address.postal_code }}</p>
+              {% endif %}
+          </div>
+          <div class="three wide column right aligned">
+            <a class="ui blue icon button" href="{% url "users:user_edit" %}">
+              <i class="edit icon"></i> <span class="only computer">Edit Profile</span>
+            </a>
+          </div>
+        </div>
+      </div>

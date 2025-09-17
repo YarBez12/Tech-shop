@@ -1,242 +1,26 @@
 {% extends "base_main.html" %}
 
 {% load products_tags %}
-{% load static %}
+{% load static %} 
 
 {% block main %}
   <div class="ui centered massive header">👤 User Profile</div>
-
-
-      <div class="ui segment profile-section">
-        <div class="ui grid">
-          <div class="thirteen wide column">
-      {% if user.first_name %}
-            <p><strong>Firstname:</strong> {{ user.first_name }}</p>
-            {% endif %}
-      {% if user.last_name %}
-            <p><strong>Lastname:</strong> {{ user.last_name }}</p>
-            {% endif %}
-            <p><strong>Email:</strong> {{ user.email }}</p>
-      {% if user.phone %}
-            <p><strong>Phone:</strong> {{ user.phone }}</p>
-            {% endif %}
-      {% if user.address %}
-            <p><strong>Address:</strong> {{ user.address.address_field1 }}, {% if user.address.address_field2 %}{{ user.address.address_field2 }},{% endif %} 
-              {{ user.address.city }}, {% if user.address.state %}{{ user.address.state }},{% endif %} {{ user.address.country }}, {{ user.address.postal_code }}</p>
-              {% endif %}
-          </div>
-          <div class="three wide column right aligned">
-            <a class="ui blue icon button" href="{% url "users:user_edit" %}">
-              <i class="edit icon"></i> <span class="only computer">Edit Profile</span>
-            </a>
-          </div>
-        </div>
-      </div>
-  
+  {% include "users/components/_profile_header.html" %}
+  {% with active_tab=saved_ui_state.tab|default:'favourites' %}
     <section id="profile-tabs">
-      {% comment %} <div class="tabs mb-3">
-        {% if products %}
-        <a href="?{% change_params tab='favourites' %}">
-            <button class="tab-button {% if request.GET.tab == 'favourites' or not request.GET.tab %}active{% endif %}" data-tab="favourites">Favourites</button>
-        </a>
-        {% endif %}
-        {% if cart.cart_total_quantity > 0 %}
-        <a href="?{% change_params tab='cart' %}">
-            <button class="tab-button {% if request.GET.tab == 'cart' %}active{% endif %}" data-tab="cart">Cart</button>
-        </a>
-        {% endif %}
-        {% if completed_orders %}
-        <a href="?{% change_params tab='orders' %}">
-            <button class="tab-button {% if request.GET.tab == 'orders' %}active{% endif %}" data-tab="orders">Completed orders</button>
-        </a>
-        {% endif %}
-      </div> {% endcomment %}
-
-
-
-      <div class="ui top attached stackable tabular menu">
-        {% if products %}
-        <a href="#" class="{% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
-        {% endif %}
-        {% if brands  %}
-        <a href="#" class="{% if saved_ui_state.tab == 'brands' %}active{% endif %} item" data-tab="brands" data-url="{% url 'products:save_tab' 'profile' %}">⭐️ Subscriptions</a>
-        {% endif %}
-        {% if cart.cart_total_quantity > 0 %}
-        <a href="#" class="{% if saved_ui_state.tab == 'cart' %}active{% endif %} item" data-tab="cart" data-url="{% url 'products:save_tab' 'profile' %}">🛒 Cart</a>
-        {% endif %}
-        {% if completed_orders %}
-        <a href="#" class="{% if saved_ui_state.tab == 'orders' %}active{% endif %} item" data-tab="orders" data-url="{% url 'products:save_tab' 'profile' %}">📦 Orders</a>
-        {% endif %}
-        <a href="#" class="{% if saved_ui_state.tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
-        {% if other_actions %}
-        <div class="notification-icon">
-          <a href="#" class="{% if saved_ui_state.tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">👀 Other actions</a>
-          {% if unread_actions_count %}
-          <div class="ui red tiny circular label notification-badge">{{ unread_actions_count }}</div>
-          {% endif %}
-        </div>
-        {% endif %}
-        {% if news %}
-        <div class="notification-icon">
-          <a href="#" class="{% if saved_ui_state.tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
-          {% if unread_news_count %}
-          <div class="ui red tiny circular label notification-badge">{{ unread_news_count }}</div>
-          {% endif %}
-        </div>
-        {% endif %}
-      </div>
-
-
-
-
+{% include "users/components/_profile_tabs_menu.html" %}
       <div class="tab-content">
-        {% if products %}
-        <div class="ui bottom attached {% if saved_ui_state.tab == 'favourites' or not saved_ui_state.tab %}active{% endif %} tab segment" data-tab="favourites">
-  <div class="ui large header">Your Favourite Products
-
-  </div>
-
-          {% include "products/components/_favourite_list.html" with is_profile=True %}
-        </div>
-        {% endif %}
-
-        {% if brands %}
-        <div class="ui bottom attached {% if saved_ui_state.tab == 'brands' %}active{% endif %} tab segment" data-tab="brands">
-  <div class="ui large header">Your Favourite Brands</div>
-        {% include "main/components/_brand_catalog.html" with brands=brands is_profile=True %}
-        </div>
-        {% endif %}
-
-
-        {% if cart.cart_total_quantity > 0 %}
-          <div class="ui bottom attached {% if saved_ui_state.tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
-  <div class="ui large header">Your Cart</div>
-
-            {% include "carts/components/_cart_products.html" %}
-            <div class="cart-summary" style="margin-top: 1rem;">
-              <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
-                <p>Total price: <strong>${{ cart.cart_total_price }}</strong></p>
-              </div>
-        </div>
-        {% endif %}
-
-        {% if completed_orders %}
-  <div class="ui bottom attached {% if saved_ui_state.tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
-
-  <div class="ui large header">Completed Orders</div>
-
- 
-  <div class="ui styled fluid accordion">
-  {% for order in completed_orders %}
-  <div class="title">
-    <i class="dropdown icon"></i>
-    <strong>Order #{{ order.order_number }}</strong> — <span>📅 {{ order.date_completed|date:"d.m.Y" }}</span> — 
-    <span><strong>Total:</strong> ${{ order.cart_total_price_after_discount }}</span>
-  </div>
-  <div class="content">
-    <div class="ui bulleted list">
-      {% for ordered_product in order.ordered.all %}
-          {% if ordered_product.quantity > 0 %}
-          <div class="item">
-            <strong>{{ ordered_product.product.title }}</strong> — ${{ ordered_product.price_at_purchase }} × {{ ordered_product.quantity }} = <strong>${{ ordered_product.total_price }}</strong>
-          </div>
-          {% endif %}
-          {% endfor %}
-    </div>
-    {% if order.discount %}
-    <div class="ui blue message" style="margin-top: 1em;">
-      <div class="header">
-        {% if order.coupon %} Coupon Applied: <strong>{{ order.coupon.code }}</strong>{% endif %}
-      </div>
-      <p>Discount: <strong>{{ order.discount }}%</strong></p>
-      <p>You saved: <strong>${{ order.cart_discount|floatformat:2 }}</strong></p>
-    </div>
-  {% endif %}
-  
-  <div class="ui divider"></div>
-  <div><strong>Total after discount:</strong> ${{ order.cart_total_price_after_discount }}</div>
-  </div>
-  {% endfor %}
-</div>
-</div>
-{% endif %}
-
-
-
-
-<div class="ui bottom attached {% if saved_ui_state.tab == 'user_products' %}active{% endif %} tab segment" data-tab="user_products">
-  <button class="ui primary button" id="open-product-modal">
-    <i class="plus icon"></i> Add product
-  </button>
-  <div class="ui large header">Your Added Products</div>
-  {% with user_products as products  %}
-  {% if not products %}
-  <p>You have not added any products yet</p>
-  {% else %}
-  {% include "products/components/_product_list.html" with is_user_products=True is_profile=True %}
-  {% endif %}
-  {% endwith %}
-        </div>
-
-        {% if other_actions %}
-        <div class="ui bottom attached {% if saved_ui_state.tab == 'other_actions' %}active{% endif %} tab segment" data-tab="other_actions">
-  <div class="ui large header">Other actions</div>
-
-  <div class="ui feed">
-    {% for action in other_actions %}
-      <div class="event">
-        <div class="content">
-          <div class="summary">
-            {% if action.user.first_name and action.user.last_name %}
-            <strong>{{action.user.first_name}} {{action.user.last_name}}</strong>
-            {% else %}
-            <strong>{{action.user.email}}</strong>
-            {% endif %}
-            {% if action.verb == 'liked' %}
-              liked your product
-            {% elif action.verb == 'purchased' %}
-              purchased your product
-            {% endif %}
-            <a href="{{ action.target.get_absolute_url }}">{{ action.target.title }}</a>
-            <div class="date">{{ action.created|timesince }} ago</div>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-
-        </div>
-        {% endif %}
-
-        {% if news %}
-        <div class="ui bottom attached {% if saved_ui_state.tab == 'news' %}active{% endif %} tab segment" data-tab="news">
-  <div class="ui large header">News</div>
-  <div class="ui three stackable cards">
-    {% for product in news %}
-    {% include "products/components/_news_card.html" %}
-    {% endfor %}
-  </div>
-
-        </div>
-        {% endif %}
-
-
-
-
-
-
+        {% include "users/components/_profile_tabs.html" %}
       </div>
     </section>
-
+    {% endwith %}
     <div class="ui modal" id="product-modal">
       <div class="header">
         <i class="add icon"></i> Add a product
       </div>
         {% include "products/components/_product_form.html" %}
-  
     </div>
 {% endblock main %}
-
 {% block additional_script %}
 <script src='{% static "js/toggle_completed_orders.js" %}'></script>
 <script src="{% static "js/profile.js" %}"></script>

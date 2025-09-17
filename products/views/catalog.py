@@ -9,10 +9,12 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
+from products.utils.mixins import EndlessPaginationMixin
 
 
 
-class BrandDetails(ListView):
+
+class BrandDetails(EndlessPaginationMixin, ListView):
     model = Product
     template_name = 'products/brand.html'
     context_object_name = 'products'
@@ -48,24 +50,24 @@ class BrandDetails(ListView):
         context['saved_ui_state'] = ui_state
         return context
     
-    def render_to_response(self, context, **response_kwargs):
-        page = context.get('page_obj')
-        if self.request.GET.get('products_only') and (not page or not page.object_list):
-            return HttpResponse('')
-        return super().render_to_response(context, **response_kwargs)
+    # def render_to_response(self, context, **response_kwargs):
+    #     page = context.get('page_obj')
+    #     if self.request.GET.get('products_only') and (not page or not page.object_list):
+    #         return HttpResponse('')
+    #     return super().render_to_response(context, **response_kwargs)
     
 
-    def paginate_queryset(self, queryset, page_size):
-        paginator = self.get_paginator(queryset, page_size)
-        page = self.request.GET.get(self.page_kwarg) or 1
-        try:
-            page_number = paginator.validate_number(page)
-            page_obj = paginator.page(page_number)
-            return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
-        except (PageNotAnInteger, EmptyPage):
-            if self.request.GET.get('products_only'):
-                return paginator, None, [], False
-            raise
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = self.get_paginator(queryset, page_size)
+    #     page = self.request.GET.get(self.page_kwarg) or 1
+    #     try:
+    #         page_number = paginator.validate_number(page)
+    #         page_obj = paginator.page(page_number)
+    #         return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
+    #     except (PageNotAnInteger, EmptyPage):
+    #         if self.request.GET.get('products_only'):
+    #             return paginator, None, [], False
+    #         raise
 
 
 class CategoryDetailView(ListView):
@@ -95,25 +97,25 @@ class CategoryDetailView(ListView):
         return context
     
 
-class SubcategoryDetailView(ListView):
+class SubcategoryDetailView(EndlessPaginationMixin, ListView):
     model = Product
     context_object_name = 'products'
     template_name = 'products/subcategory.html'
     paginate_by = 2
 
-    def paginate_queryset(self, queryset, page_size):
-        paginator = self.get_paginator(queryset, page_size,
-            orphans=self.get_paginate_orphans(),
-            allow_empty_first_page=self.get_allow_empty()
-        )
-        page_number = self.request.GET.get(self.page_kwarg, 1)
-        try:
-            page = paginator.page(page_number)
-        except PageNotAnInteger:
-            page = paginator.page(1)
-        except EmptyPage:
-            page = paginator.page(paginator.num_pages)
-        return paginator, page, page.object_list, page.has_other_pages()
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = self.get_paginator(queryset, page_size,
+    #         orphans=self.get_paginate_orphans(),
+    #         allow_empty_first_page=self.get_allow_empty()
+    #     )
+    #     page_number = self.request.GET.get(self.page_kwarg, 1)
+    #     try:
+    #         page = paginator.page(page_number)
+    #     except PageNotAnInteger:
+    #         page = paginator.page(1)
+    #     except EmptyPage:
+    #         page = paginator.page(paginator.num_pages)
+    #     return paginator, page, page.object_list, page.has_other_pages()
 
     def get_queryset(self):
         subcategory = Category.objects.get(slug=self.kwargs['subcategory_slug'])

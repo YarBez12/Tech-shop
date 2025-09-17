@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'embed_video',
     'redisboard',
     'django_extensions',
+    
 ]
 
 

@@ -1,0 +1,41 @@
+{% if products %}
+        <div class="ui bottom attached {% if active_tab == 'favourites' %}active{% endif %} tab segment" data-tab="favourites">
+            <div class="ui large header">Your Favourite Products</div>
+            {% include "products/components/_favourite_list.html" with is_profile=True %}
+        </div>
+{% endif %}
+
+{% if brands %}
+        <div class="ui bottom attached {% if active_tab == 'brands' %}active{% endif %} tab segment" data-tab="brands">
+            <div class="ui large header">Your Favourite Brands</div>
+            {% include "main/components/_brand_catalog.html" with brands=brands is_profile=True %}
+        </div>
+{% endif %}
+{% if cart.cart_total_quantity > 0 %}
+          <div class="ui bottom attached {% if active_tab == 'cart' %}active{% endif %} tab segment" data-tab="cart">
+            {% include "users/components/_cart_tab.html" %}
+        </div>
+{% endif %}
+
+{% if completed_orders %}
+  <div class="ui bottom attached {% if active_tab == 'orders' %}active{% endif %} tab segment" data-tab="orders">
+        {% include "users/components/_completed_orders_tab.html" %}
+</div>
+{% endif %}
+
+<div class="ui bottom attached {% if active_tab == 'user_products' %}active{% endif %} tab segment" data-tab="user_products">
+{% include "users/components/_user_products_tab.html" %}
+        </div>
+
+{% if other_actions %}
+        <div class="ui bottom attached {% if active_tab == 'other_actions' %}active{% endif %} tab segment" data-tab="other_actions">
+{% include "users/components/_other_actions_tab.html" %}
+        </div>
+{% endif %}
+
+{% if news %}
+        <div class="ui bottom attached {% if active_tab == 'news' %}active{% endif %} tab segment" data-tab="news">
+{% include "users/components/_news_tab.html" %}
+
+        </div>
+{% endif %}

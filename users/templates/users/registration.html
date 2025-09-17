@@ -40,12 +40,8 @@
 <div id="address-section" class="hidden" >
 {% include "users/components/_address_information_form.html" %}
                         </div>
-                        <div class="field">
-                            <div class="ui checkbox">
-                                <input type="checkbox" id="remember_me" name="remember_me">
-                                <label for="remember_me">Remember me</label>
-                            </div>
-                        </div>
+                                  {% include "users/components/_remember_me_button.html" %}
+
                         
                             <button type="submit" class="ui fluid primary button">Register</button>
                     </form>

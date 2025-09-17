@@ -1,0 +1,24 @@
+  <div class="ui large header">Other actions</div>
+
+  <div class="ui feed">
+    {% for action in other_actions %}
+      <div class="event">
+        <div class="content">
+          <div class="summary">
+            {% if action.user.first_name and action.user.last_name %}
+            <strong>{{action.user.first_name}} {{action.user.last_name}}</strong>
+            {% else %}
+            <strong>{{action.user.email}}</strong>
+            {% endif %}
+            {% if action.verb == 'liked' %}
+              liked your product
+            {% elif action.verb == 'purchased' %}
+              purchased your product
+            {% endif %}
+            <a href="{{ action.target.get_absolute_url }}">{{ action.target.title }}</a>
+            <div class="date">{{ action.created|timesince }} ago</div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>

@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 {% block main %}
 {% load static %}
-
-
-
-
-
-
-
-
     <div class="ui centered raised card login-card">
       <div class="content">
         <div class="ui center aligned">
@@ -38,12 +30,7 @@
             </div>
           </div>
   
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" id="remember_me" name="remember_me">
-              <label for="remember_me">Remember me</label>
-            </div>
-          </div>
+          {% include "users/components/_remember_me_button.html" %}
   
           <button class="ui fluid primary button" type="submit">Log in</button>
         </form>

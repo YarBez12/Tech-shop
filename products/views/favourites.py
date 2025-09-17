@@ -7,28 +7,29 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
+from products.utils.mixins import EndlessPaginationMixin
 
 
 
-class FavouriteProducts(ListView):
+class FavouriteProducts(EndlessPaginationMixin, ListView):
     model = Product
     template_name = 'products/favourite_products.html'
     context_object_name = 'products'
     paginate_by = 2
 
-    def paginate_queryset(self, queryset, page_size):
-        paginator = self.get_paginator(queryset, page_size,
-            orphans=self.get_paginate_orphans(),
-            allow_empty_first_page=self.get_allow_empty()
-        )
-        page_number = self.request.GET.get(self.page_kwarg, 1)
-        try:
-            page = paginator.page(page_number)
-        except PageNotAnInteger:
-            page = paginator.page(1)
-        except EmptyPage:
-            page = paginator.page(paginator.num_pages)
-        return paginator, page, page.object_list, page.has_other_pages()
+    # def paginate_queryset(self, queryset, page_size):
+    #     paginator = self.get_paginator(queryset, page_size,
+    #         orphans=self.get_paginate_orphans(),
+    #         allow_empty_first_page=self.get_allow_empty()
+    #     )
+    #     page_number = self.request.GET.get(self.page_kwarg, 1)
+    #     try:
+    #         page = paginator.page(page_number)
+    #     except PageNotAnInteger:
+    #         page = paginator.page(1)
+    #     except EmptyPage:
+    #         page = paginator.page(paginator.num_pages)
+    #     return paginator, page, page.object_list, page.has_other_pages()
 
     def get_queryset(self):
         redis_product_ids = get_user_favourites(self.request.user.id)
