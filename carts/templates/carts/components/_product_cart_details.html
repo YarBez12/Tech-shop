@@ -12,12 +12,14 @@
       <span class="discount-label">-{{ ordered_product.product.discount }}%</span>
     </div>
     {% else %}
-    <strong>${{ ordered_product.product.price }}</strong></p>
+    <strong>${{ ordered_product.product.price }}</strong>
     {% endif %}
     <div class="quantity-controls">
-      <a class="ui mini button {% if ordered_product.quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" ordered_product.product.slug %}">-</a>
+      {% with stock=ordered_product.product.quantity|default:0 quantity=ordered_product.quantity|default:0 %}
+      <a class="ui mini button {% if quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" ordered_product.product.slug %}">-</a>
       <span class="quantity">{{ ordered_product.quantity }}</span>
-      <a class="ui mini button" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
+      <a class="ui mini button {% if quantity >= stock %}disabled{% endif %}" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
+      {% endwith %}
     </div>
     <p>{% trans "Total product price:" %} <strong>${{ ordered_product.total_price }}</strong></p>
   </div>

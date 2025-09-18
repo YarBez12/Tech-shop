@@ -1,47 +1,18 @@
 {% extends "base_main.html" %}
 {% load i18n %}
 {% block main %}
-    {% comment %} <div class="row">
-      <div class="col-md-8">
-        <h1 class="text-center mb-4">Cart</h1>
-        
-         {% include "carts/components/_cart_products.html" %}
-      </div>
-      
-      <div class="col-md-4">
-        <h2>Final information</h2>
-        <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
-        <p>Total price: <strong>{{ cart.cart_total_price }} $</strong></p>
-        <a href="{% if disable_payment %}#{% else %}{% url "carts:checkout" %}{% endif %}" class="btn btn-primary">Checkout</a>
-      </div>
-    </div> {% endcomment %}
-
-
-
-
-
-
-
   <div class="ui massive centered header"><i class="shopping cart icon"></i>{% trans "Cart" %}</div>
   <div class="ui stackable grid">
     <div class="eleven wide column">
-
-
-
       {% include "carts/components/_cart_products.html" %}
-
-
-
     </div>
-
-
     <div class="five wide column">
       <div class="summary-box">
         <h3 class="ui header">Final information</h3>
         <p>Total products quantity: <strong>{{ cart.cart_total_quantity }}</strong></p>
         <p>Total price: <strong>${{ cart.cart_total_price }}</strong></p>
 
-        {% if request.user.is_authenticated %}
+        {% if request.user.is_authenticated and cart.cart_total_quantity > 0 %}
         <form class="ui form" method="post" action="{% url 'coupons:apply' %}">
           {% csrf_token %}
           <div class="field">
@@ -72,23 +43,35 @@
         {% endif %}
 
 
-        <a href="{% if disable_payment %}#{% else %}{% url "carts:checkout" %}{% endif %}" class="ui primary checkout button">Checkout</a>
+        {% if cart.cart_total_quantity > 0 %}
+          <a
+            {% if disable_payment %}
+              class="ui primary checkout disabled button"
+              href="#"
+              title="Adjust quantities to proceed to checkout"
+            {% else %}
+              class="ui primary checkout button"
+              href="{% url 'carts:checkout' %}"
+            {% endif %}
+          >
+            Checkout
+          </a>
+        {% else %}
+          <button class="ui primary checkout disabled button" aria-disabled="true">
+            Checkout
+          </button>
+        {% endif %}
       </div>
     </div>
 
     {% if recommended_products %}
-    <div class="recommended-products">
-      <div class="ui large centered header">{% trans "People who bought this also like" %}</div>
+    <div class="recommended-products sixteen wide column" style="margin-top:1rem;">
+      <div class="ui large header">{% trans "People who bought this also like" %}</div>
       {% with specific_products=recommended_products %}
       {% include "products/components/_specific_products_list.html" with list_title="People who bought this also like" %}
       {% endwith %}
     </div>
     {% endif %}
-
-
-
-
-
   </div>
 
 {% endblock main %}

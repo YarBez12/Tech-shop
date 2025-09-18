@@ -16,7 +16,6 @@
     <thead>
       <tr>
         <th>Product</th>
-        <th>Image</th>
         <th>Price per item</th>
         <th>Quantity</th>
         <th>Total</th>
@@ -27,14 +26,6 @@
       {% if item.quantity > 0 %}
       <tr>
         <td>{{ item.product.title }}</td>
-        <td>
-          {% if item.product.first_photo %}
-          {% absolute_url item.product.first_photo as abs_url %}
-            <img src="{{ abs_url }}" alt="" class="product-image">
-          {% else %}
-            No image
-          {% endif %}
-        </td>
         <td>{{ item.product.price }} $</td>
         <td>{{ item.quantity }}</td>
         <td>{{ item.total_price }} $</td>

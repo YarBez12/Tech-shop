@@ -19,7 +19,7 @@ class Receiver(models.Model):
     address = models.ForeignKey(Address, verbose_name=_('address'), on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
-        if self.user:
+        if self.user and self._state.adding:
             if not self.first_name:
                 self.first_name = self.user.first_name
             if not self.last_name:
@@ -49,6 +49,8 @@ class CartManager(models.Manager):
         return self.create(**kwargs)
     
     def get_or_create_with_session(self, request, **kwargs):
+        if not request.session.session_key:
+            request.session.create()
         cart, created = self.get_or_create(**kwargs)
         session_coupon_id = request.session.get('coupon_id')
         if created:
@@ -72,7 +74,6 @@ class Cart(models.Model):
     date_completed = models.DateField(null=True, blank=True)
     order_number = models.CharField(max_length=20, unique=True, blank=True)
     stripe_id = models.CharField(max_length=250, blank=True)
-    # coupon_id = models.CharField(max_length=50, blank=True, null=True)
 
     coupon = models.ForeignKey(Coupon, related_name='orders', null=True, blank=True, on_delete=models.SET_NULL)
     discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -113,15 +114,6 @@ class Cart(models.Model):
         else:
             path = '/'
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
-    
-    # @property
-    # def coupon(self):
-    #     if self.coupon_id:
-    #         try:
-    #             return Coupon.objects.get(id=self.coupon_id)
-    #         except Coupon.DoesNotExist:
-    #             pass
-    #     return None
     
     @property
     def cart_discount(self):

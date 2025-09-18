@@ -5,16 +5,19 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Cart, Receiver
 from .tasks import send_receipt_email
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from users.models import Action
 from coupons.models import CouponUsage
 from products.recommender import Recommender
+from products.utils.actions import create_action
+from django.db import transaction
+
 
 
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    if not sig_header:
+        return HttpResponse(status=400)
     event = None
 
     try:
@@ -23,62 +26,65 @@ def stripe_webhook(request):
             sig_header,
             settings.STRIPE_WEBHOOK_SECRET)
         
-    except ValueError as e:
+    except (ValueError, stripe.error.SignatureVerificationError):
         return HttpResponse(status=400)
     
-    except stripe.error.SignatureVerificationError as e:
-        return HttpResponse(status=400)
-    
-    if event.type == 'checkout.session.completed':
-        session = event.data.object
-        email = session.get('customer_email')
-        if session.mode == 'payment' and session.payment_status == "paid":
-            try:
-                receiver = Receiver.objects.get(user__email=email)
-                cart = Cart.objects.get(receiver=receiver, is_completed=False)
-            except Receiver.DoesNotExist:
-                return HttpResponse(status=404)
-            
-            cart.is_completed = True
-            cart.date_completed = timezone.now().date()
-            for ordered_product in cart.ordered.all():
-                product = ordered_product.product
-                if ordered_product.price_at_purchase is None:
-                    ordered_product.price_at_purchase = product.full_price
-                    ordered_product.save()
-                product.quantity -= ordered_product.quantity
-                product.save()
-            cart.stripe_id = session.payment_intent
-            cart.save()
-            if cart.coupon:
-                print('uuuuuuuuuuuuu')
-                coupon = cart.coupon
-                coupon.used_count += 1
-                if coupon.used_count >= coupon.usage_limit:
-                    coupon.active = False
-                CouponUsage.objects.get_or_create(user=receiver.user, coupon=cart.coupon)
-                coupon.save()
+    if event.type != 'checkout.session.completed':
+        return HttpResponse(status=200)
+    session = event.data.object
+    email = session.get('customer_email')
+    if session.get('mode') != 'payment' or session.get('payment_status') != 'paid' or not email:
+        return HttpResponse(status=200)
+    try:
+        receiver = Receiver.objects.select_related('user').get(user__email=email)
+    except Receiver.DoesNotExist:
+        return HttpResponse(status=200)
 
-            products = [item.product for item in cart.ordered.all()]
-            r = Recommender()
-            r.products_bought(products)
-            
-            send_receipt_email.delay(receiver.user.email, cart.id, receiver.id)
-            create_action(receiver.user, 'purchased', product) 
+    try:
+        cart = Cart.objects.select_related('receiver').prefetch_related('ordered__product').get(receiver=receiver, is_completed=False)
+    except Cart.DoesNotExist:
+        return HttpResponse(status=200)
+    
+    if cart.is_completed or cart.stripe_id:
+        return HttpResponse(status=200)
+    
+    with transaction.atomic():
+        for ordered_product in cart.ordered.all():
+            product = ordered_product.product
+            if not product:
+                continue
+            if ordered_product.price_at_purchase is None:
+                ordered_product.price_at_purchase = product.full_price
+                ordered_product.save(update_fields=['price_at_purchase'])
+            new_quantity = max(0, (product.quantity or 0) - (ordered_product.quantity or 0))
+            if new_quantity != product.quantity:
+                product.quantity = new_quantity
+                product.save(update_fields=['quantity'])
+        cart.stripe_id = session.get('payment_intent')
+        cart.is_completed = True
+        cart.date_completed = timezone.now().date()
+        cart.save(update_fields=['is_completed', 'date_completed', 'stripe_id'])
+        if cart.coupon:
+            coupon = cart.coupon
+            coupon.used_count = (coupon.used_count or 0) + 1
+            if coupon.usage_limit and coupon.used_count >= coupon.usage_limit:
+                coupon.active = False
+            coupon.save(update_fields=['used_count', 'active'])
+            if receiver.user:
+                CouponUsage.objects.get_or_create(user=receiver.user, coupon=cart.coupon)
+
+    products = [item.product for item in cart.ordered.all() if item.product]
+    if products:
+        r = Recommender()
+        r.products_bought(products)
+    
+    if receiver.user:
+        send_receipt_email.delay(receiver.user.email, cart.id, receiver.id)
+        for p in products:
+            create_action(receiver.user, 'purchased', p)
         
 
     
     return HttpResponse(status=200)
 
-def create_action(user, verb, target=None):
-    existing = Action.objects.filter(user=user, verb=verb)
-    if target:
-        ct = ContentType.objects.get_for_model(target)
-        existing = existing.filter(target_ct=ct, target_id=target.id)
-    if existing.exists():
-        return False
-
-    action = Action(user=user, verb=verb, target=target)
-    action.save()
-    return True
 

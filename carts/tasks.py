@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 from io import BytesIO
-from conf import settings
+from django.conf import settings
 from .models import Cart, Receiver
 
 @shared_task

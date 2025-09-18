@@ -11,18 +11,19 @@ def coupon_apply(request):
     now = timezone.now()
     form = CouponApplyForm(request.POST)
     if form.is_valid():
-        print(1)
-        code = form.cleaned_data['code']
+        code = form.cleaned_data['code'].strip()
         try:
             coupon = Coupon.objects.get(code__iexact=code,
                                         valid_from__lte=now,
                                         valid_to__gte=now,
                                         active=True)
             if coupon.one_time_per_user and request.user.is_authenticated:
-                print(2)
                 if CouponUsage.objects.filter(user=request.user, coupon=coupon).exists():
-                    print(3)
                     messages.error(request, "You have already used this coupon")
+                    request.session['coupon_id'] = None
+                else:
+                    request.session['coupon_id'] = coupon.id
+                    messages.success(request, f'Coupon "{coupon.code}" applied.')
             elif coupon.usage_limit <= coupon.used_count:
                 request.session['coupon_id'] = None
                 messages.error(request, 'Coupon has already been used the maximum number of times.')
