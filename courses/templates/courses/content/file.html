@@ -1,3 +1,10 @@
-<p>
- <a href="{{ item.file.url }}" class="button">Download file</a>
-</p>
+{% load course %}
+
+<a href="{{ item.file.url }}" class="ui labeled icon button" download>
+  <i class="download icon"></i>
+  {{ item.file.name|basename }}
+</a>
+
+<div style="margin-top:.5rem; font-size:.9em; opacity:.85;">
+  Size: {{ item.file.size|default:"—" }} bytes
+</div>

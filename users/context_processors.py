@@ -1,11 +1,12 @@
 from users.models import NotificationState, Action
 from products.models import Product
 from django.utils import timezone
+from datetime import datetime, timezone as dt_timezone
 from datetime import datetime, timedelta
 
 
 def min_date():
-    return timezone.make_aware(datetime.min, timezone.utc)
+    return datetime(1970, 1, 1, tzinfo=dt_timezone.utc)
 
 def notification_counts(request):
     if not request.user.is_authenticated:

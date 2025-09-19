@@ -1,49 +1,88 @@
 {% extends "base_main.html" %}
-
-{% block title %}
-  {{ object.title }}
-{% endblock %}
+{% load i18n %}
 
 {% block main %}
-{% with subject=object.subject %}
-<div class="ui container" style="padding: 3em 0;">
+{% with subject=object.subject first_module=object.modules.first %}
+<div class="ui container" style="padding:2rem 0;">
 
-  <h1 class="ui center aligned header">
-    <i class="book open icon"></i>
-    <div class="content">
-      {{ object.title }}
-      <div class="sub header">Subject: {{ subject.title }}</div>
+  <!-- header row with actions on the right -->
+  <div class="ui stackable grid" style="margin-bottom:1rem;">
+    <div class="eight wide column">
+      <h1 class="ui huge header" style="margin:.2em 0 0;">
+        <i class="book open icon"></i>
+        <div class="content">
+          {{ object.title }}
+          <div class="sub header">
+            <div class="ui tiny label">
+              <i class="book icon"></i>
+              <a href="{% url 'courses:course_list_subject' subject.slug %}">{{ subject.title }}</a>
+            </div>
+          </div>
+        </div>
+      </h1>
     </div>
-  </h1>
 
-  <div class="ui raised very padded text container segment" style="margin-top: 2em;">
-    <h3 class="ui dividing header">Course Overview</h3>
-    <p>
-      <strong>Subject:</strong>
-      <a href="{% url 'courses:course_list_subject' subject.slug %}">
-        {{ subject.title }}
-      </a>
-      <br>
-      <strong>Modules:</strong> {{ object.modules.count }}
-      <br>
-      <strong>Instructor:</strong> {{ object.owner.get_full_name }}
-    </p>
+    <div class="eight wide column right aligned">
+      <div class="actions-right">
+        {% if request.user == object.owner %}
+          {% if first_module %}
+            <a href="{% url 'courses:module_content_list' first_module.slug %}" class="ui primary button">
+              <i class="edit icon"></i> Manage contents
+            </a>
+          {% else %}
+            <a href="{% url 'courses:course' object.slug %}" class="ui primary button">
+              <i class="cogs icon"></i> Add modules
+            </a>
+          {% endif %}
+        {% elif request.user.is_authenticated and request.user in object.students.all %}
+          <a href="{% url 'students:student_course_detail' course.slug %}" class="ui green button">
+            <i class="play circle icon"></i> Go to course
+          </a>
+          <form method="post" action="{% url 'students:student_unenroll_course' object.slug %}" class="inline-form">
+            {% csrf_token %}
+            <input type="hidden" name="course_id" value="{{ object.id }}">
+            <button type="submit" class="ui red button">
+              <i class="sign out alternate icon"></i> Unenroll
+            </button>
+          </form>
+        {% else %}
+          <form action="{% url 'students:student_enroll_course' %}" method="post" class="inline-form">
+            {% csrf_token %}
+            {{ enroll_form }}
+            <button type="submit" class="ui primary button">
+              <i class="signup icon"></i> Enroll
+            </button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!-- /header row -->
 
-    <div class="ui divider"></div>
+  <div class="ui raised very padded segment">
+    <h3 class="ui dividing header" style="margin-top:0">Overview</h3>
+
+    <div class="ui relaxed list" style="margin-bottom:1rem;">
+      <div class="item">
+        <i class="user outline icon"></i>
+        <div class="content">
+          <div class="header">Instructor</div>
+          <div class="description">{{ object.owner.get_full_name }}</div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="layer group icon"></i>
+        <div class="content">
+          <div class="header">Modules</div>
+          <div class="description">
+            {{ object.modules.count }} module{{ object.modules.count|pluralize }}
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="ui content">
       {{ object.overview|linebreaks }}
-    </div>
-
-    
-    <div class="ui center aligned container" style="margin-top: 2em;">
-        <form action="{% url 'students:student_enroll_course' %}" method="post" class="ui form">
-          {% csrf_token %}
-          {{ enroll_form }}
-          <button type="submit" class="ui primary large button">
-            <i class="signup icon"></i> Enroll now
-          </button>
-        </form>
     </div>
   </div>
 

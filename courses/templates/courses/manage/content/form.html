@@ -1,13 +1,5 @@
 {% extends "base.html" %}
 
-{% block title %}
-  {% if object %}
-    Edit content "{{ object.title }}"
-  {% else %}
-    Add new content
-  {% endif %}
-{% endblock %}
-
 {% block main %}
 <div class="ui container" style="padding: 2em 0;">
   <h1 class="ui dividing header">

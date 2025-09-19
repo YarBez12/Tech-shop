@@ -1,0 +1,65 @@
+<div class="ui fluid card course-card">
+    <div class="content">
+    {% if is_user or is_enrolled %}
+    <div class="header" style="margin-bottom:.3em;">{{ course.title }}</div>
+    {% else %}
+    <div class="header" style="margin-bottom:.3em;">
+         <a href="{% url 'courses:course_detail' course.slug %}">{{ course.title }}</a>
+    </div>
+    {% endif %}
+    <div class="meta">
+        <span>Created {{ course.created|timesince }} ago</span>
+    </div>
+    <div class="ui tiny labels" style="margin-top:.6em;">
+        <div class="ui label">
+        <i class="book icon"></i>
+        Subject:
+        <a href="{% url 'courses:course_list_subject' course.subject.slug %}">{{ course.subject.title }}</a>
+        </div>
+        <div class="ui label">
+        <i class="layer group icon"></i>
+        {{ course.modules.count }} module{{ course.modules.count|pluralize }}
+        </div>
+        <div class="ui label">
+        <i class="users icon"></i>
+        {{ course.students.count }} student{{ course.students.count|pluralize }}
+        </div>
+    </div>
+    <div class="description clamp-2" style="margin-top:.8em;">
+        <p style="margin-bottom:.5rem;">Instructor: {{ course.owner.get_full_name }}</p>
+      <p style="opacity:.85; max-height: 3.2em; overflow: hidden;">{{ course.overview }}</p>
+    </div>
+    </div>
+    {% if is_user %}
+        <div class="extra content">
+            <div class="ui two buttons stackable">
+                <a href="{% url 'courses:course_edit' course.slug %}?next={{ request.get_full_path|urlencode }}" class="ui basic blue button">
+                <i class="edit icon"></i> Edit
+                </a>
+                <a href="{% url 'courses:course_delete' course.slug %}" class="ui basic red button">
+                <i class="trash icon"></i> Delete
+                </a>
+            </div>
+            <div class="ui two buttons stackable" style="margin-top:.5em;">
+                <a href="{% url 'courses:course' course.slug %}" class="ui basic green button">
+                <i class="cog icon"></i> Modules
+                </a>
+                {% if course.modules.count > 0 %}
+                <a href="{% url 'courses:module_content_list' course.modules.first.slug %}" class="ui basic purple button">
+                    <i class="boxes icon"></i> Content
+                </a>
+                {% else %}
+                <div class="ui disabled button">
+                    <i class="boxes icon"></i> Content
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% elif is_enrolled %}
+    <div class="extra content">
+        <a href="{% url 'students:student_course_detail' course.slug %}" class="ui basic blue button">
+        <i class="edit icon"></i> View details
+        </a>
+    </div>
+    {% endif %}
+</div>

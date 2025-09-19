@@ -1,6 +1,14 @@
 {% load i18n %}
+{% load static %}
+{% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
+
 <a href="{{ ordered_product.product.get_absolute_url }}">
-    <img src="{{ ordered_product.product.first_photo }}" alt="" class="product-image">
+  <img
+      loading="lazy"
+      src="{{ ordered_product.product.first_photo|default:IMG_PLACEHOLDER }}"
+      alt="{{ ordered_product.product.title }}"
+      class="product-image"
+  >  
   </a>
   <div class="product-details">
     <a href="{{ ordered_product.product.get_absolute_url }}"><div class="ui medium blue header">{{ ordered_product.product.title }}</div></a>

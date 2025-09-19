@@ -4,11 +4,27 @@
 
 {% block main %}
 <div class="ui container" style="padding: 3em 0;">
-  <h1 class="ui center aligned header">
-    <i class="book icon"></i>
-    <div class="content">{{ object.title }}</div>
-    <div class="sub header">Module: {{ module.title }}</div>
-  </h1>
+  <div class="ui stackable grid" style="margin-bottom:1.5em;">
+  <div class="eight wide column">
+    <h1 class="ui header" style="margin:.2em 0 0;">
+      <i class="book icon"></i>
+      <div class="content">
+        {{ object.title }}
+        <div class="sub header">Module: {{ module.title }}</div>
+      </div>
+    </h1>
+  </div>
+  <div class="eight wide column right aligned">
+    <div class="actions-right">
+      <form method="post" action="{% url 'students:student_unenroll_course' object.slug %}" class="inline-form">
+        {% csrf_token %}
+        <button type="submit" class="ui red basic button">
+          <i class="sign out alternate icon"></i> Unenroll
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
 
   <div class="ui stackable grid" style="margin-top: 2em;">
     <div class="four wide column">
@@ -35,7 +51,7 @@
             {% with item=content.item %}
             <div class="ui segment">
               <h4 class="ui header">{{ item.title }}</h4>
-              <div class="ui content">
+              <div class="ui content lesson-content">
                 {{ item.render }}
               </div>
             </div>

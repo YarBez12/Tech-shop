@@ -2,23 +2,33 @@
 {% load course %}
 {% load static %}
 
-{% block title %}
-  Module {{ module.order|add:1 }}: {{ module.title }}
-{% endblock %}
-
 {% block main %}
 {% with course=module.course %}
 <div id="module-list" data-url="{% url 'courses:module_order' %}"></div>
 <div id="content-list" data-url="{% url 'courses:content_order' %}"></div>
 <div class="ui container" style="padding: 3em 0;">
 
-  <h1 class="ui center aligned header">
-    <i class="book icon"></i>
-    <div class="content">
-      Course: "{{ course.title }}"
-      <div class="sub header">Module {{ module.order|add:1 }}: {{ module.title }}</div>
+  <div class="ui stackable grid" style="margin-bottom:1.25rem;">
+    <div class="ten wide column">
+      <h1 class="ui header" style="margin:.2em 0 0;">
+        <i class="book icon"></i>
+        <div class="content">
+          Course: "{{ course.title }}"
+          <div class="sub header">Module {{ module.order|default:0|add:1 }}: {{ module.title }}</div>
+        </div>
+      </h1>
     </div>
-  </h1>
+    <div class="six wide column right aligned">
+      <div class="actions-right">
+        <a href="{% url 'courses:course_edit' course.slug %}?next={{ request.get_full_path|urlencode }}" class="ui basic blue button">
+          <i class="edit icon"></i> Edit course
+        </a>
+        <a href="{% url 'courses:course_delete' course.slug %}" class="ui basic red button">
+          <i class="trash icon"></i> Delete course
+        </a>
+      </div>
+    </div>
+  </div>
 
   <div class="ui stackable grid" style="margin-top: 3em;">
     <div class="four wide column">
@@ -26,7 +36,7 @@
         <h4 class="ui dividing header">Modules</h4>
         <div class="ui relaxed divided list" id="modules">
           {% for m in course.modules.all %}
-          <div class="item {% if m == module %}active{% endif %}" data-id="{{ m.id }}">
+          <div class="item {% if m.pk == module.pk %}active{% endif %}" data-id="{{ m.id }}">
             <div class="content">
               <a href="{% url 'courses:module_content_list' m.slug %}">
                 <div class="header">Module {{ m.order|add:1 }}: {{ m.title }}</div>
@@ -46,22 +56,29 @@
     <div class="twelve wide column">
       <div class="ui raised very padded segment">
         <h3 class="ui dividing header">Contents of "{{ module.title }}"</h3>
-
-        {% if module.contents.all %}
+        {% with contents=module.contents.all %}
+        {% if contents %}
         <div class="ui divided items" id="module-contents">
-          {% for content in module.contents.all %}
+          {% for content in contents %}
           {% with item=content.item %}
           <div class="item" data-id="{{ content.id }}">
             <div class="content">
-              <div class="header">{{ item }}</div>
-              <div class="meta">{{ item|model_name }}</div>
-              <div class="extra">
+              <div class="header">
+                {{ item.title|default:item }}
+                <div class="ui tiny grey label" style="margin-left:.5rem;">{{ item|model_name }}</div>
+              </div>
+
+              <div class="description lesson-content" style="margin-top:.5rem;">
+                {{ item.render|safe }}
+              </div>
+
+              <div class="extra content-actions">
                 <a href="{% url 'courses:module_content_update' module.slug item|model_name item.id %}" class="ui blue small button">
                   <i class="edit icon"></i> Edit
                 </a>
-                <form action="{% url 'courses:module_content_delete' content.id %}" method="post" style="display:inline;">
+                <form action="{% url 'courses:module_content_delete' content.id %}" method="post" class="inline-form">
                   {% csrf_token %}
-                  <button type="submit" class="ui red small button">
+                  <button type="submit" class="ui red small button" onclick="return confirm('Delete this content?');">
                     <i class="trash icon"></i> Delete
                   </button>
                 </form>
@@ -77,6 +94,7 @@
             <p>You can add new content using the buttons below.</p>
           </div>
         {% endif %}
+        {% endwith %}
 
         <h4 class="ui dividing header" style="margin-top: 2em;">Add new content</h4>
         <div class="ui four item menu">

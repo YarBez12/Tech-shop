@@ -5,6 +5,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from .fields import OrderField
 from django.utils.text import slugify
 from django.template.loader import render_to_string
+from django.core.exceptions import ValidationError
+
 
 
 class Subject(models.Model):
@@ -41,15 +43,31 @@ class Course(models.Model):
 class Module(models.Model):
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200)
     description = models.TextField(blank=True)
     order = OrderField(blank=True, for_fields=['course'])
 
     def __str__(self):
-        return f'{self.order}. {self.title}'
+        prefix = f'{self.order}. ' if self.order is not None else ''
+        return f'{prefix}{self.title}'
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title)
+            unique = base
+            num = 1
+            while Module.objects.filter(course=self.course, slug=unique).exists():
+                unique = f'{base}-{num}'
+                num += 1
+            self.slug = unique
+        super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['order']
+        indexes = [models.Index(fields=['course', 'order'])]
+        constraints = [
+            models.UniqueConstraint(fields=['course', 'slug'], name='module_slug_unique_per_course'),
+        ]
 
     
 
@@ -65,8 +83,15 @@ class Content(models.Model):
     item = GenericForeignKey('content_type', 'object_id')
     order = OrderField(blank=True, for_fields=['module'])
 
+    def clean(self):
+        super().clean()
+        if hasattr(self.item, 'owner'):
+            if self.item.owner_id != self.module.course.owner_id:
+                raise ValidationError('Owner of item must match course owner.')
+
     class Meta:
         ordering = ['order']
+        indexes = [models.Index(fields=['module', 'order'])]
 
 
 class ItemBase(models.Model):

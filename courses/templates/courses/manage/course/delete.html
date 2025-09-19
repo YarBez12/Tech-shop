@@ -1,14 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ title }}{% endblock %}
 {% block main %}
- {% comment %} <h1>Delete course "{{ object.title }}"</h1>
- <div class="module">
- <form action="" method="post">
- {% csrf_token %}
- <p>Are you sure you want to delete "{{ object }}"?</p>
- <input type="submit" value="Confirm">
- </form>
- </div> {% endcomment %}
 
  <div class="delete-box">
     <h2 class="ui center aligned icon header">

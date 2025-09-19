@@ -1,37 +1,43 @@
 {% extends "base_main.html" %}
-{% block title %}My Courses{% endblock %}
 
 {% block main %}
-<div class="ui container" style="padding: 3em 0;">
-  <h1 class="ui header center aligned">
-    <i class="graduation cap icon"></i>
-    <div class="content">My Courses</div>
-  </h1>
+<div class="ui container" style="padding:2rem 0;">
 
-  <div class="ui stackable three column grid">
-    {% for course in object_list %}
-    <div class="column">
-      <div class="ui fluid card">
+  <div class="ui stackable grid" style="margin-bottom:1rem;">
+    <div class="eight wide column">
+      <h1 class="ui huge header" style="margin:.2em 0 0;">
+        <i class="graduation cap icon"></i>
         <div class="content">
-          <div class="header">{{ course.title }}</div>
+          {{ title }}
+          <div class="sub header">Courses you’re enrolled in</div>
         </div>
-        <div class="extra content">
-          <a href="{% url 'students:student_course_detail' course.slug %}" class="ui primary fluid button">
-            <i class="book icon"></i> Access Contents
-          </a>
-        </div>
+      </h1>
+    </div>
+    <div class="eight wide column right aligned">
+      <div class="actions-right">
+        {% include "courses/components/_courses_navigation.html" %}
       </div>
     </div>
-    {% empty %}
-    <div class="ui segment">
-      <h4 class="ui header">You are not enrolled in any courses yet.</h4>
-      <p>
-        <a href="{% url 'courses:course_list' %}" class="ui blue button">
-          <i class="search icon"></i> Browse Courses
-        </a>
-      </p>
-    </div>
-    {% endfor %}
   </div>
+
+  {% if object_list %}
+    <div class="ui stackable doubling three column grid">
+      {% for course in object_list %}
+        <div class="column">
+          {% include "courses/components/_course_card.html" with is_enrolled=True %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="ui placeholder segment" style="text-align:center;">
+      <div class="ui icon header">
+        <i class="book icon"></i>
+        You are not enrolled in any courses yet
+      </div>
+      <a href="{% url 'courses:course_list' %}" class="ui primary button">
+        <i class="search icon"></i> Browse Courses
+      </a>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

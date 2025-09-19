@@ -1,0 +1,14 @@
+<div class="ui tiny buttons stackable-buttons">
+  <a class="ui button{% if request.resolver_match.url_name == 'manage_course_list' %} primary{% endif %}"
+     href="{% url 'courses:manage_course_list' %}">
+    <i class="user icon"></i> My courses
+  </a>
+  <a class="ui button{% if request.resolver_match.url_name == 'course_list' and not request.GET.scope %} primary{% endif %}"
+     href="{% url 'courses:course_list' %}">
+    <i class="globe icon"></i> All courses
+  </a>
+  <a class="ui button{% if request.resolver_match.url_name == 'student_course_list' %} primary{% endif %}"
+     href="{% url 'students:student_course_list' %}">
+    <i class="bookmark icon"></i> Enrolled
+  </a>
+</div>

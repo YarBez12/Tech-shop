@@ -1,26 +1,26 @@
 {% extends "base_main.html" %}
-{% block title %}
-  {% if subject %}
-    {{ subject.title }} Courses
-  {% else %}
-    All Courses
-  {% endif %}
-{% endblock %}
+
 
 {% block main %}
 <div class="ui container" style="padding: 3em 0;">
-  <h1 class="ui center aligned header">
-    <i class="graduation cap icon"></i>
-    <div class="content">
-      {% if subject %}
-        Courses in "{{ subject.title }}"
-      {% else %}
-        All Courses
-      {% endif %}
+  <div class="ui stackable grid" style="margin-bottom:1.5em;">
+    <div class="eight wide column">
+      <h1 class="ui huge header" style="margin:.2em 0 0;">
+        <i class="graduation cap icon"></i>
+        <div class="content">
+          {% if subject %}Courses in "{{ subject.title }}"{% else %}All Courses{% endif %}
+          <div class="sub header">Browse and enroll</div>
+        </div>
+      </h1>
     </div>
-  </h1>
+    <div class="eight wide column right aligned">
+      <div class="actions-right">
+        {% include "courses/components/_courses_navigation.html" %}
+      </div>
+    </div>
+  </div>
 
-  <div class="ui stackable grid" style="margin-top: 2em;">
+  <div class="ui stackable grid" style="margin-top: 0.5rem;">
     <div class="four wide column">
       <div class="ui segment">
         <h4 class="ui dividing header">Subjects</h4>
@@ -34,9 +34,7 @@
             <a href="{% url 'courses:course_list_subject' s.slug %}" class="item {% if subject == s %}active{% endif %}">
               <div class="content">
                 <div class="header">{{ s.title }}</div>
-                <div class="description">
-                  {{ s.total_courses }} course{{ s.total_courses|pluralize }}
-                </div>
+                <div class="description">{{ s.total_courses }} course{{ s.total_courses|pluralize }}</div>
               </div>
             </a>
           {% endfor %}
@@ -46,28 +44,11 @@
 
     <div class="twelve wide column">
       {% if courses %}
-      <div class="ui three stackable cards">
-        {% for course in courses %}
-          <div class="ui raised card">
-            <div class="content">
-              <div class="header">
-                <a href="{% url 'courses:course_detail' course.slug %}">
-                  {{ course.title }}
-                </a>
-              </div>
-              <div class="meta">
-                Subject: <a href="{% url 'courses:course_list_subject' course.subject.slug %}">
-                  {{ course.subject.title }}
-                </a>
-              </div>
-              <div class="description" style="margin-top: 1em;">
-                <p><strong>{{ course.total_modules }}</strong> module{{ course.total_modules|pluralize }}</p>
-                <p>Instructor: {{ course.owner.get_full_name }}</p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
+        <div class="ui stackable three cards">
+          {% for course in courses %}
+            {% include "courses/components/_course_card.html" with course=course %}
+          {% endfor %}
+        </div>
       {% else %}
         <div class="ui warning message">
           <div class="header">No courses available</div>

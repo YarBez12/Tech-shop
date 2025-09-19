@@ -15,6 +15,7 @@ from django.db.models import Count
 from django.views.generic.detail import DetailView
 from students.forms import CourseEnrollForm
 from django.core.cache import cache
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 class OwnerMixin:
@@ -25,7 +26,7 @@ class OwnerEditMixin:
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
-class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin, PermissionRequiredMixin):
+class OwnerCourseMixin(OwnerMixin, LoginRequiredMixin):
     model = Course
     fields = ['subject', 'title', 'overview']
     success_url = reverse_lazy('courses:manage_course_list')
@@ -36,27 +37,44 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
     extra_context = {
         'title': 'My courses'
     }
-    permission_required = 'courses.view_course'
 class CourseCreateView(OwnerCourseEditMixin, CreateView):
     permission_required = 'courses.add_course'
     extra_context = {
         'title': 'Create a new course'
     }
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Course '{self.object.title}' has been created successfully!")
+        return response
 class CourseUpdateView(OwnerCourseEditMixin, UpdateView):
     permission_required = 'courses.change_course'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next') or self.request.POST.get('next', '')
         context['title'] = f"Edit course '{self.object.title}'"
         return context
+    def get_success_url(self):
+        redirect_page = self.request.POST.get('next') or self.request.GET.get('next')
+        if redirect_page and url_has_allowed_host_and_scheme(redirect_page, allowed_hosts={self.request.get_host()}):
+            return redirect_page
+        return super().get_success_url()
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f"Course '{self.object.title}' has been updated successfully!")
+        return response
 class CourseDeleteView(OwnerCourseMixin, DeleteView):
     template_name = 'courses/manage/course/delete.html'
     permission_required = 'courses.delete_course'
-    extra_context = {
-        'title': 'Course delete'
-    }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f"Delete course '{self.object.title}'"
+        return context
 
     def get_success_url(self):
-        messages.warning(self.request, 'Course has been deleted', extra_tags='deleted')
+        messages.warning(self.request, f"Course '{self.object.title}' has been deleted!", extra_tags='deleted')
         return reverse_lazy('courses:manage_course_list')
     
 
@@ -71,12 +89,15 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
     def get(self, request, *args, **kwargs):
         formset = self.get_formset()
         return self.render_to_response({
-                                    'course': self.course,
-                                    'formset': formset})
+            "title": f"Manage modules for '{self.course.title}'",
+            "course": self.course,
+            "formset": formset,
+        })
     def post(self, request, *args, **kwargs):
         formset = self.get_formset(data=request.POST)
         if formset.is_valid():
             formset.save()
+            messages.success(request, f"Modules for '{self.course.title}' have been updated!")
             return redirect('courses:manage_course_list')
         return self.render_to_response({
                                     'course': self.course,
@@ -113,7 +134,11 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
     
     def get(self, request, module_slug, model_name, id=None):
         form = self.get_form(self.model, instance=self.obj)
-        return self.render_to_response({'form': form, 'object': self.obj})
+        return self.render_to_response({
+            "title": f"{'Edit' if id else 'Create'} {model_name.capitalize()} for '{self.module.title}'",
+            "form": form,
+            "object": self.obj
+        })
     def post(self, request, module_slug, model_name, id=None):
         form = self.get_form(self.model,
                             instance=self.obj,
@@ -126,6 +151,9 @@ class ContentCreateUpdateView(TemplateResponseMixin, View):
             if not id:
                 Content.objects.create(module=self.module,
                                         item=obj)
+                messages.success(request, f"New {model_name} added to '{self.module.title}'!")
+            else:
+                messages.success(request, f"{model_name.capitalize()} has been updated!")
             return redirect('courses:module_content_list', self.module.slug)
         return self.render_to_response({'form': form,
         'object': self.obj})
@@ -137,8 +165,10 @@ class ContentDeleteView(View):
                                     pk=id,
                                     module__course__owner=request.user)
         module = content.module
+        item_str = str(content.item)
         content.item.delete()
         content.delete()
+        messages.warning(request, f"Content '{item_str}' has been deleted!")
         return redirect('courses:module_content_list', module.slug)
     
 class ModuleContentListView(TemplateResponseMixin, View):
@@ -147,7 +177,10 @@ class ModuleContentListView(TemplateResponseMixin, View):
         module = get_object_or_404(Module,
                                     slug=module_slug,
                                     course__owner=request.user)
-        return self.render_to_response({'module': module})
+        return self.render_to_response({
+            "title": f"Contents of '{module.title}'",
+            "module": module
+        })
     
 
 class ModuleOrderView(CsrfExemptMixin,
@@ -155,10 +188,7 @@ class ModuleOrderView(CsrfExemptMixin,
                     View):
     def post(self, request):
         for id, order in self.request_json.items():
-            print('Current user:', request.user)
-            print('Request JSON:', self.request_json)
             qs = Module.objects.filter(id=id, course__owner=request.user)
-            print('Matched modules:', qs)
             Module.objects.filter(id=id,
                                 course__owner=request.user).update(order=order)
         return self.render_json_response({'saved': 'OK'})
@@ -177,17 +207,14 @@ class CourseListView(TemplateResponseMixin, View):
     model = Course
     template_name = 'courses/course/list.html'
     def get(self, request, subject_slug=None):
-        # subjects = Subject.objects.annotate(total_courses=Count('courses'))
         subjects = cache.get('all_subjects')
         if not subjects:
             subjects = Subject.objects.annotate(total_courses=Count('courses'))
             cache.set('all_subjects', subjects)
-        # courses = Course.objects.annotate(total_modules=Count('modules'))
         all_courses = Course.objects.annotate(total_modules=Count('modules'))
         subject = None
         if subject_slug:
             subject = get_object_or_404(Subject, slug=subject_slug)
-            # courses = courses.filter(subject=subject)
             key = f'subject_{subject.id}_courses'
             courses = cache.get(key)
             if not courses:
@@ -198,9 +225,12 @@ class CourseListView(TemplateResponseMixin, View):
             if not courses:
                 courses = all_courses
                 cache.set('all_courses', courses)
-        return self.render_to_response({'subjects': subjects,
-                                        'subject': subject,
-                                        'courses': courses})
+        return self.render_to_response({
+            "title": subject.title if subject else "All Courses",
+            "subjects": subjects,
+            "subject": subject,
+            "courses": courses
+        })
     
 
 class CourseDetailView(DetailView):
@@ -209,4 +239,5 @@ class CourseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['enroll_form'] = CourseEnrollForm(initial={'course':self.object})
+        context["title"] = self.object.title
         return context

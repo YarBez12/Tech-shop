@@ -1252,6 +1252,7 @@ a.item:hover, a.header:hover, a.link:hover {
 
 .inline-form { 
   margin:10px 0 0 0; 
+  display:inline-block
 }   
 
 .owner-info .ui.button {     
@@ -1287,3 +1288,56 @@ a.item:hover, a.header:hover, a.link:hover {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.85em;
 }
+
+
+.actions-right{
+  display:flex;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+.actions-right .ui.tiny.buttons{
+  flex-shrink:0;
+}
+.create-course-btn{
+  align-self:flex-start;
+  margin:0 !important;
+}
+@media (max-width: 767px){
+  .actions-right{
+    justify-content:stretch;
+  }
+  .actions-right .ui.tiny.buttons{
+    width:100%;
+  }
+  .actions-right .ui.tiny.buttons .button{
+    width:33.333%;
+  }
+  .create-course-btn{
+    width:100%;
+  }
+  .course-card .extra.content .ui.two.buttons.stackable .button{
+    width:100% !important;
+    margin:.35rem 0 !important;
+  }
+}
+
+
+
+.actions-right .inline-form {  
+  margin:0; 
+}
+
+.lesson-content img,
+.lesson-content video{
+    max-width:100%;
+    height:auto;
+    display:block
+}
+
+.lesson-content iframe{
+    width:100%;height:auto;aspect-ratio:16/9
+}
+
+
+
