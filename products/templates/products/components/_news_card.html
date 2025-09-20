@@ -57,7 +57,9 @@
     <div class="meta" style="margin-top:.6rem;">
       <div class="ui mini labels" style="display:flex;gap:.25rem;flex-wrap:wrap;">
         {% for tag in product.tags.all %}
+          {% if tag.display %}
           <a class="ui label" href="#">#{{ tag.name }}</a>
+          {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -76,11 +78,3 @@
     </div>
   </div>
 </div>
-
-<style>
-/* optional: unify images height on cards in grids */
-.product-card .image img{display:block;}
-@media (max-width: 767px){
-  .product-card .image img{height:180px;}
-}
-</style>

@@ -1,10 +1,11 @@
 from products.models import Category, Product
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
-from django.db.models import F, ExpressionWrapper, DecimalField, Value
+from django.db.models import F, ExpressionWrapper, DecimalField, Value, Q
 from django.db.models.functions import Coalesce, Lower
 
 
 def filter_products(search_query):
+    q = (search_query or "").strip()
     products = Product.objects.filter(is_active=True)
     if search_query:
         vector = SearchVector('title', weight='A') + \
@@ -12,12 +13,23 @@ def filter_products(search_query):
              SearchVector('tags__name', weight='C') + \
              SearchVector('sku', weight='A')
 
-        query = SearchQuery(search_query)
+        terms = [term for term in q.split(' ') if len(term) >= 3]
+        raw = ' | '.join(f'{t}:*' for t in terms)   
+        query = SearchQuery(raw, search_type='raw') 
+
+        sub_query = Q()
+        for term in terms:
+            sub_query |= (
+                Q(title__icontains=term) |
+                Q(description__icontains=term) |
+                Q(sku__istartswith=term) |
+                Q(tags__name__istartswith=term)
+            )
 
 
         qs = Product.objects.annotate(
             rank=SearchRank(vector, query)
-        ).filter(rank__gte=0.05).order_by('-rank')
+        ).filter(Q(rank__gte=0.1) | sub_query).order_by('-rank')
 
         product_ids = qs.values('id').distinct()
         products = Product.objects.filter(id__in=product_ids, is_active=True)

@@ -25,7 +25,7 @@
         {% endif %}{{ product.title|highlight:query }}</div>
           <div class="ui labels" style="margin-left: 0.5em;">
           {% for tag in product.tags.all|display_tags:query  %}
-            <div class="ui small grey label">{{ tag.text|safe }}</div>
+            <div class="ui small grey label">{{ tag.text|safe|highlight:query }}</div>
             {% endfor %}
           </div>
         </div>
