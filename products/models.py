@@ -6,10 +6,7 @@ from decimal import Decimal
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, GenericTaggedItemBase
 from django.utils.text import slugify
-
 from django.utils import timezone
-
-
 from users.models import User
 
 
@@ -86,7 +83,7 @@ class Product(models.Model):
     quantity = models.IntegerField()
     watched = models.IntegerField(default=0)
     created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(default=timezone.now)
     warranty = models.DecimalField(decimal_places=2, max_digits=5, null=True, blank=True)
     tags = TaggableManager(through=CustomTaggedItem, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
@@ -100,6 +97,19 @@ class Product(models.Model):
             self.slug = slugify(self.title)
         if not self.sku:
             self.sku = f"SKU-{uuid.uuid4().hex[:8].upper()}"
+        tracked_fields = ("title", "price", "discount", "brand_id", "category_id")
+        if self.pk:
+            try:
+                old = Product.objects.only(*tracked_fields).get(pk=self.pk)
+            except Product.DoesNotExist:
+                old = None
+            if old:
+                if any(
+                    getattr(old, field) != getattr(self, field)
+                    for field in tracked_fields
+                ):
+                    print(444)
+                    self.updated_at = timezone.now()
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

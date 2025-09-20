@@ -291,6 +291,7 @@ a.item:hover, a.header:hover, a.link:hover {
       display: inline-block;
       margin-right: 1em;
       vertical-align: top;
+      margin-top:0;  
     }
 
     @keyframes fadeIn {
@@ -958,7 +959,7 @@ a.item:hover, a.header:hover, a.link:hover {
     
 
     
-    @media (max-width: 850px) {
+    @media (max-width: 1000px) {
       .mobile-only {
         display: flex !important;
       }
@@ -982,7 +983,7 @@ a.item:hover, a.header:hover, a.link:hover {
       display: none !important;
     }
     
-    @media (min-width: 992px) {
+    @media (min-width: 1150px) {
       .only-desktop {
         display: block !important;
       }
@@ -1261,7 +1262,6 @@ a.item:hover, a.header:hover, a.link:hover {
 
 
 
-
 .site-footer {
   background-color: #1b1c1d;
   color: #fff;
@@ -1341,3 +1341,60 @@ a.item:hover, a.header:hover, a.link:hover {
 
 
 
+
+
+.card-grid .ui.card{
+  margin-top:0;           
+}
+
+
+/* Ровная сетка карточек */
+.card-grid, .slider-container {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+}
+
+.slider-container .ui.card{
+  height: 400px !important;
+}
+
+.card-grid .ui.card {
+  height: 300px !important;
+}
+
+.card-grid .ui.card .image img, .slider-container .ui.card .image img{
+  height: 250px !important;
+}
+
+
+.product-cart-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 193, 7, 0.85); 
+  display: flex;
+  align-items: center;
+  text-align: center;
+  z-index: 5;
+  font-size: 20px !important;
+}
+
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+
+.ui.container {
+  flex: 1;
+  padding-bottom: 2rem;
+}

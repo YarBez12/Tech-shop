@@ -1,106 +1,170 @@
 {% extends "admin/base_site.html" %}
-{% block title %}
- Cart {{ cart.id }} {{ block.super }}
-{% endblock %}
+
+{% block title %}Cart {{ cart.order_number|default:cart.id }} | {{ block.super }}{% endblock %}
+
 {% block breadcrumbs %}
- <div class="breadcrumbs">
-    <a href="{% url "admin:index" %}">Home</a> &rsaquo;
- <a href="{% url "admin:carts_cart_changelist" %}">Carts</a>
- &rsaquo;
- <a href="{% url "admin:carts_cart_change" cart.id %}">Cart {{ cart.id }}</a>
- &rsaquo; Detail
- </div>
+<div class="breadcrumbs">
+  <a href="{% url "admin:index" %}">Home</a> &rsaquo;
+  <a href="{% url "admin:carts_cart_changelist" %}">Carts</a> &rsaquo;
+  <a href="{% url "admin:carts_cart_change" cart.id %}">Cart {{ cart.id }}</a> &rsaquo;
+  Detail
+</div>
 {% endblock %}
+
 {% block content %}
-<div class="module">
- <h1>Cart {{ cart.id }}</h1>
- <ul class="object-tools">
- <li>
- <a href="#" onclick="window.print();">
- Print cart
- </a>
- </li>
- </ul>
- <table>
- <tr>
- <th>Created</th>
- <td>{{ cart.created_at }}</td>
- </tr>
- <tr>
- <th>Receiver</th>
- <td>{{ cart.receiver }}</td>
- </tr>
- <tr>
- <th>E-mail</th>
- <td><a href="mailto:{{ cart.receiver.email }}">{{ cart.receiver.email }}</a></td>
- </tr>
- <tr>
- <th>Address</th>
- <td>
- {{ cart.receiver.address }},
- {{ cart.receiver.address.postal_code }} {{ cart.receiver.address.city }}
- </td>
- </tr>
- <tr>
- <th>Total amount</th>
- <td>${{ cart.cart_total_price }}</td>
- </tr>
- <tr>
-    <th>Stripe payment</th>
- <td>
- {% if cart.stripe_id %}
- <a href="{{ cart.get_stripe_url }}" target="_blank">
- {{ cart.stripe_id }}
- </a>
- {% endif %}
- </td>
- </tr>
-</table>
-</div>
-<div class="module">
- <h2>Items bought</h2>
- <table style="width:100%">
- <thead>
- <tr>
- <th>Product</th>
- <th>Price</th>
- <th>Quantity</th>
- <th>Total</th>
- </tr>
- </thead>
- <tbody>
- {% for item in cart.ordered.all %}
- <tr class="row{% cycle "1" "2" %}">
- <td>{{ item.product.title }}</td>
- <td class="num">$ {% if item.price_at_purchase %}{{item.price_at_purchase}}{% else %}{{item.product.price}}{% endif %} {{ item.price }}</td>
- <td class="num">{{ item.quantity }}</td>
- <td class="num">${{ item.total_price }}</td>
- </tr>
- {% endfor %}
+<div class="module" style="margin-bottom: 1.5rem;">
+  <h1 style="display:flex; align-items:center; gap:.75rem; flex-wrap:wrap;">
+    Cart {{ cart.order_number|default:cart.id }}
+    {% if cart.is_completed %}
+      <span class="tag success" style="background:#28a745; color:#fff; padding:.15rem .5rem; border-radius:2px; font-size:.85em;">Completed</span>
+    {% else %}
+      <span class="tag" style="background:#d9534f; color:#fff; padding:.15rem .5rem; border-radius:2px; font-size:.85em;">Open</span>
+    {% endif %}
+  </h1>
 
- {% if cart.discount %}
- <tr class="subtotal">
- <td colspan="3">Subtotal</td>
- <td class="num">
- ${{ cart.cart_total_price|floatformat:2 }}
- </td>
- </tr>
- <tr>
- <td colspan="3">
- "{{ cart.coupon.code }}" coupon
- ({{ cart.discount }}% off)
- </td>
- <td class="num neg">
- – ${{ cart.cart_discount|floatformat:2 }}
- </td>
- </tr>
- {% endif %}
+  <ul class="object-tools">
+    <li><a href="#" onclick="window.print();return false;">Print</a></li>
+    {% if cart.stripe_id %}
+      <li><a href="{{ cart.get_stripe_url }}" target="_blank" rel="noopener">View in Stripe</a></li>
+    {% endif %}
+  </ul>
 
- <tr class="total">
- <td colspan="3">Total</td>
- <td class="num">${{ cart.cart_total_price_after_discount }}</td>
- </tr>
- </tbody>
- </table>
+  <table>
+    <tbody>
+      <tr>
+        <th>Created</th>
+        <td>{{ cart.created_at|date:"Y-m-d" }}</td>
+      </tr>
+      <tr>
+        <th>Completed on</th>
+        <td>{% if cart.is_completed %}{{ cart.date_completed|date:"Y-m-d" }}{% else %}—{% endif %}</td>
+      </tr>
+      <tr>
+        <th>Receiver</th>
+        <td>
+          {% if cart.receiver %}
+            {{ cart.receiver.first_name }} {{ cart.receiver.last_name }}{% if cart.receiver.user %} ({{ cart.receiver.user.username }}){% endif %}
+          {% else %}
+            — 
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th>E-mail</th>
+        <td>
+          {% if cart.receiver and cart.receiver.email %}
+            <a href="mailto:{{ cart.receiver.email }}">{{ cart.receiver.email }}</a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th>Phone</th>
+        <td>{% if cart.receiver and cart.receiver.phone %}{{ cart.receiver.phone }}{% else %}—{% endif %}</td>
+      </tr>
+      <tr>
+        <th>Address</th>
+        <td>
+          {% if cart.receiver and cart.receiver.address %}
+            {{ cart.receiver.address.address_field1 }}{% if cart.receiver.address.address_field2 %}, {{ cart.receiver.address.address_field2 }}{% endif %},
+            {{ cart.receiver.address.city }}{% if cart.receiver.address.state %}, {{ cart.receiver.address.state }}{% endif %},
+            {{ cart.receiver.address.country }} {{ cart.receiver.address.postal_code }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+      <tr>
+        <th>Stripe payment</th>
+        <td>
+          {% if cart.stripe_id %}
+            <a href="{{ cart.get_stripe_url }}" target="_blank" rel="noopener">{{ cart.stripe_id }}</a>
+          {% else %}
+            —
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
+
+<div class="module">
+  <h2>Items</h2>
+  {% if cart.ordered.exists %}
+  <table class="listing" style="width:100%;">
+    <thead>
+      <tr>
+        <th style="width:45%;">Product</th>
+        <th style="width:15%; text-align:right;">Unit price</th>
+        <th style="width:10%; text-align:right;">Qty</th>
+        <th style="width:15%; text-align:right;">Total</th>
+        <th style="width:15%; text-align:right;">Recorded at</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart.ordered.all %}
+        {% if item.quantity > 0 %}
+        <tr class="row{% cycle '1' '2' %}">
+          <td>
+            {% if item.product %}
+              {{ item.product.title }}
+            {% else %}
+              <em>Deleted product (ID {{ item.product_id }})</em>
+            {% endif %}
+          </td>
+          <td class="num" style="text-align:right;">
+            ${{ item.price_at_purchase|default:item.product.full_price|floatformat:2 }}
+          </td>
+          <td class="num" style="text-align:right;">{{ item.quantity }}</td>
+          <td class="num" style="text-align:right;">${{ item.total_price|floatformat:2 }}</td>
+          <td class="num" style="text-align:right;">{{ item.added_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+
+      <tr class="subtotal">
+        <td colspan="3" style="text-align:right;"><strong>Subtotal</strong></td>
+        <td class="num" style="text-align:right;"><strong>${{ cart.cart_total_price|floatformat:2 }}</strong></td>
+        <td></td>
+      </tr>
+
+      {% if cart.discount %}
+        <tr>
+          <td colspan="3" style="text-align:right;">
+            {% if cart.coupon %}"{{ cart.coupon.code }}" coupon{% else %}Discount{% endif %} ({{ cart.discount }}% off)
+          </td>
+          <td class="num" style="text-align:right; color:#a94442;">– ${{ cart.cart_discount|floatformat:2 }}</td>
+          <td></td>
+        </tr>
+      {% endif %}
+
+      <tr class="total">
+        <td colspan="3" style="text-align:right;"><strong>Total</strong></td>
+        <td class="num" style="text-align:right;"><strong>${{ cart.cart_total_price_after_discount|floatformat:2 }}</strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  {% else %}
+    <div class="listing" style="width:100%;margin-top:.5rem;">No items in this cart.</div>
+  {% endif %}
+</div>
+
+<style>
+  /* tighten default admin table a bit */
+  .module table th, .module table td { vertical-align: top; }
+  .listing thead th { border-bottom: 1px solid #ddd; }
+  .listing tbody tr.total td { border-top: 2px solid #000; }
+  .listing tbody tr.subtotal td { border-top: 1px solid #999; }
+  @media print {
+    .breadcrumbs, .object-tools { display:none !important; }
+    body { background:#fff; }
+  }
+  .listing {
+    width: 100%;
+    table-layout: fixed; /* чтобы таблица всегда занимала всю ширину */
+}
+
+</style>
 {% endblock %}

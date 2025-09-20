@@ -48,15 +48,17 @@ def change_params(context, **kwargs):
 def highlight(text, query):
     if not text:
         return ""
-    if  query:
-        terms = query.split()
-        pattern = re.compile("|".join(re.escape(term) for term in terms), re.IGNORECASE)
-        def replacer(match):
-            return f"<strong>{match.group(0)}</strong>"
-        highlighted_text = pattern.sub(replacer, text)
-        return mark_safe(highlighted_text)
-    return text
+    if not query:
+        return text
+    terms = [re.escape(t) for t in str(query).split() if t.strip()]
+    if not terms:
+        return text
+    pattern = re.compile(r'(' + '|'.join(terms) + r')', re.IGNORECASE)
 
+    def repl(m):
+        return f'<mark class="hl">{m.group(0)}</mark>'
+
+    return mark_safe(pattern.sub(repl, str(text)))
 
 @register.filter
 def days_since(value):

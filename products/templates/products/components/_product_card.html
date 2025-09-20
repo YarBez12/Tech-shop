@@ -34,8 +34,10 @@
         <span class="price">${{ product.price }}</span>
         {% endif %}
       </div>
+      {% if product.summary %}
       <div class="description">
         {{ product.summary|truncatewords:15 }}
       </div>
+      {% endif %}
     </div>
   </div>

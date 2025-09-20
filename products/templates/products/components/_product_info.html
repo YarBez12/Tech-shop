@@ -40,7 +40,9 @@
           <a class="ui small red label" href="{% url 'products:brand_details' product.brand.slug %}">{{ product.brand.name }}</a>
           {% endif %}
           {% for tag in product.tags.all  %}
+            {% if tag.display %}
             <a class="ui small grey custom-tag label" data-url="{% url 'products:tag_products' product.slug tag.slug %}">{{ tag.name }}</a>
+            {% endif %}
             {% endfor %}
           </div>
           <div class="price">

@@ -17,7 +17,7 @@ def filter_products(search_query):
 
         qs = Product.objects.annotate(
             rank=SearchRank(vector, query)
-        ).filter(rank__gte=0.1).order_by('-rank')
+        ).filter(rank__gte=0.05).order_by('-rank')
 
         product_ids = qs.values('id').distinct()
         products = Product.objects.filter(id__in=product_ids, is_active=True)
