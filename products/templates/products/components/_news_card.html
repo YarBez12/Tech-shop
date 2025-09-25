@@ -58,7 +58,7 @@
       <div class="ui mini labels" style="display:flex;gap:.25rem;flex-wrap:wrap;">
         {% for tag in product.tags.all %}
           {% if tag.display %}
-          <a class="ui label" href="#">#{{ tag.name }}</a>
+          <div class="ui label">#{{ tag.name }}</div>
           {% endif %}
         {% endfor %}
       </div>

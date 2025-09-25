@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect
-from products.models import Product, ReviewImage, ProductImage, ProductActivationRequest
+from products.models import Product, ReviewImage, ProductImage, ProductActivationRequest, ProductCharacteristic
 from products.forms import ReviewForm, ProductForm
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.edit import FormMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.db.models import Case, When, Value, BooleanField, Q, Count
+from django.db.models import Case, When, Value, BooleanField, Q, Count, Prefetch
 from itertools import chain
 from products.recommender import Recommender
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from products.utils.redis_utils import zincrby_product_view, zincrby_category_view, get_product_views
+from products.utils.filters import get_prefetched_characteristics_query
 
 
 class ProductDetailView(DetailView, FormMixin):
@@ -24,54 +25,60 @@ class ProductDetailView(DetailView, FormMixin):
         return self.request.path_info
 
     def get_object(self, queryset = ...):
-        return Product.objects.get(slug=self.kwargs['product_slug'])
+        self._obj = (Product.objects
+                    .select_related('brand','category','category__parent','user')
+                    .prefetch_related('images','tags', get_prefetched_characteristics_query())
+                    .get(slug=self.kwargs['product_slug']))
+        return self._obj
     
     def get_context_data(self, **kwargs):
-        self.object = self.get_object()
+        product = self.get_object()
         if not self.request.GET:
-            zincrby_product_view(self.object.id)
-            zincrby_category_view(self.object.category.id)
+            zincrby_product_view(product.id)
+            zincrby_category_view(product.category.id)
         context = super().get_context_data(**kwargs)
         r = Recommender()
-        recommended_bought_products = r.suggest_products_for([self.object], 8)
-        recommended_tag_related_products = Product.objects.exclude(pk=self.object.pk)\
-            .filter(tags__in=self.object.tags.all(), is_active=True)\
-            .annotate(same_tags=Count('tags', filter=Q(tags__in=self.object.tags.all())))\
+        recommended_bought_products = r.suggest_products_for([product], 8)
+        recommended_tag_related_products = Product.objects.exclude(pk=product.pk)\
+            .filter(tags__in=product.tags.all(), is_active=True)\
+            .annotate(same_tags=Count('tags', filter=Q(tags__in=product.tags.all())))\
             .order_by('-same_tags')\
             .distinct()
-        recommended_category_related_products = Product.objects.filter(category=self.object.category, is_active=True)\
-            .exclude(pk=self.object.pk)\
+        recommended_category_related_products = Product.objects.filter(category=product.category, is_active=True)\
+            .exclude(pk=product.pk)\
             .exclude(id__in=recommended_tag_related_products.values_list('id', flat=True))
         recommended_products = list(chain(recommended_bought_products, recommended_tag_related_products, recommended_category_related_products))[:8]
         product = self.get_object()
         session_key = f"ui_state:product:{product.slug}"
         ui_state = self.request.session.get(session_key, {})
         rating = ui_state.get('rating')
-        reviews = (product.reviews.all().annotate(
-            is_current_user = Case(
-                When(user=self.request.user, then=Value(True)),
-                default=Value(False),
-                output_field=BooleanField()
-            )
-        )
-        .order_by('-is_current_user'))
+        reviews = (product.reviews
+                .select_related('user')
+                .prefetch_related('images')
+                .annotate(
+                    is_current_user=Case(
+                        When(user=self.request.user, then=Value(True)),
+                        default=Value(False),
+                        output_field=BooleanField()
+                    ))
+                .order_by('-is_current_user', '-created_at'))
         if rating:
             reviews = reviews.filter(grade=rating)
         context['reviews'] = reviews
-        context['title'] = self.object.title
+        context['title'] = product.title
         context['review_form'] = self.get_form()
         context['recommended_products'] = recommended_products
-        context['small_images'] = self.object.images.all()[1:4]
-        context['product_views'] = get_product_views(self.object.id)
+        context['small_images'] = product.images.all()[1:4]
+        context['product_views'] = get_product_views(product.id)
         context['ui_state'] = ui_state
         return context
     
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        product = self.get_object()
         form = self.get_form()
         if form.is_valid():
             review = form.save(commit=False)
-            review.product = self.object
+            review.product = product
             review.user = request.user
             review.save()
             images = request.FILES.getlist('images')

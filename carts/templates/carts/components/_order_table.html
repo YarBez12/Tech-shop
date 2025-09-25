@@ -1,0 +1,37 @@
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price per item</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order.ordered.all %}
+      {% if item.quantity > 0 %}
+      <tr>
+        <td>{{ item.product.title }}</td>
+        <td>
+          {% if item.price_at_purchase %}
+            {{ item.price_at_purchase }} $
+          {% else %}
+            {{ item.product.price }} $
+          {% endif %}
+        </td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.total_price }} $</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><strong>Final Price:</strong> {{ order.cart_total_price }} $</p>
+
+  {% if order.discount %}
+    <div class="coupon-info" style="margin-top: 10px; padding: 10px; background-color: #f0f8ff; border: 1px solid #b5d6f6; border-radius: 6px;">
+      {% if order.coupon %} <p><strong>Coupon applied:</strong> {{ order.coupon.code }}</p>{% endif %}
+      <p><strong>Discount:</strong> {{ order.discount }}%</p>
+      <p><strong>Final Price after discount:</strong> {{ order.cart_total_price_after_discount }} $</p>
+    </div>
+  {% endif %}

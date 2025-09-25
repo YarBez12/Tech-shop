@@ -107,14 +107,16 @@
         {% if item.quantity > 0 %}
         <tr class="row{% cycle '1' '2' %}">
           <td>
-            {% if item.product %}
-              {{ item.product.title }}
+            {% with p=item.product %}
+            {% if p %}
+              {{ p.title }}
             {% else %}
               <em>Deleted product (ID {{ item.product_id }})</em>
             {% endif %}
+            {% endwith %}
           </td>
           <td class="num" style="text-align:right;">
-            ${{ item.price_at_purchase|default:item.product.full_price|floatformat:2 }}
+            ${{ item.price_at_purchase|default_if_none:item.product.full_price|floatformat:2 }}
           </td>
           <td class="num" style="text-align:right;">{{ item.quantity }}</td>
           <td class="num" style="text-align:right;">${{ item.total_price|floatformat:2 }}</td>
@@ -152,19 +154,6 @@
 </div>
 
 <style>
-  /* tighten default admin table a bit */
-  .module table th, .module table td { vertical-align: top; }
-  .listing thead th { border-bottom: 1px solid #ddd; }
-  .listing tbody tr.total td { border-top: 2px solid #000; }
-  .listing tbody tr.subtotal td { border-top: 1px solid #999; }
-  @media print {
-    .breadcrumbs, .object-tools { display:none !important; }
-    body { background:#fff; }
-  }
-  .listing {
-    width: 100%;
-    table-layout: fixed; /* чтобы таблица всегда занимала всю ширину */
-}
 
 </style>
 {% endblock %}

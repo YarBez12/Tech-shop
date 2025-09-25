@@ -1,6 +1,8 @@
 
 from .models import Cart, Receiver, OrderedProduct
 from products.models import Product
+from django.db.models import F
+from django.db.models.functions import Coalesce
 
 
 def get_or_create_receiver(request):
@@ -17,14 +19,17 @@ def get_or_create_cart_for_request(request, *, receiver=None):
     return Cart.objects.get_or_create_with_session(request, session_key=request.session.session_key, is_completed=False)
 
 def cart_has_overstock(cart):
-    for ordered_product in cart.ordered.all():
-        if ordered_product.quantity > (ordered_product.product.quantity or 0):
-            return True
-    return False
+    return cart.ordered.select_related('product').filter(
+        quantity__gt=Coalesce(F('product__quantity'), 0)
+    ).exists()
 
 
 def get_ordered_product(request, product_slug):
-    product = Product.objects.get(slug=product_slug)
     cart = get_or_create_cart_for_request(request)
-    ordered_product, _ = OrderedProduct.objects.get_or_create(product=product, cart=cart)
+    product = (Product.objects
+               .only('id', 'slug', 'title', 'quantity', 'price', 'discount')
+               .get(slug=product_slug))
+    ordered_product, _ = OrderedProduct.objects.get_or_create(
+        product=product, cart=cart, defaults={'quantity': 0}
+    )
     return ordered_product

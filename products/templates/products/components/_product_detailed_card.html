@@ -41,7 +41,7 @@
             {% endif %}
           </div>
           <div class="ui horizontal list" style="margin-top: 1em;">
-            {% for product_characteristic in product.product_characteristics.all  %}
+            {% for product_characteristic in product.prefetched_characteristics %}
           {% if product_characteristic.characteristic.main %}
           <div class="item"><strong>{{ product_characteristic.characteristic.title }}:</strong> {{ product_characteristic.value }}</div>
           {% endif %}

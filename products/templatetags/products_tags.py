@@ -22,6 +22,7 @@ def child_categories(parent_category, count):
             )
         )
         .filter(product_count__gt=0)
+        .only('id', 'slug', 'title', 'image', 'parent_id')
     )
 
     categories = sorted(
@@ -44,6 +45,7 @@ def parent_categories():
             )
         )
         .filter(child_products__gt=0)
+        .only('id', 'slug', 'title', 'image')
     )
 
 @register.simple_tag()
@@ -58,6 +60,7 @@ def brands(count = 15):
             )
         )
         .filter(product_count__gt=0)
+        .only('id', 'slug', 'name', 'image', 'foundation_year', 'description')
         .order_by('-product_count')[:count]
     )
 
@@ -86,11 +89,14 @@ def get_product_characteristics(characteristic):
 
 @register.simple_tag()
 def favourite_products(request):
-    if request.user.is_authenticated:
-        redis_ids = r.smembers(f"favourite:user:{request.user.id}")
-        product_ids = [int(pid) for pid in redis_ids]
-        return Product.objects.filter(pk__in=product_ids, is_active=True)
-    return []
+    if not request.user.is_authenticated:
+        return []
+    ids = [int(pid) for pid in r.smembers(f"favourite:user:{request.user.id}")]
+    qs = (Product.objects
+          .filter(pk__in=ids, is_active=True, quantity__gt=0)
+          .select_related('brand', 'category', 'user')
+          .prefetch_related('images', 'tags'))
+    return list(qs)
 
 
 @register.filter()

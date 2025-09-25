@@ -24,6 +24,7 @@ from main.views import custom_404, test_404
 from django.contrib.sitemaps.views import sitemap
 from main.sitemaps import ProductSitemap
 
+
 sitemaps = {
     'products': ProductSitemap,
 }

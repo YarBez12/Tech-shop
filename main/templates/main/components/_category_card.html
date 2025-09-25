@@ -8,9 +8,9 @@
           </a>
           <div class="subcategories">
         {% for subcategory in subcategories  %}
-        <a href="{{ subcategory.get_absolute_url }}">{{ subcategory.title }}</a>, 
+        <a href="{{ subcategory.get_absolute_url }}">{{ subcategory.title }}</a>,
         {% endfor %}
-        ...
+        {% if subcategories %}...{% endif %}
       </div>
       </div>
     </div>

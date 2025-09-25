@@ -1,12 +1,14 @@
 {% load static %}
 <div class="ui subcategory card">
   <div class="image">
+    {% with first_product=category.prefetched_products.0 %}
     <img loading="lazy"
          src="{% if category.image %}{{ category.image.url }}
-              {% elif category.products.first and category.products.first.first_photo %}{{ category.products.first.first_photo }}
+              {% elif first_product and first_product.first_photo %}{{ first_product.first_photo }}
               {% else %}{% static 'images/placeholder.png' %}
               {% endif %}"
          alt="{{ item.title }}">
+      {% endwith %}
   </div>
   <div class="content">
     <div class="header">{{ category.title }}</div>

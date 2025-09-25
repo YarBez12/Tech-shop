@@ -2,10 +2,9 @@
 {% load i18n %}
 
 {% block main %}
-{% with subject=object.subject first_module=object.modules.first %}
+{% with subject=object.subject  %}
 <div class="ui container" style="padding:2rem 0;">
 
-  <!-- header row with actions on the right -->
   <div class="ui stackable grid" style="margin-bottom:1rem;">
     <div class="eight wide column">
       <h1 class="ui huge header" style="margin:.2em 0 0;">
@@ -34,7 +33,7 @@
               <i class="cogs icon"></i> Add modules
             </a>
           {% endif %}
-        {% elif request.user.is_authenticated and request.user in object.students.all %}
+        {% elif is_enrolled %}
           <a href="{% url 'students:student_course_detail' course.slug %}" class="ui green button">
             <i class="play circle icon"></i> Go to course
           </a>
@@ -57,7 +56,6 @@
       </div>
     </div>
   </div>
-  <!-- /header row -->
 
   <div class="ui raised very padded segment">
     <h3 class="ui dividing header" style="margin-top:0">Overview</h3>
@@ -75,7 +73,7 @@
         <div class="content">
           <div class="header">Modules</div>
           <div class="description">
-            {{ object.modules.count }} module{{ object.modules.count|pluralize }}
+            {{ modules_count }} module{{ modules_count|pluralize }}
           </div>
         </div>
       </div>

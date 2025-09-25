@@ -4,11 +4,15 @@ from users.models import Address, User
 from products.models import Product
 import uuid
 from django.utils import timezone
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from django.conf import settings
 from coupons.models import Coupon
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import Coalesce
+from functools import cached_property
+from django.db.models import DecimalField, ExpressionWrapper, Sum, Value
+from django.db.models.functions import Coalesce
 
 class Receiver(models.Model):
     first_name = models.CharField(_('first_name'), max_length=200)
@@ -80,7 +84,8 @@ class Cart(models.Model):
 
     objects = CartManager()
 
-
+    def _items_qs(self):
+        return self.ordered.select_related('product')
 
     def save(self, *args, **kwargs):
         if not self.order_number or self.order_number.strip() == "":
@@ -91,15 +96,35 @@ class Cart(models.Model):
 
     @property
     def cart_total_price(self):
-        order_products = self.ordered.all()
-        total_price = sum([product.total_price for product in order_products])
-        return round(total_price, 2)
+        price_per_item = models.Case(
+            models.When(price_at_purchase__isnull=False,
+                then=models.F('price_at_purchase')),
+            default=(
+                models.F('product__price') * (1 - Coalesce(models.F('product__discount'), 0) / 100.0)
+            ),
+            output_field=models.DecimalField(max_digits=10, decimal_places=2),
+        )
+        row_total = ExpressionWrapper(
+            price_per_item * models.F('quantity'),
+            output_field=DecimalField(max_digits=12, decimal_places=2),
+        )
+        total = (
+            self._items_qs()
+            .aggregate(
+                total=Coalesce(
+                    models.Sum(row_total),
+                    Value(0),
+                    output_field=DecimalField(max_digits=12, decimal_places=2)
+                )
+            )['total'] or Decimal('0')
+        )
+        return total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    
 
-    @property
+    
+    @cached_property
     def cart_total_quantity(self):
-        order_products = self.ordered.all()
-        total_quantity = sum([product.quantity for product in order_products])
-        return total_quantity
+        return self._items_qs().aggregate(total=Coalesce(models.Sum('quantity'), 0))['total'] or 0
     
     def __str__(self):
         if self.receiver:
@@ -124,6 +149,12 @@ class Cart(models.Model):
     @property
     def cart_total_price_after_discount(self):
         return self.cart_total_price - self.cart_discount
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['session_key']),
+            models.Index(fields=['is_completed', 'date_completed']),
+        ]
 
 class OrderedProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, related_name='ordered')
@@ -133,10 +164,17 @@ class OrderedProduct(models.Model):
     price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return self.product.title
+        return self.product.title if self.product else f"OrderedProduct #{self.pk}"
     
     @property
     def total_price(self):
         if self.price_at_purchase is not None:
             return round(self.price_at_purchase * Decimal(self.quantity), 2)
         return round(Decimal(self.product.full_price) * Decimal(self.quantity),2)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['cart']),
+            models.Index(fields=['product']),
+            models.Index(fields=['added_at']),
+        ]

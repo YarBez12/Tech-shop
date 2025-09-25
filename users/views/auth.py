@@ -4,14 +4,13 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse_lazy, reverse
 from users.utils import apply_remember_me, merge_carts, build_form_errors_html
 from django.contrib.auth import login, logout
-from django.shortcuts import redirect
+from django.shortcuts import redirect, resolve_url
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
 from django.views.generic import CreateView
 from urllib.parse import urlsplit
 from django.urls import resolve, Resolver404
-
-
+from django.conf import settings
 
 class UserLoginView(LoginView):
     form_class = LoginForm
@@ -35,13 +34,13 @@ class UserLoginView(LoginView):
             return redirect_page
         return reverse_lazy('main:index')
     
-    def form_valid(self, form):
-        user = form.get_user()
-        if user:
-            login(self.request, user)
-            apply_remember_me(self.request)
-            messages.success(self.request, f"{user.first_name}, You successfuly logined")
-            return redirect(self.get_success_url())
+    # def form_valid(self, form):
+    #     user = form.get_user()
+    #     if user:
+    #         login(self.request, user)
+    #         apply_remember_me(self.request)
+    #         messages.success(self.request, f"{user.first_name}, You successfuly logined")
+    #         return redirect(self.get_success_url())
     
     def form_invalid(self, form):
         messages.error(self.request, build_form_errors_html(form))
@@ -86,10 +85,9 @@ class UserRegistrationView(CreateView):
                 address, created = Address.objects.get_or_create(**address_data)
                 user.address = address
             user.save()
-            login(self.request, user)
+            login(self.request, user, backend=settings.AUTHENTICATION_BACKENDS[0])
             apply_remember_me(self.request)
 
-        messages.success(self.request, 'You successfuly registered to your account')
         return redirect(self.get_success_url())
     
     def form_invalid(self, user_form, address_form = None):

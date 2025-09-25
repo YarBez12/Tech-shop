@@ -1,4 +1,6 @@
 from .models import User
+from django.shortcuts import resolve_url
+
 
 
 def associate_by_email(strategy, details, user=None, *args, **kwargs):

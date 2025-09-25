@@ -2,9 +2,10 @@
 
         {% for ordered_product in cart.ordered.all %}
         {% if ordered_product.quantity > 0 and ordered_product.product %}
-        {% with product_quantity=ordered_product.product.quantity|default:0 %}
-        <div class="product-cart-card{% if ordered_product.quantity|default:0 > product_quantity %} out-of-stock{% endif %}">
-          {% if ordered_product.quantity|default:0 > product_quantity %}
+        {% with product=ordered_product.product %}
+        {% with product_quantity=product.quantity|default_if_none:0 quantity=ordered_product.quantity|default_if_none:0 %}
+        <div class="product-cart-card{% if quantity > product_quantity %} out-of-stock{% endif %}">
+          {% if quantity > product_quantity %}
           <div class="stock-overlay">
           <div class="ui message" style="background: rgba(128,128,128,0.1); padding: 5px; margin-bottom: 5px;">
             <p>{% blocktrans with stock=product_quantity %}Available stock: {{ stock }}{% endblocktrans %}</p>
@@ -12,8 +13,9 @@
           </div>
           </div>
           {% endif %}
-          {% include "carts/components/_product_cart_details.html" %}
+          {% include "carts/components/_product_cart_details.html" with product=product ordered_product=ordered_product quantity=quantity product_quantity=product_quantity %}
         </div>
+        {% endwith %}
         {% endwith %}
         {% endif %}
         {% empty %}

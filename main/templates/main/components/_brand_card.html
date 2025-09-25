@@ -4,13 +4,13 @@
 
 
     <div class="ui card catalog-card">
-        <div class="content">
-          <a class="header-row" href="{{ brand.get_absolute_url }}">
+        <a class="content" href="{{ brand.get_absolute_url }}">
+          <div class="header-row">
             {% if brand.image %}
             <img src="{% if brand.image %}{{ brand.image.url }}{% endif %}" alt="{{ brand.name }}" class="brand-card-image" />
             {% endif %}
             <div class="ui medium header">{{ brand.name }}</div>
-          </a>
+          </div>
           <div class="meta" style="margin-top: 0.5em;">
             {% if brand.foundation_year %}
               <span>Founded in {{ brand.foundation_year }}</span>
@@ -19,6 +19,6 @@
           <div class="description" style="margin-top: 0.5em;">
             {{ brand.description }}
           </div>
-        </div>
+        </a>
       </div>
       

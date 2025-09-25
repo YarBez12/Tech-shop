@@ -4,13 +4,15 @@
 {% block main %}
 
   <div class="ui massive centered header">Brand: "{{ brand.name }}"
+    {% with subscribed=brand|is_subscribed:user %}
     <button id="subscribe-btn" 
-    class="ui {% if brand|is_subscribed:user %}red{% else %}primary{% endif %} button"
+    class="ui {% if subscribed %}red{% else %}primary{% endif %} button"
     data-url="{% url 'products:subscribe_brand' %}" 
     data-brand-id="{{ brand.id }}"
-    data-action="{% if brand|is_subscribed:user %}unsubscribe{% else %}subscribe{% endif %}">
-    {% if brand|is_subscribed:user %}Unsubscribe{% else %}Subscribe{% endif %}
+    data-action="{% if subscribed %}unsubscribe{% else %}subscribe{% endif %}">
+    {% if subscribed %}Unsubscribe{% else %}Subscribe{% endif %}
       </button>
+      {% endwith %}
   </div>
   {% if products %}
                 {% include "products/components/_product_list.html" %}

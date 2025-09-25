@@ -19,8 +19,6 @@ env = environ.Env(
     DEBUG=(bool, False),
 )
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(BASE_DIR / '.env')
@@ -101,7 +99,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'users.context_processors.notification_counts'
+                'users.context_processors.notification_counts',
             ],
         },
     },
@@ -248,5 +246,5 @@ SOCIAL_AUTH_PIPELINE = (
     'users.pipeline.save_user_details_once',
 )
 
-
 LOGIN_REDIRECT_URL = env('LOGIN_REDIRECT_URL', default='/')
+

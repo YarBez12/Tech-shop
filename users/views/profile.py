@@ -16,6 +16,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, View
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from products.utils.filters import get_prefetched_characteristics_query
 
 
 
@@ -38,12 +39,20 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         user = self.get_object()
         receiver, _ = Receiver.objects.get_or_create(user= user)
         cart = Cart.objects.get_or_create_with_session(self.request, receiver = receiver, is_completed = False)
-        completed_orders = Cart.objects.filter(receiver = receiver, is_completed = True).order_by('-date_completed')
+        completed_orders = (Cart.objects
+                                .filter(receiver=receiver, is_completed=True)
+                                .select_related('receiver')
+                                .prefetch_related('ordered__product')
+                                .order_by('-date_completed'))        
         subcriptions = Subcription.objects.filter(user=user).only('brand_id')
         brand_ids = subcriptions.values_list('brand_id', flat=True)
-        brands = Brand.objects.filter(pk__in=brand_ids)
+        brands = Brand.objects.filter(pk__in=brand_ids).only('id', 'name', 'slug', 'image', 'foundation_year')
         two_weeks_ago = timezone.now() - timedelta(days=14)
-        news = Product.objects.filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago)
+        news = (Product.objects
+            .filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago, is_active=True)
+            .select_related('brand', 'category')
+            .only('id', 'title', 'slug', 'price', 'discount', 'category', 'brand', 'updated_at', 'created_at')
+            .order_by('-updated_at')[:48])
 
         session_key = "ui_state:profile"
         ui_state = self.request.session.get(session_key, {})
@@ -62,10 +71,14 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
             product_ids = [int(pid) for pid in redis_product_ids]
         except Exception:
             product_ids = []
-        products = Product.objects.filter(pk__in=product_ids, is_active=True)
+        products = (Product.objects
+                   .filter(pk__in=product_ids, is_active=True)
+                   .prefetch_related('images','tags', get_prefetched_characteristics_query())
+                   .select_related('brand', 'category')
+                   .only('id', 'title', 'slug', 'price', 'discount', 'brand', 'category', 'summary'))
         if sort_option:
             products = sort_with_option(sort_option, products)
-        paginator = Paginator(products, 2)
+        paginator = Paginator(products, 8)
         page = self.request.GET.get('page')
         try:
             paginated_products = paginator.page(page)
@@ -74,7 +87,11 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         except EmptyPage:
             paginated_products = paginator.page(paginator.num_pages)
 
-        user_products = user.products.select_related('brand').all()
+        user_products = (user.products
+                            .select_related('brand', 'category')
+                            .prefetch_related('images','tags', get_prefetched_characteristics_query())
+                            .only('id', 'title', 'slug', 'price', 'discount', 'brand', 'category', 'is_active')
+                            .all())
         if sort_option:
             user_products = sort_with_option(sort_option, user_products)
 
@@ -82,19 +99,37 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         other_actions = Action.objects.filter(
             target_ct=product_ct,
             target_id__in=user_products.values_list('id', flat=True)
-        ).exclude(user=user).select_related('user')
+        ).exclude(user=user).select_related('user').only('user__first_name', 'user__last_name', 'user__email', 'verb', 'created', 'target_id')
         
-        context['title'] = 'Profile'
-        context['page_obj'] = paginated_products
-        context['cart'] = cart
-        context['completed_orders'] = completed_orders
-        context['products'] = paginated_products
-        context['product_form'] = self.get_form()
-        context['user_products'] = user_products
-        context['news'] = news
-        context['other_actions'] = other_actions
-        context['brands'] = brands
-        context['saved_ui_state'] = ui_state
+        has_products = paginated_products.paginator.count > 0
+        has_brands = len(brand_ids) > 0
+        has_cart_items = (cart.cart_total_quantity or 0) > 0
+        has_completed_orders = completed_orders.exists()
+        has_other_actions = other_actions.exists()
+        has_news = len(news) > 0
+
+        context.update({
+            'title': 'Profile',
+            'page_obj': paginated_products,
+            'cart': cart,
+            'cart_total_quantity': cart.cart_total_quantity,
+            'cart_total_price': cart.cart_total_price,
+            'completed_orders': completed_orders,
+            'products': paginated_products,  
+            'product_form': self.get_form(),
+            'user_products': user_products,
+            'news': news,
+            'other_actions': other_actions,
+            'brands': brands,
+            'saved_ui_state': ui_state,
+
+            'has_products': has_products,
+            'has_brands': has_brands,
+            'has_cart_items': has_cart_items,
+            'has_completed_orders': has_completed_orders,
+            'has_other_actions': has_other_actions,
+            'has_news': has_news,
+        })
 
 
         return context

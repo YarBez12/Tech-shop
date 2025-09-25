@@ -1,18 +1,18 @@
       <div class="ui top attached stackable tabular menu">
-        {% if products %}
+        {% if has_products %}
         <a href="#" class="{% if active_tab == 'favourites' %}active{% endif %} item" data-tab="favourites" data-url="{% url 'products:save_tab' 'profile' %}">❤️ Favourites</a>
         {% endif %}
-        {% if brands  %}
+        {% if has_brands  %}
         <a href="#" class="{% if active_tab == 'brands' %}active{% endif %} item" data-tab="brands" data-url="{% url 'products:save_tab' 'profile' %}">⭐️ Subscriptions</a>
         {% endif %}
-        {% if cart.cart_total_quantity > 0 %}
+        {% if has_cart_items > 0 %}
         <a href="#" class="{% if active_tab == 'cart' %}active{% endif %} item" data-tab="cart" data-url="{% url 'products:save_tab' 'profile' %}">🛒 Cart</a>
         {% endif %}
-        {% if completed_orders %}
+        {% if has_completed_orders %}
         <a href="#" class="{% if active_tab == 'orders' %}active{% endif %} item" data-tab="orders" data-url="{% url 'products:save_tab' 'profile' %}">📦 Orders</a>
         {% endif %}
         <a href="#" class="{% if active_tab == 'user_products' %}active{% endif %} item" data-tab="user_products" data-url="{% url 'products:save_tab' 'profile' %}">🔧 Your products</a>
-        {% if other_actions %}
+        {% if has_other_actions %}
         <div class="notification-icon">
           <a href="#" class="{% if active_tab == 'other_actions' %}active{% endif %} item" data-tab="other_actions" data-url="{% url 'products:save_tab' 'profile' %}">👀 Other actions</a>
           {% if unread_actions_count %}
@@ -20,7 +20,7 @@
           {% endif %}
         </div>
         {% endif %}
-        {% if news %}
+        {% if has_news %}
         <div class="notification-icon">
           <a href="#" class="{% if active_tab == 'news' %}active{% endif %} item" data-tab="news" data-url="{% url 'products:save_tab' 'profile' %}">📰 News</a>
           {% if unread_news_count %}

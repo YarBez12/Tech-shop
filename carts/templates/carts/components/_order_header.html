@@ -1,0 +1,10 @@
+<div class="header">
+    <h1>{{ header_title }}</h1>
+  </div>
+  
+  <div class="order-info">
+    <h2>Order #{{ order.order_number|default:"" }}</h2>
+    <p>Date: {{ order.date_completed|date:"d.m.Y" }}</p>
+    <p>Total Price: {{ order.cart_total_price_after_discount }} $</p>
+    <p>{{ header_subtitle }}</p>
+  </div>

@@ -1,8 +1,8 @@
 from users.models import NotificationState, Action
 from products.models import Product
 from django.utils import timezone
-from datetime import datetime, timezone as dt_timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone as dt_timezone
+from django.contrib.contenttypes.models import ContentType
 
 
 def min_date():
@@ -31,9 +31,10 @@ def notification_counts(request):
 
     if product_ids:
         since_actions = state.last_seen_actions or min_date()
+        product_ct = ContentType.objects.get_for_model(Product)
         unread_actions = (
             Action.objects
-            .filter(target_id__in=product_ids, created__gt=since_actions)
+            .filter( target_ct=product_ct, target_id__in=product_ids, created__gt=since_actions)
             .exclude(user=user)
             .count()
         )

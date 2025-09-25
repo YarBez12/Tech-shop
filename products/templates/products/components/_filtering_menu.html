@@ -12,7 +12,7 @@
       <div class="grouped fields" data-section-name="{{ characteristic.title }}">
         <label>{{ characteristic.title }}</label>
         <div class="characteristics-wrapper">
-        {% for product_characteristic in characteristic|get_product_characteristics  %}
+        {% for product_characteristic in characteristic.prefetched_values  %}
         <div class="characteristic-value">
           <div class="field">
           <div class="ui checkbox">

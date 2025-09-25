@@ -1348,7 +1348,6 @@ a.item:hover, a.header:hover, a.link:hover {
 }
 
 
-/* Ровная сетка карточек */
 .card-grid, .slider-container {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
 }
@@ -1397,4 +1396,36 @@ html, body {
 .ui.container {
   flex: 1;
   padding-bottom: 2rem;
+}
+
+.messages-wrapper { 
+  position: sticky; 
+  top: 12px; 
+  z-index: 1000; 
+}
+
+
+.module table th, .module table td { 
+  vertical-align: top; 
+}
+.listing thead th { 
+  border-bottom: 1px solid #ddd; 
+}
+.listing tbody tr.total td { 
+  border-top: 2px solid #000; 
+}
+.listing tbody tr.subtotal td { 
+  border-top: 1px solid #999; 
+}
+@media print {
+  .breadcrumbs, .object-tools { 
+    display:none !important; 
+  }
+  body { 
+    background:#fff; 
+  }
+}
+.listing {
+  width: 100%;
+  table-layout: fixed; 
 }

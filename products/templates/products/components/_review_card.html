@@ -16,7 +16,7 @@
       <span style="color: green;">+ {{ review.pros }}</span><br>
       <span style="color: red;">- {{ review.cons }}</span>
 
-      {% if review.images.exists %}
+      {% if review.images.all %}
       <div id="review-gallery-{{ review.id }}" class="ui small images" style="margin-top: 1em;">
         {% for image in review.images.all %}
           <a href="{{ image.image.url }}">

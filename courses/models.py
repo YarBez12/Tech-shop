@@ -14,6 +14,7 @@ class Subject(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     class Meta:
         ordering = ['title']
+        indexes = [models.Index(fields=['slug'])]
     def __str__(self):
         return self.title
 class Course(models.Model):
@@ -26,18 +27,24 @@ class Course(models.Model):
     students = models.ManyToManyField(User, related_name='courses_joined', blank=True)
     class Meta:
         ordering = ['-created']
+        indexes = [
+            models.Index(fields=['slug']),
+            models.Index(fields=['subject', 'created']),
+        ]
     def __str__(self):
         return self.title
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.title)
-            unique_slug = base_slug
-            num = 1
-            while Course.objects.filter(slug=unique_slug).exists():
-                unique_slug = f'{base_slug}-{num}'
-                num += 1
-            self.slug = unique_slug
+            base = slugify(self.title)
+            candidates = Course.objects.filter(slug__startswith=base).values_list('slug', flat=True)
+            existing = set(candidates)
+            slug = base
+            i = 1
+            while slug in existing:
+                slug = f'{base}-{i}'
+                i += 1
+            self.slug = slug
         super().save(*args, **kwargs)
     
 class Module(models.Model):

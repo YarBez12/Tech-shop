@@ -14,6 +14,11 @@ class ReviewDelete(DeleteView):
         'title': 'Review delete'
     }
     
+    def get_queryset(self):
+        return (Review.objects
+                .select_related('user','product')
+                .prefetch_related('images'))
+    
     def get_success_url(self):
         messages.warning(self.request, 'Review has been deleated', extra_tags='deleted')
         return self.object.get_absolute_url()
@@ -26,6 +31,11 @@ class ReviewEdit(UpdateView):
     extra_context = {
         'title': 'Review update'
     }
+
+    def get_queryset(self):
+        return (Review.objects
+                .select_related('user','product')
+                .prefetch_related('images'))
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['review_form'] = context.get('form')

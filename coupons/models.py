@@ -38,10 +38,16 @@ class Coupon(models.Model):
 
     def __str__(self):
         return f"{self.code} (-{self.discount}%)"    
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['code']),
+            models.Index(fields=['active', 'valid_from', 'valid_to']),
+        ]
 
 class CouponUsage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE, related_name='usages')
     used_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -17,7 +17,7 @@ urlpatterns = [
     path('product/<slug:slug>/update/', ProductEdit.as_view(), name='product_edit'),
     path('product/<slug:product_slug>/<slug:tag_slug>/same/', TagProductsView.as_view(), name='tag_products'),
     
-    path('brand/<slug:slug>', BrandDetails.as_view(), name='brand_details'),
+    path('brand/<slug:slug>/', BrandDetails.as_view(), name='brand_details'),
     path('subscribe-brand/', subscribe_brand, name='subscribe_brand'),
     
     path('save-sort/<str:key>/', save_sort, name='save_sort'),

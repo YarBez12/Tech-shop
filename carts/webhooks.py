@@ -9,6 +9,9 @@ from coupons.models import CouponUsage
 from products.recommender import Recommender
 from products.utils.actions import create_action
 from django.db import transaction
+from django.db.models import F, IntegerField, Value
+from django.db.models.functions import Coalesce, Greatest
+from products.models import Product
 
 
 
@@ -49,17 +52,19 @@ def stripe_webhook(request):
         return HttpResponse(status=200)
     
     with transaction.atomic():
-        for ordered_product in cart.ordered.all():
+        for ordered_product in cart.ordered.select_related('product').all():
             product = ordered_product.product
             if not product:
                 continue
             if ordered_product.price_at_purchase is None:
                 ordered_product.price_at_purchase = product.full_price
                 ordered_product.save(update_fields=['price_at_purchase'])
-            new_quantity = max(0, (product.quantity or 0) - (ordered_product.quantity or 0))
-            if new_quantity != product.quantity:
-                product.quantity = new_quantity
-                product.save(update_fields=['quantity'])
+            Product.objects.filter(pk=ordered_product.product_id).update(
+                quantity=Greatest(
+                    Value(0),
+                    Coalesce(F('quantity'), Value(0), output_field=IntegerField()) - (ordered_product.quantity or 0)
+                )
+            )
         cart.stripe_id = session.get('payment_intent')
         cart.is_completed = True
         cart.date_completed = timezone.now().date()

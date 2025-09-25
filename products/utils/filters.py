@@ -1,6 +1,6 @@
-from products.models import Category, Product
+from products.models import Category, Product, ProductCharacteristic
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
-from django.db.models import F, ExpressionWrapper, DecimalField, Value, Q
+from django.db.models import F, ExpressionWrapper, DecimalField, Value, Q, Prefetch
 from django.db.models.functions import Coalesce, Lower
 
 
@@ -71,3 +71,18 @@ def sort_with_option(sort_option, items):
         items = items.order_by(sort_option)
     return items
 
+def get_prefetched_characteristics_query():
+    prefetched_characteristics = Prefetch(
+        'product_characteristics',
+        queryset=(
+            ProductCharacteristic.objects
+            .select_related('characteristic')
+            .only(
+                'id', 'value',
+                'characteristic__id', 'characteristic__title', 'characteristic__main'
+            )
+            .order_by('characteristic__title')
+        ),
+        to_attr='prefetched_characteristics'
+    )
+    return prefetched_characteristics

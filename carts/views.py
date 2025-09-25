@@ -33,20 +33,15 @@ class CartView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = self.get_object()
+        cart_id = self.object.id
+        cart = Cart.objects.prefetch_related('ordered__product').get(id=cart_id)
         context['title'] = 'Cart'
-        disable_payment = cart_has_overstock(cart)
-        context['disable_payment'] = disable_payment
-        coupon_apply_form = CouponApplyForm()
-        context['coupon_apply_form'] = coupon_apply_form
+        context['disable_payment'] = cart_has_overstock(cart)
+        context['coupon_apply_form'] = CouponApplyForm()
 
         r = Recommender()
         cart_products = [item.product for item in cart.ordered.all() if item.quantity > 0]
-        if cart_products:
-            recommended_products = r.suggest_products_for(cart_products, max_results=5)
-        else:
-            recommended_products = []
-        context['recommended_products'] = recommended_products
+        context['recommended_products'] = r.suggest_products_for(cart_products, max_results=5) if cart_products else []
         return context
     
 
@@ -91,23 +86,28 @@ class PaymentView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
 
         receiver = get_or_create_receiver(request)
-        cart = get_or_create_cart_for_request(request, receiver=receiver)
-        line_items = []
-        order_description_parts = []
+        cart = Cart.objects.get_or_create_with_session(request, receiver=receiver, is_completed=False)
+        cart = Cart.objects.select_related('receiver').prefetch_related('ordered__product').get(pk=cart.pk)
+        line_items, order_description_parts = [], []
+
+        if cart.ordered.filter(quantity__gt=Coalesce(F('product__quantity'), 0)).exists():
+            messages.warning(request, 'Adjust quantities to proceed to checkout')
+            return redirect('carts:cart')
 
         for ordered_product in cart.ordered.all():
             if ordered_product.quantity > 0:
+                product = ordered_product.product
                 line_items.append({
                     'price_data': {
                         'currency': 'usd',
                         'product_data': {
-                            'name': ordered_product.product.title,
+                            'name': product.title,
                         },
-                        'unit_amount': int(ordered_product.product.full_price * 100),
+                        'unit_amount': int(product.full_price * 100),
                     },
                     'quantity': ordered_product.quantity,
                 })
-                order_description_parts.append(f"{ordered_product.product.title} x {ordered_product.quantity}")
+                order_description_parts.append(f"{product.title} x {ordered_product.quantity}")
         
         session_data = {
             'payment_method_types': ['card'],
@@ -141,33 +141,30 @@ def payment_cancel(request):
     
 def add_to_cart(request, product_slug):
     ordered_product = get_ordered_product(request, product_slug)
-    if ordered_product.quantity >= ordered_product.product.quantity:
+    stock = ordered_product.product.quantity or 0
+    if ordered_product.quantity >= stock:
         messages.warning(request, 'We have no such items left!')
     else:
-        ordered_product.quantity += 1
-        ordered_product.save()
+        OrderedProduct.objects.filter(pk=ordered_product.pk).update(quantity=F('quantity') + 1)
     next_page = request.META.get('HTTP_REFERER', '/')
     return redirect(next_page)
 
 def remove_from_cart(request, product_slug):
     ordered_product = get_ordered_product(request, product_slug)
     if ordered_product.quantity > 1:
-        ordered_product.quantity -= 1
-        ordered_product.save()
+        OrderedProduct.objects.filter(pk=ordered_product.pk).update(quantity=F('quantity') - 1)
     next_page = request.META.get('HTTP_REFERER', '/')
     return redirect(next_page)   
 
 def delete_full_item_from_cart(request, product_slug):
     ordered_product = get_ordered_product(request, product_slug)
-    ordered_product.quantity = 0
-    ordered_product.save()
+    OrderedProduct.objects.filter(pk=ordered_product.pk).update(quantity=0)
     next_page = request.META.get('HTTP_REFERER', '/')
     return redirect(next_page) 
 
 def reduce_quantity(request, ordered_product_pk):
-    ordered_product = OrderedProduct.objects.get(pk=ordered_product_pk)
-    ordered_product.quantity = ordered_product.product.quantity or 0
-    ordered_product.save()
+    ordered_product = OrderedProduct.objects.select_related('product').get(pk=ordered_product_pk)
+    OrderedProduct.objects.filter(pk=ordered_product.pk).update(quantity=(ordered_product.product.quantity or 0))
     next_page = request.META.get('HTTP_REFERER', '/')
     return redirect(next_page) 
 

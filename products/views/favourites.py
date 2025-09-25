@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from products.utils.mixins import EndlessPaginationMixin
+from products.utils.filters import get_prefetched_characteristics_query
 
 
 
@@ -15,32 +16,19 @@ class FavouriteProducts(EndlessPaginationMixin, ListView):
     model = Product
     template_name = 'products/favourite_products.html'
     context_object_name = 'products'
-    paginate_by = 2
-
-    # def paginate_queryset(self, queryset, page_size):
-    #     paginator = self.get_paginator(queryset, page_size,
-    #         orphans=self.get_paginate_orphans(),
-    #         allow_empty_first_page=self.get_allow_empty()
-    #     )
-    #     page_number = self.request.GET.get(self.page_kwarg, 1)
-    #     try:
-    #         page = paginator.page(page_number)
-    #     except PageNotAnInteger:
-    #         page = paginator.page(1)
-    #     except EmptyPage:
-    #         page = paginator.page(paginator.num_pages)
-    #     return paginator, page, page.object_list, page.has_other_pages()
+    paginate_by = 8
 
     def get_queryset(self):
         redis_product_ids = get_user_favourites(self.request.user.id)
         product_ids = [int(pid) for pid in redis_product_ids]
-        products = Product.objects.filter(pk__in=product_ids, is_active=True)
+        products = (Product.objects
+                    .filter(pk__in=product_ids, is_active=True, quantity__gt=0)
+                    .select_related('brand','category','user')
+                    .prefetch_related('images','tags', get_prefetched_characteristics_query()))
         session_key = "ui_state:favourite_products"
         ui_state = self.request.session.get(session_key, {})
         sort_option = ui_state.get('sort', 'title')
-        if sort_option:
-            products = sort_with_option(sort_option, products)
-        return products
+        return sort_with_option(sort_option, products) if sort_option else products
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

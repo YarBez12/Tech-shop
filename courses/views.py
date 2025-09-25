@@ -16,12 +16,15 @@ from django.views.generic.detail import DetailView
 from students.forms import CourseEnrollForm
 from django.core.cache import cache
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.db import transaction
+
 
 
 class OwnerMixin:
     def get_queryset(self):
         qs = super().get_queryset()
-        return qs.filter(owner=self.request.user)
+        return (qs.filter(owner=self.request.user)
+                  .select_related('owner', 'subject'))
 class OwnerEditMixin:
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -37,6 +40,14 @@ class ManageCourseListView(OwnerCourseMixin, ListView):
     extra_context = {
         'title': 'My courses'
     }
+
+    def get_queryset(self):
+        return (super().get_queryset()
+                .annotate(
+                    total_modules=Count('modules', distinct=True),
+                    total_students=Count('students', distinct=True),
+                )
+                .only('id', 'title', 'slug', 'overview', 'created', 'subject', 'owner'))
 class CourseCreateView(OwnerCourseEditMixin, CreateView):
     permission_required = 'courses.add_course'
     extra_context = {
@@ -84,7 +95,10 @@ class CourseModuleUpdateView(TemplateResponseMixin, View):
     def get_formset(self, data=None):
         return ModuleFormSet(instance=self.course, data=data)
     def dispatch(self, request, slug):
-        self.course = get_object_or_404(Course, slug=slug, owner=request.user)
+        self.course = get_object_or_404(
+            Course.objects.only('id', 'title', 'slug').filter(owner=request.user),
+            slug=slug
+        )
         return super().dispatch(request, slug)
     def get(self, request, *args, **kwargs):
         formset = self.get_formset()
@@ -174,9 +188,11 @@ class ContentDeleteView(View):
 class ModuleContentListView(TemplateResponseMixin, View):
     template_name = 'courses/manage/module/content_list.html'
     def get(self, request, module_slug):
-        module = get_object_or_404(Module,
-                                    slug=module_slug,
-                                    course__owner=request.user)
+        module = get_object_or_404(
+            Module.objects.select_related('course'),
+            slug=module_slug,
+            course__owner=request.user
+        )
         return self.render_to_response({
             "title": f"Contents of '{module.title}'",
             "module": module
@@ -187,20 +203,30 @@ class ModuleOrderView(CsrfExemptMixin,
                     JsonRequestResponseMixin,
                     View):
     def post(self, request):
-        for id, order in self.request_json.items():
-            qs = Module.objects.filter(id=id, course__owner=request.user)
-            Module.objects.filter(id=id,
-                                course__owner=request.user).update(order=order)
+        order_map = {int(id): order for id, order in self.request_json.items()}
+        if not order_map:
+            return self.render_json_response({'saved': 'OK'})
+        ids = list(order_map.keys())
+        with transaction.atomic():
+            modules = list(Module.objects.filter(id__in=ids, course__owner=request.user))
+            for module in modules:
+                module.order = order_map.get(module.id, module.order)
+            Module.objects.bulk_update(modules, ['order'])
         return self.render_json_response({'saved': 'OK'})
     
 class ContentOrderView(CsrfExemptMixin,
                     JsonRequestResponseMixin,
                     View):
     def post(self, request):
-        for id, order in self.request_json.items():
-            Content.objects.filter(id=id,
-                                module__course__owner=request.user) \
-                                .update(order=order)
+        order_map = {int(id): order for id, order in self.request_json.items()}
+        if not order_map:
+            return self.render_json_response({'saved': 'OK'})
+        ids = list(order_map.keys())
+        with transaction.atomic():
+            contents = list(Content.objects.filter(id__in=ids, module__course__owner=request.user))
+            for content in contents:
+                content.order = order_map.get(content.id, content.order)
+            Content.objects.bulk_update(contents, ['order'])
         return self.render_json_response({'saved': 'OK'})
     
 class CourseListView(TemplateResponseMixin, View):
@@ -209,9 +235,15 @@ class CourseListView(TemplateResponseMixin, View):
     def get(self, request, subject_slug=None):
         subjects = cache.get('all_subjects')
         if not subjects:
-            subjects = Subject.objects.annotate(total_courses=Count('courses'))
+            subjects = (Subject.objects
+                        .annotate(total_courses=Count('courses', distinct=True))
+                        .only('id', 'title', 'slug'))
             cache.set('all_subjects', subjects)
-        all_courses = Course.objects.annotate(total_modules=Count('modules'))
+        all_courses = (Course.objects
+                .select_related('subject', 'owner')
+                .annotate(total_modules=Count('modules', distinct=True),
+                          total_students=Count('students', distinct=True))
+                .only('id', 'title', 'slug', 'overview', 'created', 'subject', 'owner'))
         subject = None
         if subject_slug:
             subject = get_object_or_404(Subject, slug=subject_slug)
@@ -238,6 +270,17 @@ class CourseDetailView(DetailView):
     template_name = 'courses/course/detail.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        course = self.object
         context['enroll_form'] = CourseEnrollForm(initial={'course':self.object})
         context["title"] = self.object.title
+        context['is_enrolled'] = (
+            self.request.user.is_authenticated and
+            course.students.filter(pk=self.request.user.pk).exists()
+        )
+        context['first_module'] = course.modules.first()
         return context
+    
+    def get_queryset(self):
+        return (Course.objects
+                .select_related('owner', 'subject')
+                .prefetch_related('modules', 'students'))

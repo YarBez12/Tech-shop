@@ -26,6 +26,8 @@ class ProductActivationRequestAdmin(admin.ModelAdmin):
     list_display = ('product','user','status','created')
     list_filter = ('status','created')
     search_fields = ('product__title','user__email')
+    list_select_related = ('product', 'user')
+    date_hierarchy = 'created'
 
     @transaction.atomic
     def save_model(self, request, obj, form, change):
@@ -93,9 +95,13 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'price', 'quantity', 'watched', 'updated_at', 'warranty', 'category', 'brand', 'is_active')
     list_display_links = ('pk', 'title')
     list_editable = ('is_active',)
-    list_filter = ('category', 'brand')
+    list_filter = ('is_active', 'category', 'brand', 'created_at')
+    search_fields = ('title', 'summary', 'sku')
     readonly_fields = ('watched', 'created_at', 'updated_at')
     prepopulated_fields = {'slug' : ('title', )}
+    autocomplete_fields = ('category', 'brand')
+    list_select_related = ('category', 'brand')
+    date_hierarchy = 'created_at'
     class Media:
         js = ('../static/js/product_admins.js',)
 
@@ -104,13 +110,11 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'parent')
     list_display_links = ('pk', 'title')
     list_filter = ('parent', )
+    search_fields = ('title', 'slug')
     prepopulated_fields = {'slug' : ('title', )}
+    autocomplete_fields = ('parent',)
 
-# @admin.register(Tag)
-# class TagAdmin(admin.ModelAdmin):
-#     list_display = ('pk', 'tag', 'display')
-#     list_editable = ('display',)
-#     list_display_links = ('pk', 'tag')
+
 
 
 
@@ -119,6 +123,7 @@ class CustomTagAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'display')
     list_editable = ('display',)
     list_display_links = ('pk', 'name')
+    search_fields = ('name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
 
 @admin.register(Brand)
@@ -126,20 +131,26 @@ class BrandAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'foundation_year')
     list_display_links = ('pk', 'name')
     list_filter = ('foundation_year', )
+    search_fields = ('name', 'slug')
     prepopulated_fields = {'slug' : ('name', )}
 
 @admin.register(Characteristic)
 class CharacteristicAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'category', 'main')
     list_display_links = ('pk', 'title')
-    list_filter = ('category', )
+    list_filter = ('category', 'main')
+    search_fields = ('title', 'slug', 'category__title')
     prepopulated_fields = {'slug' : ('title', )}
     list_editable = ('main',)
+    autocomplete_fields = ('category',)
 
 @admin.register(ProductCharacteristic)
 class ProductCharacteristicAdmin(admin.ModelAdmin):
     list_display = ('product', 'characteristic', 'value')
     list_filter = ('product', 'characteristic')
+    search_fields = ('product__title', 'characteristic__title', 'value')
+    autocomplete_fields = ('product', 'characteristic')
+    list_select_related = ('product', 'characteristic')
 
 
 @admin.register(Review)
@@ -148,25 +159,41 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'created_at', 'grade', 'product', 'user')
     list_display_links = ('pk', 'title')
     list_filter = ('created_at', 'grade', 'product', 'user')
+    search_fields = ('title', 'product__title', 'user__email')
     readonly_fields = ('title', 'summary', 'pros', 'cons', 'created_at', 'grade', 'product')
+    list_select_related = ('product', 'user')
+    date_hierarchy = 'created_at'
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', )
     list_filter = ('product', )
+    search_fields = ('product__title',)
+    autocomplete_fields = ('product',)
+    list_select_related = ('product',)
 
 @admin.register(ReviewImage)
 class ReviewImageAdmin(admin.ModelAdmin):
     list_display = ('review', )
     list_filter = ('review', )
+    search_fields = ('review__title', 'review__product__title')
+    autocomplete_fields = ('review',)
+    list_select_related = ('review',)
 
 @admin.register(Subcription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('user', 'brand', 'created')
     list_filter = ('user', 'brand')
+    search_fields = ('user__email', 'brand__name')
+    autocomplete_fields = ('user', 'brand')
+    list_select_related = ('user', 'brand')
+    date_hierarchy = 'created'
 
 
 @admin.register(FavouriteProduct)
 class FavouriteProductAdmin(admin.ModelAdmin):
     list_display = ('user', 'product')
     list_filter = ('user', 'product')
+    search_fields = ('user__email', 'product__title')
+    autocomplete_fields = ('user', 'product')
+    list_select_related = ('user', 'product')

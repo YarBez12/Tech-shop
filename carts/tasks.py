@@ -8,7 +8,10 @@ from .models import Cart, Receiver
 
 @shared_task
 def send_receipt_email(user_email, cart_id, receiver_id):
-    cart = Cart.objects.get(id=cart_id)
+    cart = (Cart.objects
+                .select_related('receiver')
+                .prefetch_related('ordered__product')
+                .get(id=cart_id))
     receiver = Receiver.objects.get(id=receiver_id)
     context = {
         'order': cart,

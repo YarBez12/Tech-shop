@@ -2,33 +2,31 @@
 {% load static %}
 {% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
 
-<a href="{{ ordered_product.product.get_absolute_url }}">
+<a href="{{ product.get_absolute_url }}">
   <img
       loading="lazy"
-      src="{{ ordered_product.product.first_photo|default:IMG_PLACEHOLDER }}"
-      alt="{{ ordered_product.product.title }}"
+      src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+      alt="{{ product.title }}"
       class="product-image"
   >  
   </a>
   <div class="product-details">
-    <a href="{{ ordered_product.product.get_absolute_url }}"><div class="ui medium blue header">{{ ordered_product.product.title }}</div></a>
+    <a href="{{ product.get_absolute_url }}"><div class="ui medium blue header">{{ product.title }}</div></a>
     <p>{% trans "Price per item:" %}</p>
-    {% if ordered_product.product.discount %}
+    {% if product.discount %}
     <div class="price-block">
-      <span class="old-price">${{ ordered_product.product.price }}</span>
-      <span class="new-price">${{ ordered_product.product.full_price }}</span>
-      <span class="discount-label">-{{ ordered_product.product.discount }}%</span>
+      <span class="old-price">${{ product.price }}</span>
+      <span class="new-price">${{ product.full_price }}</span>
+      <span class="discount-label">-{{ product.discount }}%</span>
     </div>
     {% else %}
-    <strong>${{ ordered_product.product.price }}</strong>
+    <strong>${{ product.price }}</strong>
     {% endif %}
     <div class="quantity-controls">
-      {% with stock=ordered_product.product.quantity|default:0 quantity=ordered_product.quantity|default:0 %}
-      <a class="ui mini button {% if quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" ordered_product.product.slug %}">-</a>
-      <span class="quantity">{{ ordered_product.quantity }}</span>
-      <a class="ui mini button {% if quantity >= stock %}disabled{% endif %}" href = "{% url "carts:add_to_cart" ordered_product.product.slug %}">+</a>
-      {% endwith %}
+      <a class="ui mini button {% if quantity <= 1 %}disabled{% endif %}" href="{% url "carts:remove_from_cart" product.slug %}">-</a>
+      <span class="quantity">{{ quantity }}</span>
+      <a class="ui mini button {% if quantity >= product_quantity %}disabled{% endif %}" href = "{% url "carts:add_to_cart" product.slug %}">+</a>
     </div>
     <p>{% trans "Total product price:" %} <strong>${{ ordered_product.total_price }}</strong></p>
   </div>
-  <a class="ui red button delete-btn" href="{% url "carts:delete_full_from_cart" ordered_product.product.slug %}">{% trans "Delete" %}</a>
+  <a class="ui red button delete-btn" href="{% url "carts:delete_full_from_cart" product.slug %}">{% trans "Delete" %}</a>

@@ -18,11 +18,11 @@
         </div>
         <div class="ui label">
         <i class="layer group icon"></i>
-        {{ course.modules.count }} module{{ course.modules.count|pluralize }}
+        {{ course.total_modules }} module{{ course.total_modules|pluralize }}
         </div>
         <div class="ui label">
         <i class="users icon"></i>
-        {{ course.students.count }} student{{ course.students.count|pluralize }}
+        {{ course.total_students }} student{{ course.total_students|pluralize }}
         </div>
     </div>
     <div class="description clamp-2" style="margin-top:.8em;">

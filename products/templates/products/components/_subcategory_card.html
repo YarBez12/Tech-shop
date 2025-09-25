@@ -7,12 +7,14 @@
       <img 
         loading="lazy"
         alt="{{ subcategory.title }}"
-        src="{% if subcategory.image %}{{ subcategory.image.url }}
-            {% elif subcategory.products.first and subcategory.products.first.first_photo %}
-              {{ subcategory.products.first.first_photo }}
+        src="{% with p=subcategory.prefetched_products.0 %}
+            {% if subcategory.image %}{{ subcategory.image.url }}
+            {% elif p and p.first_photo %}
+              {{ p.first_photo }}
             {% else %}
               {% static 'images/placeholder.png' %}
-            {% endif %}"
+            {% endif %}
+            {% endwith %}"
       >
     </div>
     <div class="content">

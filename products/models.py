@@ -134,6 +134,8 @@ class Product(models.Model):
         indexes = [
             models.Index(fields=['slug']),
             models.Index(fields=['is_active', 'quantity']),
+            models.Index(fields=['brand', 'is_active']),
+            models.Index(fields=['category', 'is_active']),
         ]
         ordering = ['-created_at']
 
@@ -189,15 +191,20 @@ class Review(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['product']),
+            models.Index(fields=['created_at']),
         ]
 
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    class Meta:
+        indexes = [models.Index(fields=['product'])]
 
 class ReviewImage(models.Model):
     image = models.ImageField(upload_to='reviews/')
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='images')
+    class Meta:
+        indexes = [models.Index(fields=['review'])]
 
 
 class FavouriteProduct(models.Model):
@@ -206,6 +213,12 @@ class FavouriteProduct(models.Model):
 
     def __str__(self):
         return self.product.title
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),
+            models.Index(fields=['product']),
+        ]
     
 class Subcription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subcriptions')

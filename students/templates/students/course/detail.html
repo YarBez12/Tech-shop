@@ -44,10 +44,10 @@
     <div class="twelve wide column">
       <div class="ui segment">
         <h3 class="ui dividing header">{{ module.title }}</h3>
-
-        {% if module.contents.all %}
+        {% with contents=module.contents.all %}
+        {% if contents %}
         {% cache 600 module_contents module %}
-          {% for content in module.contents.all %}
+          {% for content in contents %}
             {% with item=content.item %}
             <div class="ui segment">
               <h4 class="ui header">{{ item.title }}</h4>
@@ -64,6 +64,7 @@
             <p>This module does not contain any content at the moment.</p>
           </div>
         {% endif %}
+        {% endwith %}
       </div>
     </div>
   </div>
