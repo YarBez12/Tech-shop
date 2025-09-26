@@ -1,5 +1,5 @@
 from users.models import User, NotificationState, Action, Address
-from carts.models import Cart, Receiver
+from carts.models import Cart, Receiver, OrderedProduct
 from django.contrib.contenttypes.models import ContentType
 from products.forms import ProductForm
 from products.models import Product, ProductImage, Subcription, Brand
@@ -16,7 +16,8 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, View
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from products.utils.filters import get_prefetched_characteristics_query
+from products.utils.filters import get_prefetched_characteristics_query, get_prefetched_images_query
+from django.db.models import Prefetch
 
 
 
@@ -39,11 +40,38 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         user = self.get_object()
         receiver, _ = Receiver.objects.get_or_create(user= user)
         cart = Cart.objects.get_or_create_with_session(self.request, receiver = receiver, is_completed = False)
-        completed_orders = (Cart.objects
-                                .filter(receiver=receiver, is_completed=True)
-                                .select_related('receiver')
-                                .prefetch_related('ordered__product')
-                                .order_by('-date_completed'))        
+        completed_orders = (
+            Cart.objects.with_totals()
+            .filter(receiver=receiver, is_completed=True)
+            .select_related('receiver', 'coupon')
+            .prefetch_related(
+                Prefetch(
+                    'ordered',
+                    queryset=(
+                        OrderedProduct.objects
+                            .select_related(               
+                                'product__brand',
+                                'product__category',
+                            )
+                            .only(
+                                'id', 'quantity', 'price_at_purchase', 'cart_id',
+                                'product__id', 'product__slug', 'product__title',
+                                'product__price', 'product__discount', 'product__quantity',
+                                'product__brand_id', 'product__category_id',
+                            )
+                    ),
+                    to_attr='prefetched_items', 
+                )
+            )
+            .only('id', 'receiver_id', 'coupon_id', 'order_number', 'date_completed', 'discount') 
+            .order_by('-date_completed')
+        )
+
+        # completed_orders = (Cart.objects
+        #                         .filter(receiver=receiver, is_completed=True)
+        #                         .select_related('receiver')
+        #                         .prefetch_related('ordered__product')
+        #                         .order_by('-date_completed'))        
         subcriptions = Subcription.objects.filter(user=user).only('brand_id')
         brand_ids = subcriptions.values_list('brand_id', flat=True)
         brands = Brand.objects.filter(pk__in=brand_ids).only('id', 'name', 'slug', 'image', 'foundation_year')
@@ -51,6 +79,7 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
         news = (Product.objects
             .filter(brand_id__in=brand_ids, updated_at__gte=two_weeks_ago, is_active=True)
             .select_related('brand', 'category')
+            .prefetch_related(get_prefetched_images_query())
             .only('id', 'title', 'slug', 'price', 'discount', 'category', 'brand', 'updated_at', 'created_at')
             .order_by('-updated_at')[:48])
 
@@ -73,7 +102,7 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
             product_ids = []
         products = (Product.objects
                    .filter(pk__in=product_ids, is_active=True)
-                   .prefetch_related('images','tags', get_prefetched_characteristics_query())
+                   .prefetch_related('tags', get_prefetched_characteristics_query(), get_prefetched_images_query())
                    .select_related('brand', 'category')
                    .only('id', 'title', 'slug', 'price', 'discount', 'brand', 'category', 'summary'))
         if sort_option:
@@ -89,7 +118,7 @@ class ProfileView(LoginRequiredMixin, DetailView, FormMixin):
 
         user_products = (user.products
                             .select_related('brand', 'category')
-                            .prefetch_related('images','tags', get_prefetched_characteristics_query())
+                            .prefetch_related('tags', get_prefetched_characteristics_query(), get_prefetched_images_query())
                             .only('id', 'title', 'slug', 'price', 'discount', 'brand', 'category', 'is_active')
                             .all())
         if sort_option:

@@ -7,7 +7,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.views.generic import ListView
 from products.utils.mixins import EndlessPaginationMixin
-from products.utils.filters import get_prefetched_characteristics_query
+from products.utils.filters import get_prefetched_characteristics_query, get_prefetched_images_query
 
 
 
@@ -26,7 +26,7 @@ class SearchResults(EndlessPaginationMixin, ListView):
         products = filter_products(search_query)
         products = sort_with_option(sort_option, products) if sort_option else products
         return (products.select_related('brand','category','user')
-                    .prefetch_related('images','tags', get_prefetched_characteristics_query()))
+                    .prefetch_related('tags', get_prefetched_characteristics_query(), get_prefetched_images_query()))
 
     def get_template_names(self):
         if self.request.GET.get('products_only'):

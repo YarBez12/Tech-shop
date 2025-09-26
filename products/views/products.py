@@ -13,6 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from products.utils.redis_utils import zincrby_product_view, zincrby_category_view, get_product_views
 from products.utils.filters import get_prefetched_characteristics_query
+from products.utils.filters import get_prefetched_images_query
 
 
 class ProductDetailView(DetailView, FormMixin):
@@ -40,11 +41,12 @@ class ProductDetailView(DetailView, FormMixin):
         r = Recommender()
         recommended_bought_products = r.suggest_products_for([product], 8)
         recommended_tag_related_products = Product.objects.exclude(pk=product.pk)\
+            .prefetch_related(get_prefetched_images_query())\
             .filter(tags__in=product.tags.all(), is_active=True)\
             .annotate(same_tags=Count('tags', filter=Q(tags__in=product.tags.all())))\
             .order_by('-same_tags')\
             .distinct()
-        recommended_category_related_products = Product.objects.filter(category=product.category, is_active=True)\
+        recommended_category_related_products = Product.objects.prefetch_related(get_prefetched_images_query()).filter(category=product.category, is_active=True)\
             .exclude(pk=product.pk)\
             .exclude(id__in=recommended_tag_related_products.values_list('id', flat=True))
         recommended_products = list(chain(recommended_bought_products, recommended_tag_related_products, recommended_category_related_products))[:8]

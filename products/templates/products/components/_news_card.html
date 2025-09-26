@@ -6,10 +6,12 @@
 <div class="ui fluid card product-card">
   <div class="image" style="background:#f8f8f8;">
     <a href="{{ product.get_absolute_url }}">
+      {% with img=product.prefetched_images|first %}
       <img loading="lazy"
-           src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+           src="{% if img %}{{ img.image.url }}{% else %}{{ IMG_PLACEHOLDER }}{% endif %}"
            alt="{{ product.title }}"
            style="object-fit:cover; width:100%; height:200px;">
+        {% endwith %}
     </a>
     {% if product.updated_at and product.updated_at|date:"U" > product.created_at|date:"U" %}
       <div class="ui top right attached label"

@@ -1,4 +1,6 @@
 
+          {% load products_tags %}
+          {% favourite_ids request.user as fav_ids %}
           <div class="slider-container only-desktop ">
             
             {% for product in specific_products %}
@@ -14,5 +16,5 @@
             </div>
             {% endfor %}
             </div>
-          </div>
+          </div> 
   

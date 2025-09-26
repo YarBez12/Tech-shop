@@ -3,12 +3,14 @@
 {% static 'images/placeholder.png' as IMG_PLACEHOLDER %}
 
 <a href="{{ product.get_absolute_url }}">
+  {% with img=product.prefetched_images|first %}
   <img
       loading="lazy"
-      src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+      src="{% if img %}{{ img.image.url }}{% else %}{{ IMG_PLACEHOLDER }}{% endif %}"
       alt="{{ product.title }}"
       class="product-image"
   >  
+  {% endwith %}
   </a>
   <div class="product-details">
     <a href="{{ product.get_absolute_url }}"><div class="ui medium blue header">{{ product.title }}</div></a>

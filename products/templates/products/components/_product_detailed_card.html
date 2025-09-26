@@ -7,11 +7,13 @@
   <div class="product-detailed-card">
     {% with query=request.GET.q|default:"" %}
     <div class="product-info">
+      {% with img=product.prefetched_images|first %}
       <img
         loading="lazy"
-        src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+        src="{% if img %}{{ img.image.url }}{% else %}{{ IMG_PLACEHOLDER }}{% endif %}"
         alt="{{ product.title }}"
       >
+      {% endwith %}
       <div class="product-details">
         <div class="top-part">
           <div class="ui purple tiny label">{{ product.category }}</div>

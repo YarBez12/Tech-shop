@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
 from products.utils.mixins import EndlessPaginationMixin
-from products.utils.filters import get_prefetched_characteristics_query
+from products.utils.filters import get_prefetched_characteristics_query, get_prefetched_images_query
 
 
 
@@ -33,7 +33,7 @@ class BrandDetails(EndlessPaginationMixin, ListView):
             brand=self.brand,
             is_active=True,
             quantity__gt=0
-        ).select_related('brand', 'category', 'user').prefetch_related('images','tags', get_prefetched_characteristics_query())
+        ).select_related('brand', 'category', 'user').prefetch_related('images','tags', get_prefetched_characteristics_query(), get_prefetched_images_query())
         return sort_with_option(sort_option, products) if sort_option else products
 
     def get_template_names(self):
@@ -74,7 +74,7 @@ class CategoryDetailView(ListView):
             .only('id','slug','title','image','parent_id')
             .prefetch_related(Prefetch(
                 'products',
-                queryset=Product.objects.only('id','category_id','price','discount')
+                queryset=Product.objects.prefetch_related(get_prefetched_images_query()).only('id','category_id','price','discount')
                                         .order_by('-created_at'),
                 to_attr='prefetched_products'
             ))
@@ -132,7 +132,7 @@ class SubcategoryDetailView(EndlessPaginationMixin, ListView):
 
         return (products
             .select_related('brand','category','user')
-            .prefetch_related('images','tags', get_prefetched_characteristics_query()))
+            .prefetch_related('tags', get_prefetched_images_query(), get_prefetched_characteristics_query()))
     
     def get_context_data(self, **kwargs):
         subcategory = Category.objects.get(slug=self.kwargs['subcategory_slug'])
@@ -190,7 +190,7 @@ class SubcategoryProductsView(DetailView):
         context['products'] = (self.object.products
                             .filter(is_active=True, quantity__gt=0)
                             .select_related('brand','category','user')
-                            .prefetch_related('images','tags')
+                            .prefetch_related('images','tags', get_prefetched_images_query())
                             [:6])
         return context
     def get(self, request, *args, **kwargs):
@@ -215,7 +215,7 @@ class TagProductsView(DetailView):
             tags__in=[self.object],
             is_active=True,
             quantity__gt=0
-        ).select_related('brand','category','user').prefetch_related('images','tags').exclude(slug=self.kwargs.get('product_slug')).distinct()[:5]
+        ).select_related('brand','category','user').prefetch_related('images','tags', get_prefetched_images_query()).exclude(slug=self.kwargs.get('product_slug')).distinct()[:5]
         return context
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

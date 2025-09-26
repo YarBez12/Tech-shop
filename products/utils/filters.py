@@ -1,4 +1,4 @@
-from products.models import Category, Product, ProductCharacteristic
+from products.models import Category, Product, ProductCharacteristic, ProductImage
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import F, ExpressionWrapper, DecimalField, Value, Q, Prefetch
 from django.db.models.functions import Coalesce, Lower
@@ -86,3 +86,10 @@ def get_prefetched_characteristics_query():
         to_attr='prefetched_characteristics'
     )
     return prefetched_characteristics
+
+def get_prefetched_images_query():
+    return Prefetch(
+                'images',
+                queryset=ProductImage.objects.only('id', 'image', 'product_id'),
+                to_attr='prefetched_images'
+            )

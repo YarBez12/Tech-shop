@@ -14,8 +14,8 @@ def notification_counts(request):
     user = request.user
     state, _ = NotificationState.objects.get_or_create(user=user)
 
-    brand_ids = list(user.subcriptions.values_list('brand_id', flat=True))
-    product_ids = list(user.products.values_list('id', flat=True))
+    brand_ids = tuple(user.subcriptions.values_list('brand_id', flat=True))
+    product_ids = tuple(user.products.values_list('id', flat=True))
     unread_news = 0
     unread_actions = 0
     if brand_ids:

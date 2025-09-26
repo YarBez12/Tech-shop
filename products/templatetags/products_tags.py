@@ -6,51 +6,68 @@ from conf.utils import r
 from products.models import Category, Product, ProductCharacteristic, Brand
 from django.conf import settings
 from products.utils.redis_utils import get_category_views
+from django.core.cache import cache
+
 
 register = template.Library()
 
 @register.simple_tag()
 def child_categories(parent_category, count):
-    categories = (
-        Category.objects
-        .filter(parent=parent_category)
-        .annotate(
-            product_count=Count(
-                "products",
-                filter=Q(products__is_active=True, products__quantity__gt=0),
-                distinct=True,
-            )
-        )
-        .filter(product_count__gt=0)
-        .only('id', 'slug', 'title', 'image', 'parent_id')
-    )
+    count = int(count)
+    cache_key = f"main:child_categories:{parent_category.id}:{count}"
+    categories = cache.get(cache_key)
+    if categories is not None:
+        return categories
 
-    categories = sorted(
-        categories,
-        key=lambda c: get_category_views(c.id),
-        reverse=True
-    )
-    return categories[:int(count)]
+    categories_qs = (Category.objects
+          .filter(parent=parent_category)
+          .annotate(
+              product_count=Count(
+                  "products",
+                  filter=Q(products__is_active=True, products__quantity__gt=0),
+                  distinct=True,
+              )
+          )
+          .filter(product_count__gt=0)
+          .only('id', 'slug', 'title', 'image', 'parent_id'))
+
+    categories = list(categories_qs)
+    categories.sort(key=lambda c: get_category_views(c.id), reverse=True)
+
+    categories = categories[:count]
+    cache.set(cache_key, categories, 300)
+    return categories
 
 @register.simple_tag()
 def parent_categories():
-    return (
-        Category.objects
-        .filter(parent=None)
-        .annotate(
-            child_products=Count(
-                "children__products",
-                filter=Q(children__products__is_active=True, children__products__quantity__gt=0),
-                distinct=True,
-            )
-        )
-        .filter(child_products__gt=0)
-        .only('id', 'slug', 'title', 'image')
-    )
+    cache_key = "main:parent_categories"
+    categories = cache.get(cache_key)
+    if categories is not None:
+        return categories
+    
+    categories_qs = (Category.objects
+          .filter(parent=None)
+          .annotate(
+              child_products=Count(
+                  "children__products",
+                  filter=Q(children__products__is_active=True,
+                           children__products__quantity__gt=0),
+                  distinct=True,
+              )
+          )
+          .filter(child_products__gt=0)
+          .only('id', 'slug', 'title', 'image'))
+    categories = list(categories_qs)
+    cache.set(cache_key, categories, 300)  
+    return categories
 
 @register.simple_tag()
 def brands(count = 15):
-    return (
+    cache_key = "main:brands"
+    brands_list = cache.get(cache_key)
+    if brands_list is not None:
+        return brands_list
+    brands_qs = (
         Brand.objects
         .annotate(
             product_count=Count(
@@ -63,6 +80,9 @@ def brands(count = 15):
         .only('id', 'slug', 'name', 'image', 'foundation_year', 'description')
         .order_by('-product_count')[:count]
     )
+    brands_list = list(brands_qs)
+    cache.set(cache_key, brands_list, 300)
+    return brands_list
 
 @register.simple_tag()
 def product_number_by_page(parent_count, count):
@@ -97,6 +117,11 @@ def favourite_products(request):
           .select_related('brand', 'category', 'user')
           .prefetch_related('images', 'tags'))
     return list(qs)
+@register.simple_tag()
+def favourite_ids(user):
+    if not user.is_authenticated:
+        return []
+    return [int(pid) for pid in r.smembers(f"favourite:user:{user.id}")]
 
 
 @register.filter()

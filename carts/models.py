@@ -1,7 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from users.models import Address, User
-from products.models import Product
+from products.models import Product, ProductImage
 import uuid
 from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP
@@ -11,8 +11,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import Coalesce
 from functools import cached_property
-from django.db.models import DecimalField, ExpressionWrapper, Sum, Value
-from django.db.models.functions import Coalesce
+from django.db.models import DecimalField, ExpressionWrapper, Sum, Value, Prefetch, F
+from django.db.models.functions import Coalesce, Cast, Round
 
 class Receiver(models.Model):
     first_name = models.CharField(_('first_name'), max_length=200)
@@ -39,8 +39,66 @@ class Receiver(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
+class CartQuerySet(models.QuerySet):
+    def with_totals(self):
+        price_per_item = models.Case(
+            models.When(
+                ordered__price_at_purchase__isnull=False,
+                then=F('ordered__price_at_purchase'),
+            ),
+            default=ExpressionWrapper(
+                F('ordered__product__price') * (
+                    Value(Decimal('1')) - (
+                        ExpressionWrapper(
+                            Cast(Coalesce(F('ordered__product__discount'), Value(0)),
+                                 DecimalField(max_digits=5, decimal_places=2))
+                            / Value(Decimal('100')),
+                            output_field=DecimalField(max_digits=6, decimal_places=4),
+                        )
+                    )
+                ),
+                output_field=DecimalField(max_digits=10, decimal_places=2),
+            ),
+            output_field=DecimalField(max_digits=10, decimal_places=2),
+        )
 
+
+        row_total = ExpressionWrapper(
+            price_per_item * models.F('ordered__quantity'),
+            output_field=DecimalField(max_digits=12, decimal_places=2),
+        )
+
+        return self.annotate(
+            items_total=Coalesce(
+                Sum(row_total),
+                Value(Decimal('0')),
+                output_field=DecimalField(max_digits=12, decimal_places=2),
+            ),
+        ).annotate(
+            discount_decimal=ExpressionWrapper(
+                Cast(Coalesce(F('discount'), Value(0)),
+                     DecimalField(max_digits=5, decimal_places=2))
+                / Value(Decimal('100')),
+                output_field=DecimalField(max_digits=6, decimal_places=4),
+            ),
+        ).annotate(
+            total_raw=ExpressionWrapper(
+                F('items_total') * (Value(Decimal('1')) - F('discount_decimal')),
+                output_field=DecimalField(max_digits=12, decimal_places=6),
+            ),
+        ).annotate(
+            total_after_discount=Round(
+                Cast(F('total_raw'), DecimalField(max_digits=12, decimal_places=6)),
+                precision=2,
+            ),
+        )
 class CartManager(models.Manager):
+    def get_queryset(self):
+        return CartQuerySet(self.model, using=self._db)
+
+    def with_totals(self):
+        return self.get_queryset().with_totals()
+    
     def create_with_session(self, request, **kwargs):
         coupon_id = request.session.get('coupon_id')
         if coupon_id:
@@ -56,6 +114,27 @@ class CartManager(models.Manager):
         if not request.session.session_key:
             request.session.create()
         cart, created = self.get_or_create(**kwargs)
+        cart = (
+            self.select_related(None)
+            .prefetch_related(
+                Prefetch(
+                    "ordered",
+                    queryset=(
+                        OrderedProduct.objects
+                        .select_related("product")
+                        .prefetch_related(
+                            Prefetch(
+                                "product__images",
+                                queryset=ProductImage.objects.only("id", "product_id", "image"),
+                                to_attr="prefetched_images",
+                            )
+                        )
+                    ),
+                    to_attr="prefetched_items",
+                )
+            )
+            .get(pk=cart.pk)
+        )
         session_coupon_id = request.session.get('coupon_id')
         if created:
             cart.session_key = request.session.session_key

@@ -19,6 +19,7 @@ from coupons.forms import CouponApplyForm
 from products.recommender import Recommender
 from users.utils import build_form_errors_html
 from .utils import *
+from products.utils.filters import get_prefetched_images_query
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 

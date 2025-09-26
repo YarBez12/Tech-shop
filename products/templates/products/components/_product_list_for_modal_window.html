@@ -1,3 +1,5 @@
+{% load products_tags %}
+{% favourite_ids request.user as fav_ids %}
 <div class="content">
     <div class="modal-product-grid">
         {% for product in products %}

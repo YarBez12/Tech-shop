@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from products.utils.mixins import EndlessPaginationMixin
-from products.utils.filters import get_prefetched_characteristics_query
+from products.utils.filters import get_prefetched_characteristics_query, get_prefetched_images_query
 
 
 
@@ -24,7 +24,7 @@ class FavouriteProducts(EndlessPaginationMixin, ListView):
         products = (Product.objects
                     .filter(pk__in=product_ids, is_active=True, quantity__gt=0)
                     .select_related('brand','category','user')
-                    .prefetch_related('images','tags', get_prefetched_characteristics_query()))
+                    .prefetch_related('tags', get_prefetched_characteristics_query(), get_prefetched_images_query()))
         session_key = "ui_state:favourite_products"
         ui_state = self.request.session.get(session_key, {})
         sort_option = ui_state.get('sort', 'title')

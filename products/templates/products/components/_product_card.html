@@ -15,11 +15,13 @@
       </div>
     </div>
     <div class="image product-image-container">
-      <img
+      {% with img=product.prefetched_images|first %}
+      <img 
         loading="lazy"
-        src="{{ product.first_photo|default:IMG_PLACEHOLDER }}"
+        src="{% if img %}{{ img.image.url }}{% else %}{{ IMG_PLACEHOLDER }}{% endif %}" 
         alt="{{ product.title }}"
-      >  
+      >
+      {% endwith %}
     </div>
   
     <div class="content">

@@ -1,8 +1,9 @@
 from django.shortcuts import render
-from products.models import Product
+from products.models import Product, ProductImage, CustomTag
 from .utils import get_top_viewed_products
 from django.core.cache import cache
 from django.db.models import Prefetch
+from products.utils.filters import get_prefetched_images_query
 
 
 
@@ -17,15 +18,8 @@ def index(request):
 
     top_product_ids = get_top_viewed_products(limit=NEED, oversample=5)
     base_qs = (Product.objects
-        .select_related('brand', 'category')
-        .prefetch_related(
-            'tags',
-            Prefetch('images')
-        )
-        .only(
-            'id', 'title', 'slug', 'price', 'discount', 'quantity', 'is_active',
-            'brand__name', 'category__title'
-        )
+        .select_related('brand', 'category', 'user')
+        .prefetch_related(get_prefetched_images_query())
         .filter(is_active=True, quantity__gt=0)
     )
     popular_products_ordered = []
@@ -40,7 +34,7 @@ def index(request):
                    .order_by('-watched')[:missing]
         )
         popular_products_ordered.extend(fallback_qs)
-    popular_products_ordered = popular_products_ordered[:NEED]
+    popular_products_ordered = list(popular_products_ordered)[:NEED]
     cache.set(cache_key, popular_products_ordered, 60)
     return render(request, 'main/index.html', {
         'title': 'Home Page',

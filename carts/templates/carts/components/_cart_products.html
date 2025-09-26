@@ -1,6 +1,6 @@
         {% load i18n %}
 
-        {% for ordered_product in cart.ordered.all %}
+        {% for ordered_product in cart.prefetched_items %}
         {% if ordered_product.quantity > 0 and ordered_product.product %}
         {% with product=ordered_product.product %}
         {% with product_quantity=product.quantity|default_if_none:0 quantity=ordered_product.quantity|default_if_none:0 %}
