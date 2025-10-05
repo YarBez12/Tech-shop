@@ -8,15 +8,16 @@ from users.tasks import send_email_task
 
 class ProductCharacteristicInline(admin.TabularInline):
     model = ProductCharacteristic
-    extra = 0
+    extra = 1
 
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
 
         if obj and obj.category:
+            print(obj, obj.category)
             formset.form.base_fields['characteristic'].queryset = obj.category.characteristics.all()
         else:
-            formset.form.base_fields['characteristic'].queryset = Characteristic.objects.none()
+            formset.form.base_fields['characteristic'].queryset = Characteristic.objects.all()
 
         return formset
 

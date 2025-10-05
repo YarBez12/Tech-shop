@@ -1,7 +1,7 @@
 
           {% load products_tags %}
           {% favourite_ids request.user as fav_ids %}
-          <div class="slider-container only-desktop ">
+          <div class="slider-container only computer ">
             
             {% for product in specific_products %}
             {% include "products/components/_product_card.html" %}

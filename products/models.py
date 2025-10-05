@@ -37,7 +37,7 @@ class Category(models.Model):
     
 
 class CustomTag(TagBase):
-    display = models.BooleanField(default=False)
+    display = models.BooleanField(default=True)
 
 class CustomTaggedItem(GenericTaggedItemBase):
     tag = models.ForeignKey(

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review, Product
+from .models import Review, Product, Category
 from taggit.forms import TagWidget
 
 
@@ -49,10 +49,18 @@ class ProductForm(forms.ModelForm):
             'brand': forms.Select(),     
             'tags': TagWidget(attrs={'placeholder': 'Enter tags separated by commas, e.g. iphone, samsung'}) 
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = (
+            Category.objects.filter(parent__isnull=False)
+            .select_related('parent')
+        )
     def save(self, commit=True):
         instance = super().save(commit=False)
         if commit:
             instance.save()
             self.save_m2m() 
         return instance
+    
+
         

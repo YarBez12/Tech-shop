@@ -1,2 +1,8 @@
+venv/
+__pycache__/
+*.pyc
 .env
-w_HTML/
+*.env
+staticfiles/
+media/
+celerybeat-schedule

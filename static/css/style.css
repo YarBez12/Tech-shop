@@ -983,7 +983,7 @@ a.item:hover, a.header:hover, a.link:hover {
       display: none !important;
     }
     
-    @media (min-width: 1150px) {
+    @media (min-width: 999px) {
       .only-desktop {
         display: block !important;
       }

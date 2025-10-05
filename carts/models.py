@@ -244,12 +244,17 @@ class OrderedProduct(models.Model):
 
     def __str__(self):
         return self.product.title if self.product else f"OrderedProduct #{self.pk}"
-    
+
     @property
     def total_price(self):
+        quantity = Decimal(self.quantity or 0)
+        if quantity <= 0:
+            return Decimal('0.00')
         if self.price_at_purchase is not None:
             return round(self.price_at_purchase * Decimal(self.quantity), 2)
-        return round(Decimal(self.product.full_price) * Decimal(self.quantity),2)
+        if self.product and hasattr(self.product, 'full_price') and self.product.full_price is not None:
+            return round(Decimal(self.product.full_price) * Decimal(self.quantity),2)
+        return Decimal('0.00')
     
     class Meta:
         indexes = [
