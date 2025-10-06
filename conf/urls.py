@@ -35,7 +35,6 @@ urlpatterns = [
     path('admin/get_characteristics/', get_characteristics, name='get_characteristics'),
     path('sitemap.xml/', sitemap, {'sitemaps': sitemaps}, name = 'django.contrib.sitemaps.views.sitemap'),
     path('social-auth/', include('social_django.urls', namespace='social')),
-    path('__debug__/', include('debug_toolbar.urls')),
     path('coupons/', include('coupons.urls', namespace='coupons')),
     path('course/', include('courses.urls', namespace='courses')),
     path('', include('main.urls', namespace='main')),
@@ -47,6 +46,7 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    urlpatterns += [path('__debug__/', include('debug_toolbar.urls'))]
 
 
 handler404 = custom_404

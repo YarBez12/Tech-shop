@@ -61,10 +61,8 @@ INSTALLED_APPS = [
     'students',
     'django.contrib.sitemaps',
     'social_django',
-    'debug_toolbar',
     'django_celery_beat',
     'embed_video',
-    'redisboard',
     'django_extensions',
     
 ]
@@ -72,8 +70,9 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -178,11 +177,29 @@ STATIC_URL = '/static/'
 # STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'staticfiles',
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = {
+    "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default=None)
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default=None)
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default=None)
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", default=None)  
+AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL", default=None)  
+AWS_QUERYSTRING_AUTH = False
+
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=not DEBUG)
+CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=not DEBUG)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -252,3 +269,7 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': lambda r: True,
     'ENABLE_STACKTRACES': True,
 }
+
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar', 'redisboard']
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
