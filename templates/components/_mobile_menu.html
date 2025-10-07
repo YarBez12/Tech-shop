@@ -1,0 +1,15 @@
+<div class="ui left vertical inverted sidebar menu" id="mobile-menu">
+    {% if user.is_authenticated %}
+      {% if user.is_staff %}
+        <a class="item" href="{% url 'admin:index' %}"><i class="tachometer alternate icon"></i> Admin Dashboard</a>
+        <a class="item" href="{% url 'users:send_mail' %}"><i class="envelope icon"></i> Send Mail</a>
+      {% endif %}
+      <a class="item" href="{% url "products:favourites" %}"><i class="heart icon"></i> Favourites</a>
+      <a class="item" href="{% url "users:profile" %}"><i class="user icon"></i> Profile</a>
+      <a class="item" href="{% url "users:logout" %}"><i class="sign out icon"></i> Log out</a>
+    {% else %}
+      <a class="item" href="{% url "users:login" %}"><i class="sign in icon"></i> Log in</a>
+    {% endif %}
+    <a class="item" href="{% url "carts:cart" %}"><i class="shopping cart icon"></i> Cart</a>
+    <a class="item" href="{% url "courses:manage_course_list" %}"><i class="book icon"></i> Learning</a>
+  </div>

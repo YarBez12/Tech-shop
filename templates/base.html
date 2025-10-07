@@ -18,6 +18,8 @@
     <title>{{ title }}</title>
   </head>
   <body>
+    {% include "components/_mobile_menu.html" %}
+  <div class="pusher">
     <div class="messages-wrapper">
 {% include "components/_notifications.html" %}
     </div>
@@ -26,6 +28,7 @@
     {% block main %}{% endblock main %}
     </div>
     {% block footer %}{% endblock footer %}
+  </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui/dist/semantic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>

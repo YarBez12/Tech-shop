@@ -1,6 +1,12 @@
 {% load static %}
       <nav class="ui top-menu">
         <div class="ui secondary menu">
+          <div class="item mobile-toggle mobile-only notification-icon">
+  <i class="bars icon" id="mobile-menu-toggle"></i>
+  {% if total_notifications %}
+  <div class="ui red tiny circular label notification-badge">{{ total_notifications }}</div>
+{% endif %}
+</div>
           
           <a href="{% url "main:index" %}" class="item logo-link">
             <img src="{% static "images/icon.png" %}" alt="Logo">
@@ -9,7 +15,7 @@
       
 
 
-          <div class="ui right vertical inverted labeled icon sidebar mobile-menu mobile-only menu" id="mobile-menu">
+          {% comment %} <div class="ui right vertical inverted labeled icon sidebar mobile-menu mobile-only menu" id="mobile-menu">
 
 
 
@@ -27,19 +33,19 @@
   <a class="item" href="{% url "carts:cart" %}"><i class="shopping cart icon"></i> Cart</a>
   <a class="item" href="{% url "courses:manage_course_list" %}"><i class="book icon"></i> Learning</a>
   
-          </div>
+          </div> {% endcomment %}
 
 
 
 
 
   <div class="right menu">
-    <div class="item">
+    <div class="item navbar-search">
       <div class="ui search">
         {% include "components/_search_form.html" %}
       </div>
     </div>
-    <div class="mobile-hidden">
+    <div class="mobile-hidden navbar-icons">
       {% if request.user.is_authenticated %}
       {% if user.is_staff %}
     <div class="ui simple dropdown item">
@@ -80,14 +86,10 @@
       </a>
       {% endif %}
     </div>
+
+
     </div>
 
-<div class="item mobile-toggle mobile-only notification-icon">
-  <i class="bars icon" id="mobile-menu-toggle"></i>
-  {% if total_notifications %}
-  <div class="ui red tiny circular label notification-badge">{{ total_notifications }}</div>
-{% endif %}
-</div>
   </div>
 </nav>
 

@@ -161,6 +161,8 @@ a.item:hover, a.header:hover, a.link:hover {
 }
 
 .logo-link {
+  margin: 0 !important;
+  padding: 0 !important;
   gap: 0.5em;
 }
 
@@ -996,7 +998,7 @@ a.item:hover, a.header:hover, a.link:hover {
 
     .ui.search {
       width: 100%;
-      min-width: 250px;
+      min-width: 230px;
     }
     .ui.search div.input {
       width: 100%;
@@ -1428,4 +1430,62 @@ html, body {
 .listing {
   width: 100%;
   table-layout: fixed; 
+}
+
+
+
+.pusher {
+  flex: 1 0 auto;
+  overflow: auto; 
+}
+
+
+
+
+
+@media (max-width: 450px) {
+  .top-menu .navbar-search {
+    order: 2;
+    width: 100%;
+    flex-basis: 100%;
+    margin-top: .5rem;
+  }
+
+  .top-menu .ui.secondary.menu {
+    display: flex !important;
+    justify-content: space-between; 
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 10px !important;
+  }
+
+  .top-menu .hamburger {
+    order: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .hamburger .bars.icon {
+    font-size: 1.1rem;
+  }
+
+  .top-menu .logo-link {
+    order: 2;
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    padding-right: 20px !important;
+  }
+
+  .top-menu .navbar-search {
+    order: 3;
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .top-menu .ui.secondary.menu .right.menu {
+    order: 4;
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
