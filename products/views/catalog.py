@@ -7,8 +7,10 @@ from django.db.models.functions import Coalesce
 from decimal import Decimal
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.views.generic import DetailView, ListView
+from django.shortcuts import resolve_url
+from django.utils.http import urlencode
+from django.conf import settings
 from products.utils.mixins import EndlessPaginationMixin
 from products.utils.filters import get_prefetched_characteristics_query, get_prefetched_images_query
 
@@ -229,8 +231,14 @@ def get_characteristics(request):
     return JsonResponse({'characteristics': list(characteristics)})
 
 
-@login_required
 def subscribe_brand(request):
+    if not request.user.is_authenticated:
+        login_url = resolve_url(settings.LOGIN_URL)
+        next_url = request.META.get("HTTP_REFERER") or request.get_full_path()
+        return JsonResponse(
+            {"status": "unauthorized", "login_url": f"{login_url}?{urlencode({'next': next_url})}"},
+            status=401
+        )
     if request.method == "POST":
         brand_id = request.POST.get('id')
         action = request.POST.get('action')
@@ -243,5 +251,5 @@ def subscribe_brand(request):
                 Subcription.objects.filter(user=request.user, brand=brand).delete()
                 return JsonResponse({'status': 'ok', 'action': 'unsubscribed'})
         except Brand.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Brand not found'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+            return JsonResponse({'status': 'error', 'message': 'Brand not found'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)

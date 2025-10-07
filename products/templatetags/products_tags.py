@@ -146,4 +146,6 @@ def display_tags(tags, query):
 
 @register.filter
 def is_subscribed(brand, user):
+    if not getattr(user, "is_authenticated", False):
+        return False
     return Subcription.objects.filter(brand=brand, user=user).exists()

@@ -7,6 +7,21 @@ $u.onReady(()=>{
     const body = new URLSearchParams({ id: btn.dataset.brandId, action: btn.dataset.action });
 
     const res = await fetch(url, { method:'POST', headers: $u.csrfHeaders(), body });
+
+    if (res.status === 401) {
+      try {
+        const data = await res.json();
+        if (data.login_url) {
+          window.location = data.login_url;
+          return;
+        }
+      } catch(e){}
+    }
+    if (res.redirected) {
+      window.location = res.url;
+      return;
+    }
+
     const data = await res.json();
 
     if (data.status === 'ok') {

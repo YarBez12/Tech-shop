@@ -54,12 +54,13 @@ class ProductDetailView(DetailView, FormMixin):
         session_key = f"ui_state:product:{product.slug}"
         ui_state = self.request.session.get(session_key, {})
         rating = ui_state.get('rating')
+        current_user_id = self.request.user.pk if self.request.user.is_authenticated else -1
         reviews = (product.reviews
                 .select_related('user')
                 .prefetch_related('images')
                 .annotate(
                     is_current_user=Case(
-                        When(user=self.request.user, then=Value(True)),
+                        When(user=current_user_id, then=Value(True)),
                         default=Value(False),
                         output_field=BooleanField()
                     ))
