@@ -1,0 +1,688 @@
+[
+{
+  "model": "courses.subject",
+  "pk": 7,
+  "fields": {
+    "title": "Information Technology",
+    "slug": "information-technology"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 8,
+  "fields": {
+    "title": "Electronics & Hardware",
+    "slug": "electronics-hardware"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 9,
+  "fields": {
+    "title": "Computer Science",
+    "slug": "computer-science"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 10,
+  "fields": {
+    "title": "Artificial Intelligence & Data Science",
+    "slug": "artificial-intelligence-data-science"
+  }
+},
+{
+  "model": "courses.subject",
+  "pk": 11,
+  "fields": {
+    "title": "Engineering & Robotics",
+    "slug": "engineering-robotics"
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 12,
+  "fields": {
+    "owner": 1,
+    "subject": 10,
+    "title": "Introduction to Machine Learning",
+    "slug": "introduction-to-machine-learning",
+    "overview": "Learn the basics of supervised and unsupervised learning, algorithms like linear regression, k-means, and decision trees.",
+    "created": "2025-10-05T15:46:48.372Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 13,
+  "fields": {
+    "owner": 1,
+    "subject": 10,
+    "title": "Deep Learning with TensorFlow",
+    "slug": "deep-learning-with-tensorflow",
+    "overview": "Explore neural networks, CNNs, and RNNs with TensorFlow for building real-world AI applications.",
+    "created": "2025-10-05T15:47:01.931Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 14,
+  "fields": {
+    "owner": 1,
+    "subject": 10,
+    "title": "Data Visualization & Analytics",
+    "slug": "data-visualization-analytics",
+    "overview": "Discover techniques for transforming complex datasets into clear, actionable visual insights using Python libraries.",
+    "created": "2025-10-05T15:47:18.340Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 15,
+  "fields": {
+    "owner": 1,
+    "subject": 10,
+    "title": "Natural Language Processing (NLP) Fundamentals",
+    "slug": "natural-language-processing-nlp-fundamentals",
+    "overview": "Understand text preprocessing, sentiment analysis, and transformers like BERT for real-world language applications.",
+    "created": "2025-10-05T15:47:33.420Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 16,
+  "fields": {
+    "owner": 1,
+    "subject": 9,
+    "title": "Python Programming for Beginners",
+    "slug": "python-programming-for-beginners",
+    "overview": "A step-by-step guide to learning Python — from basic syntax to working with data and creating simple apps.",
+    "created": "2025-10-05T15:47:58.128Z",
+    "students": [
+      25
+    ]
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 17,
+  "fields": {
+    "owner": 1,
+    "subject": 9,
+    "title": "Algorithms and Data Structures",
+    "slug": "algorithms-and-data-structures",
+    "overview": "Master core algorithms, sorting techniques, and data structures essential for efficient software development.",
+    "created": "2025-10-05T15:48:12.551Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 18,
+  "fields": {
+    "owner": 1,
+    "subject": 9,
+    "title": "Web Development with Django",
+    "slug": "web-development-with-django",
+    "overview": "Build powerful, database-driven websites using Django and understand the fundamentals of back-end web development.",
+    "created": "2025-10-05T15:48:29.318Z",
+    "students": [
+      25
+    ]
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 19,
+  "fields": {
+    "owner": 1,
+    "subject": 9,
+    "title": "Software Design Patterns",
+    "slug": "software-design-patterns",
+    "overview": "Learn reusable software design principles for building maintainable and scalable applications.",
+    "created": "2025-10-05T15:48:55.782Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 20,
+  "fields": {
+    "owner": 25,
+    "subject": 8,
+    "title": "Microcontroller Programming with Arduino",
+    "slug": "microcontroller-programming-with-arduino",
+    "overview": "Build interactive projects and learn C-based programming for embedded systems.",
+    "created": "2025-10-05T15:49:57.687Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 21,
+  "fields": {
+    "owner": 1,
+    "subject": 8,
+    "title": "Digital Circuit Design",
+    "slug": "digital-circuit-design",
+    "overview": "Understand the foundations of digital logic, gates, and circuit design using simulation tools.",
+    "created": "2025-10-05T15:50:09.188Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 22,
+  "fields": {
+    "owner": 25,
+    "subject": 8,
+    "title": "IoT Systems & Prototyping",
+    "slug": "iot-systems-prototyping",
+    "overview": "Learn how sensors, cloud services, and hardware interact to create connected IoT ecosystems.",
+    "created": "2025-10-05T15:50:21.765Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 23,
+  "fields": {
+    "owner": 25,
+    "subject": 11,
+    "title": "Introduction to Robotics",
+    "slug": "introduction-to-robotics",
+    "overview": "Learn the fundamentals of robotics — sensors, actuators, and control systems for real-world robots.",
+    "created": "2025-10-05T15:50:38.026Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 24,
+  "fields": {
+    "owner": 1,
+    "subject": 11,
+    "title": "Automation and Control Systems",
+    "slug": "automation-and-control-systems",
+    "overview": "Explore PID controllers, industrial automation, and feedback systems used in modern engineering.",
+    "created": "2025-10-05T15:50:54.953Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 25,
+  "fields": {
+    "owner": 25,
+    "subject": 7,
+    "title": "Networking Fundamentals",
+    "slug": "networking-fundamentals",
+    "overview": "Study TCP/IP, DNS, and network topologies to understand how modern computer networks operate.",
+    "created": "2025-10-05T15:51:09.862Z",
+    "students": [
+      1
+    ]
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 26,
+  "fields": {
+    "owner": 1,
+    "subject": 7,
+    "title": "Cloud Computing with AWS & Azure",
+    "slug": "cloud-computing-with-aws-azure",
+    "overview": "Gain practical knowledge of deploying and managing cloud-based systems using industry-leading platforms.",
+    "created": "2025-10-05T15:51:25.537Z",
+    "students": []
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 14,
+  "fields": {
+    "course": 16,
+    "title": "Getting Started with Python",
+    "slug": "getting-started-with-python",
+    "description": "Learn how to install Python, use the interpreter, and write your first “Hello World” program",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 15,
+  "fields": {
+    "course": 16,
+    "title": "Data Types and Variables",
+    "slug": "data-types-and-variables",
+    "description": "Understand Python’s core data types — strings, integers, floats, and lists — and how to store data efficiently.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 16,
+  "fields": {
+    "course": 16,
+    "title": "Control Flow and Functions",
+    "slug": "control-flow-and-functions",
+    "description": "Master if-else statements, loops, and how to structure code using reusable functions.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 17,
+  "fields": {
+    "course": 16,
+    "title": "Working with Files",
+    "slug": "working-with-files",
+    "description": "Learn how to read and write files, handle exceptions, and work with file paths in Python.",
+    "order": 3
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 18,
+  "fields": {
+    "course": 17,
+    "title": "Introduction to Algorithms",
+    "slug": "introduction-to-algorithms",
+    "description": "Explore what algorithms are, how to measure performance, and how to implement simple examples.",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 19,
+  "fields": {
+    "course": 17,
+    "title": "Sorting and Searching",
+    "slug": "sorting-and-searching",
+    "description": "Learn about common algorithms like quicksort, mergesort, and binary search with hands-on coding exercises.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 20,
+  "fields": {
+    "course": 17,
+    "title": "Stacks, Queues, and Linked Lists",
+    "slug": "stacks-queues-and-linked-lists",
+    "description": "Understand linear data structures and how they’re used in everyday software applications.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 21,
+  "fields": {
+    "course": 17,
+    "title": "Trees and Graphs",
+    "slug": "trees-and-graphs",
+    "description": "Dive into advanced data structures and learn traversal techniques used in modern computing.",
+    "order": 3
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 22,
+  "fields": {
+    "course": 18,
+    "title": "Introduction to Django Framework",
+    "slug": "introduction-to-django-framework",
+    "description": "Discover the Django architecture, installation, and setting up your first project.",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 23,
+  "fields": {
+    "course": 18,
+    "title": "Models and Database Integration",
+    "slug": "models-and-database-integration",
+    "description": "Learn how Django ORM works to manage data and interact with databases seamlessly.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 24,
+  "fields": {
+    "course": 18,
+    "title": "Views and Templates",
+    "slug": "views-and-templates",
+    "description": "Understand how Django handles logic and presentation layers for dynamic web pages.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 25,
+  "fields": {
+    "course": 18,
+    "title": "Forms and User Input",
+    "slug": "forms-and-user-input",
+    "description": "Create interactive forms, handle POST requests, and validate user input.",
+    "order": 3
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 26,
+  "fields": {
+    "course": 18,
+    "title": "Authentication and Authorization",
+    "slug": "authentication-and-authorization",
+    "description": "Implement user login, registration, and permission-based access controls.",
+    "order": 4
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 27,
+  "fields": {
+    "course": 18,
+    "title": "Deployment and Optimization",
+    "slug": "deployment-and-optimization",
+    "description": "Learn how to deploy your Django app to production and optimize for performance and security.",
+    "order": 5
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 28,
+  "fields": {
+    "course": 19,
+    "title": "Creational Patterns",
+    "slug": "creational-patterns",
+    "description": "Explore patterns like Singleton, Factory, and Builder for creating flexible object instances.",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 29,
+  "fields": {
+    "course": 19,
+    "title": "Structural Patterns",
+    "slug": "structural-patterns",
+    "description": "Learn Adapter, Facade, and Decorator patterns to manage relationships between classes.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 30,
+  "fields": {
+    "course": 19,
+    "title": "Behavioral Patterns",
+    "slug": "behavioral-patterns",
+    "description": "Study patterns like Observer, Strategy, and Command that control communication between objects.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 31,
+  "fields": {
+    "course": 25,
+    "title": "Introduction to Computer Networks",
+    "slug": "introduction-to-computer-networks",
+    "description": "Understand the basic concepts of computer networking, including types of networks, topology, and data transmission fundamentals.",
+    "order": 0
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 32,
+  "fields": {
+    "course": 25,
+    "title": "Network Protocols and Models",
+    "slug": "network-protocols-and-models",
+    "description": "Learn about the OSI and TCP/IP models, how data flows across networks, and the role of key protocols such as IP, TCP, and UDP.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 33,
+  "fields": {
+    "course": 25,
+    "title": "Routing and Switching Basics",
+    "slug": "routing-and-switching-basics",
+    "description": "Explore how routers and switches manage data traffic, routing tables, and IP addressing to ensure efficient communication.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 34,
+  "fields": {
+    "course": 25,
+    "title": "Network Security and Troubleshooting",
+    "slug": "network-security-and-troubleshooting",
+    "description": "Gain practical skills in securing networks, detecting issues, and using diagnostic tools like ping and traceroute to troubleshoot problems.",
+    "order": 3
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 16,
+  "fields": {
+    "module": 31,
+    "content_type": 53,
+    "object_id": 7,
+    "order": 0
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 17,
+  "fields": {
+    "module": 31,
+    "content_type": 53,
+    "object_id": 8,
+    "order": 1
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 18,
+  "fields": {
+    "module": 31,
+    "content_type": 50,
+    "object_id": 5,
+    "order": 3
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 19,
+  "fields": {
+    "module": 31,
+    "content_type": 50,
+    "object_id": 6,
+    "order": 4
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 20,
+  "fields": {
+    "module": 31,
+    "content_type": 51,
+    "object_id": 2,
+    "order": 5
+  }
+},
+{
+  "model": "courses.content",
+  "pk": 21,
+  "fields": {
+    "module": 31,
+    "content_type": 55,
+    "object_id": 5,
+    "order": 2
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 2,
+  "fields": {
+    "owner": 1,
+    "title": "dss",
+    "created": "2025-06-21T23:32:59.918Z",
+    "updated": "2025-06-21T23:32:59.918Z",
+    "content": "sdsdsdsdsd"
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "efedf",
+    "created": "2025-06-22T07:50:34.592Z",
+    "updated": "2025-06-22T07:50:34.592Z",
+    "content": "deede"
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 6,
+  "fields": {
+    "owner": 1,
+    "title": "fdfcfef",
+    "created": "2025-09-25T08:13:46.779Z",
+    "updated": "2025-09-25T08:13:46.779Z",
+    "content": "eewfweewew"
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 7,
+  "fields": {
+    "owner": 25,
+    "title": "What is a Computer Network?",
+    "created": "2025-10-05T16:39:15.554Z",
+    "updated": "2025-10-05T16:39:15.554Z",
+    "content": "A computer network is a group of interconnected devices that communicate and share resources with each other. Networks can range from small home setups to massive global infrastructures like the Internet. Networking allows data to be exchanged efficiently and securely between computers, servers, and other hardware."
+  }
+},
+{
+  "model": "courses.text",
+  "pk": 8,
+  "fields": {
+    "owner": 25,
+    "title": "Why Networking Matters",
+    "created": "2025-10-05T16:39:28.049Z",
+    "updated": "2025-10-05T16:39:28.049Z",
+    "content": "Networking is the backbone of modern communication — enabling everything from online learning and cloud computing to IoT and remote work. Understanding how networks operate is crucial for anyone pursuing a career in IT or cybersecurity."
+  }
+},
+{
+  "model": "courses.file",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "qqqqq",
+    "created": "2025-09-18T22:49:15.793Z",
+    "updated": "2025-09-18T22:49:15.793Z",
+    "file": "learning_files/1.4_Revision_Questions.pptx"
+  }
+},
+{
+  "model": "courses.file",
+  "pk": 4,
+  "fields": {
+    "owner": 1,
+    "title": "wefwefwefw",
+    "created": "2025-09-25T08:14:19.555Z",
+    "updated": "2025-09-25T08:14:19.555Z",
+    "file": "learning_files/chef-claude-icon.png"
+  }
+},
+{
+  "model": "courses.file",
+  "pk": 5,
+  "fields": {
+    "owner": 25,
+    "title": "Network Concepts",
+    "created": "2025-10-05T16:42:17.768Z",
+    "updated": "2025-10-05T16:42:17.768Z",
+    "file": "learning_files/1.3_-_Network_Concepts.pptx"
+  }
+},
+{
+  "model": "courses.image",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "title": "ttgtgrtg",
+    "created": "2025-06-04T04:57:52.725Z",
+    "updated": "2025-06-21T23:31:40.681Z",
+    "file": "learning_images/BPMN_process_flow.jpeg"
+  }
+},
+{
+  "model": "courses.image",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "image",
+    "created": "2025-06-22T07:51:11.855Z",
+    "updated": "2025-06-22T07:51:11.855Z",
+    "file": "learning_images/61134847-0-app-intro.png"
+  }
+},
+{
+  "model": "courses.image",
+  "pk": 5,
+  "fields": {
+    "owner": 25,
+    "title": "Basic Network Diagram",
+    "created": "2025-10-05T16:39:51.133Z",
+    "updated": "2025-10-05T16:39:51.133Z",
+    "file": "learning_images/Sample-network-diagram.png"
+  }
+},
+{
+  "model": "courses.image",
+  "pk": 6,
+  "fields": {
+    "owner": 25,
+    "title": "Network Topologies Overview",
+    "created": "2025-10-05T16:40:13.109Z",
+    "updated": "2025-10-05T16:40:13.109Z",
+    "file": "learning_images/Networking-Topology.webp"
+  }
+},
+{
+  "model": "courses.video",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "title": "video",
+    "created": "2025-06-22T07:51:23.094Z",
+    "updated": "2025-06-22T07:51:23.094Z",
+    "url": "https://www.youtube.com/watch?v=GpB29joEh0Q"
+  }
+},
+{
+  "model": "courses.video",
+  "pk": 2,
+  "fields": {
+    "owner": 25,
+    "title": "Computer Networking in 100 Seconds",
+    "created": "2025-10-05T16:40:54.976Z",
+    "updated": "2025-10-05T16:40:54.976Z",
+    "url": "https://www.youtube.com/watch?v=keeqnciDVOo"
+  }
+}
+]
