@@ -23,6 +23,8 @@ from django.conf.urls import handler404
 from main.views import custom_404, test_404
 from django.contrib.sitemaps.views import sitemap
 from main.sitemaps import ProductSitemap
+from main.views_internal import run_sync
+
 
 
 sitemaps = {
@@ -31,6 +33,7 @@ sitemaps = {
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('internal/sync/', run_sync, name='internal-sync'),
     path('test-404/', test_404),
     path('admin/get_characteristics/', get_characteristics, name='get_characteristics'),
     path('sitemap.xml/', sitemap, {'sitemaps': sitemaps}, name = 'django.contrib.sitemaps.views.sitemap'),

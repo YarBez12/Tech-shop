@@ -225,7 +225,7 @@ INTERNAL_IPS = [
  '127.0.0.1',
 ]
 
-
+SYNC_CRON_TOKEN = env('SYNC_CRON_TOKEN', default=None)
 
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/0')
