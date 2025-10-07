@@ -228,24 +228,15 @@ INTERNAL_IPS = [
 
 
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
-USE_REDIS = env.bool('USE_REDIS', default=False)
-REDIS_URL = env('REDIS_URL', default=None)
-if USE_REDIS and REDIS_URL:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': REDIS_URL,
-        }
+REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/0')
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
     }
-    CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'techshop-demo-cache',
-        }
-    }
-    CELERY_BROKER_URL = None
+}
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
+
 CELERY_BEAT_SCHEDULE = {
     'sync-views-every-5m': {
         'task': 'products.tasks.sync_views_from_redis',
