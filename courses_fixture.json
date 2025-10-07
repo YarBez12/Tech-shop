@@ -43,7 +43,9 @@
   "model": "courses.course",
   "pk": 12,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 10,
     "title": "Introduction to Machine Learning",
     "slug": "introduction-to-machine-learning",
@@ -56,7 +58,9 @@
   "model": "courses.course",
   "pk": 13,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 10,
     "title": "Deep Learning with TensorFlow",
     "slug": "deep-learning-with-tensorflow",
@@ -69,7 +73,9 @@
   "model": "courses.course",
   "pk": 14,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 10,
     "title": "Data Visualization & Analytics",
     "slug": "data-visualization-analytics",
@@ -82,7 +88,9 @@
   "model": "courses.course",
   "pk": 15,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 10,
     "title": "Natural Language Processing (NLP) Fundamentals",
     "slug": "natural-language-processing-nlp-fundamentals",
@@ -95,14 +103,18 @@
   "model": "courses.course",
   "pk": 16,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 9,
     "title": "Python Programming for Beginners",
     "slug": "python-programming-for-beginners",
     "overview": "A step-by-step guide to learning Python — from basic syntax to working with data and creating simple apps.",
     "created": "2025-10-05T15:47:58.128Z",
     "students": [
-      25
+      [
+        "20113257@mail.wit.ie"
+      ]
     ]
   }
 },
@@ -110,7 +122,9 @@
   "model": "courses.course",
   "pk": 17,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 9,
     "title": "Algorithms and Data Structures",
     "slug": "algorithms-and-data-structures",
@@ -123,14 +137,18 @@
   "model": "courses.course",
   "pk": 18,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 9,
     "title": "Web Development with Django",
     "slug": "web-development-with-django",
     "overview": "Build powerful, database-driven websites using Django and understand the fundamentals of back-end web development.",
     "created": "2025-10-05T15:48:29.318Z",
     "students": [
-      25
+      [
+        "20113257@mail.wit.ie"
+      ]
     ]
   }
 },
@@ -138,7 +156,9 @@
   "model": "courses.course",
   "pk": 19,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 9,
     "title": "Software Design Patterns",
     "slug": "software-design-patterns",
@@ -151,7 +171,9 @@
   "model": "courses.course",
   "pk": 20,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "subject": 8,
     "title": "Microcontroller Programming with Arduino",
     "slug": "microcontroller-programming-with-arduino",
@@ -164,7 +186,9 @@
   "model": "courses.course",
   "pk": 21,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 8,
     "title": "Digital Circuit Design",
     "slug": "digital-circuit-design",
@@ -177,7 +201,9 @@
   "model": "courses.course",
   "pk": 22,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "subject": 8,
     "title": "IoT Systems & Prototyping",
     "slug": "iot-systems-prototyping",
@@ -190,7 +216,9 @@
   "model": "courses.course",
   "pk": 23,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "subject": 11,
     "title": "Introduction to Robotics",
     "slug": "introduction-to-robotics",
@@ -203,7 +231,9 @@
   "model": "courses.course",
   "pk": 24,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 11,
     "title": "Automation and Control Systems",
     "slug": "automation-and-control-systems",
@@ -216,14 +246,18 @@
   "model": "courses.course",
   "pk": 25,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "subject": 7,
     "title": "Networking Fundamentals",
     "slug": "networking-fundamentals",
     "overview": "Study TCP/IP, DNS, and network topologies to understand how modern computer networks operate.",
     "created": "2025-10-05T15:51:09.862Z",
     "students": [
-      1
+      [
+        "yaroslav2020bezv@gmail.com"
+      ]
     ]
   }
 },
@@ -231,7 +265,9 @@
   "model": "courses.course",
   "pk": 26,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "subject": 7,
     "title": "Cloud Computing with AWS & Azure",
     "slug": "cloud-computing-with-aws-azure",
@@ -476,7 +512,10 @@
   "pk": 16,
   "fields": {
     "module": 31,
-    "content_type": 53,
+    "content_type": [
+      "courses",
+      "text"
+    ],
     "object_id": 7,
     "order": 0
   }
@@ -486,7 +525,10 @@
   "pk": 17,
   "fields": {
     "module": 31,
-    "content_type": 53,
+    "content_type": [
+      "courses",
+      "text"
+    ],
     "object_id": 8,
     "order": 1
   }
@@ -496,7 +538,10 @@
   "pk": 18,
   "fields": {
     "module": 31,
-    "content_type": 50,
+    "content_type": [
+      "courses",
+      "image"
+    ],
     "object_id": 5,
     "order": 3
   }
@@ -506,7 +551,10 @@
   "pk": 19,
   "fields": {
     "module": 31,
-    "content_type": 50,
+    "content_type": [
+      "courses",
+      "image"
+    ],
     "object_id": 6,
     "order": 4
   }
@@ -516,7 +564,10 @@
   "pk": 20,
   "fields": {
     "module": 31,
-    "content_type": 51,
+    "content_type": [
+      "courses",
+      "video"
+    ],
     "object_id": 2,
     "order": 5
   }
@@ -526,7 +577,10 @@
   "pk": 21,
   "fields": {
     "module": 31,
-    "content_type": 55,
+    "content_type": [
+      "courses",
+      "file"
+    ],
     "object_id": 5,
     "order": 2
   }
@@ -535,7 +589,9 @@
   "model": "courses.text",
   "pk": 2,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "dss",
     "created": "2025-06-21T23:32:59.918Z",
     "updated": "2025-06-21T23:32:59.918Z",
@@ -546,7 +602,9 @@
   "model": "courses.text",
   "pk": 3,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "efedf",
     "created": "2025-06-22T07:50:34.592Z",
     "updated": "2025-06-22T07:50:34.592Z",
@@ -557,7 +615,9 @@
   "model": "courses.text",
   "pk": 6,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "fdfcfef",
     "created": "2025-09-25T08:13:46.779Z",
     "updated": "2025-09-25T08:13:46.779Z",
@@ -568,7 +628,9 @@
   "model": "courses.text",
   "pk": 7,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "What is a Computer Network?",
     "created": "2025-10-05T16:39:15.554Z",
     "updated": "2025-10-05T16:39:15.554Z",
@@ -579,7 +641,9 @@
   "model": "courses.text",
   "pk": 8,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "Why Networking Matters",
     "created": "2025-10-05T16:39:28.049Z",
     "updated": "2025-10-05T16:39:28.049Z",
@@ -590,7 +654,9 @@
   "model": "courses.file",
   "pk": 3,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "qqqqq",
     "created": "2025-09-18T22:49:15.793Z",
     "updated": "2025-09-18T22:49:15.793Z",
@@ -601,7 +667,9 @@
   "model": "courses.file",
   "pk": 4,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "wefwefwefw",
     "created": "2025-09-25T08:14:19.555Z",
     "updated": "2025-09-25T08:14:19.555Z",
@@ -612,7 +680,9 @@
   "model": "courses.file",
   "pk": 5,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "Network Concepts",
     "created": "2025-10-05T16:42:17.768Z",
     "updated": "2025-10-05T16:42:17.768Z",
@@ -623,7 +693,9 @@
   "model": "courses.image",
   "pk": 1,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "ttgtgrtg",
     "created": "2025-06-04T04:57:52.725Z",
     "updated": "2025-06-21T23:31:40.681Z",
@@ -634,7 +706,9 @@
   "model": "courses.image",
   "pk": 3,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "image",
     "created": "2025-06-22T07:51:11.855Z",
     "updated": "2025-06-22T07:51:11.855Z",
@@ -645,7 +719,9 @@
   "model": "courses.image",
   "pk": 5,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "Basic Network Diagram",
     "created": "2025-10-05T16:39:51.133Z",
     "updated": "2025-10-05T16:39:51.133Z",
@@ -656,7 +732,9 @@
   "model": "courses.image",
   "pk": 6,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "Network Topologies Overview",
     "created": "2025-10-05T16:40:13.109Z",
     "updated": "2025-10-05T16:40:13.109Z",
@@ -667,7 +745,9 @@
   "model": "courses.video",
   "pk": 1,
   "fields": {
-    "owner": 1,
+    "owner": [
+      "yaroslav2020bezv@gmail.com"
+    ],
     "title": "video",
     "created": "2025-06-22T07:51:23.094Z",
     "updated": "2025-06-22T07:51:23.094Z",
@@ -678,7 +758,9 @@
   "model": "courses.video",
   "pk": 2,
   "fields": {
-    "owner": 25,
+    "owner": [
+      "20113257@mail.wit.ie"
+    ],
     "title": "Computer Networking in 100 Seconds",
     "created": "2025-10-05T16:40:54.976Z",
     "updated": "2025-10-05T16:40:54.976Z",
