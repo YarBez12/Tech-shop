@@ -14,6 +14,7 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from celery.schedules import crontab
 import environ
+import os
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -74,8 +75,8 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'conf.middlewares.ForceEnglishMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
+    # 'conf.middlewares.ForceEnglishMiddleware',
+    # 'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -157,7 +158,7 @@ LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
     ('en', _('English')),
-    ('uk', _('Ukrainian')),
+    # ('uk', _('Ukrainian')),
 ]
 
 TIME_ZONE = 'UTC'
@@ -227,15 +228,24 @@ INTERNAL_IPS = [
 
 
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
-REDIS_URL = env('REDIS_URL', default='redis://127.0.0.1:6379/0')
-CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': REDIS_URL,
+USE_REDIS = env.bool('USE_REDIS', default=False)
+REDIS_URL = env('REDIS_URL', default=None)
+if USE_REDIS and REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+        }
     }
-}
-
+    CELERY_BROKER_URL = env('CELERY_BROKER_URL', default=REDIS_URL)
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'techshop-demo-cache',
+        }
+    }
+    CELERY_BROKER_URL = None
 CELERY_BEAT_SCHEDULE = {
     'sync-views-every-5m': {
         'task': 'products.tasks.sync_views_from_redis',
@@ -246,6 +256,11 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*/10'),
     },
 }
+
+USE_CELERY_INLINE = env.bool('USE_CELERY_INLINE', default=bool(not CELERY_BROKER_URL))
+if USE_CELERY_INLINE:
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
 
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 60 * 15 
