@@ -1,0 +1,16 @@
+name: Cron Sync Tech Shop
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   
+  workflow_dispatch: {}       
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit internal sync endpoint
+        run: |
+          curl -sS -X POST \
+            -H "X-Cron-Token: ${{ secrets.SYNC_CRON_TOKEN }}" \
+            https://tech-shop-6x1q.onrender.com/internal/sync/
