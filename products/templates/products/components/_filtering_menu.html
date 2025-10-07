@@ -9,6 +9,7 @@
     <form class="ui form" method="get">
       <div class="filter-scroll">
       {% for characteristic in characteristics  %}
+      {% if characteristic.prefetched_values %}
       <div class="grouped fields" data-section-name="{{ characteristic.title }}">
         <label>{{ characteristic.title }}</label>
         <div class="characteristics-wrapper">
@@ -29,9 +30,10 @@
         {% endfor %}
       </div>
       </div>
+      {% endif %}
       {% endfor %}
 
-
+      {% if brands %}
       <div class="grouped fields">
         <label>Brand</label>
         <div class="characteristics-wrapper">
@@ -51,6 +53,7 @@
           {% endfor %}
         </div>
       </div>
+      {% endif %}
     </div>
 
 

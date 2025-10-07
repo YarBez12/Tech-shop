@@ -155,6 +155,7 @@ class SubcategoryDetailView(EndlessPaginationMixin, ListView):
                         .select_related('product')
                         .only('id', 'value', 'product__id', 'product__slug')
                         .order_by('value')
+                        .distinct('characteristic_id', 'value')
                     ),
                     to_attr='prefetched_values'
                 )
